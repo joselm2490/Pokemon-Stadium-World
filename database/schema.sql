@@ -85,7 +85,8 @@ CREATE TABLE IF NOT EXISTS pokemon (
     altura_m REAL,
     ratio_captura INTEGER,
     experiencia_base INTEGER,
-    curva_crecimiento TEXT
+    curva_crecimiento TEXT,
+    movimientos_predeterminados TEXT -- JSON Array con los 4 IDs de movimientos predeterminados
 );
 
 -- --------------------------------------------------------------------
@@ -121,4 +122,97 @@ CREATE TABLE IF NOT EXISTS pokemon_movimientos (
     metodo_aprendizaje TEXT NOT NULL, -- 'nivel', 'mt', 'tutor', 'huevo', 'especial'
     nivel_aprendizaje INTEGER DEFAULT 1,
     PRIMARY KEY (pokemon_id, movimiento_id, metodo_aprendizaje, nivel_aprendizaje)
+);
+
+-- --------------------------------------------------------------------
+-- 9. TABLA: usuarios (Sistema de registro y autenticación)
+-- --------------------------------------------------------------------
+CREATE TABLE IF NOT EXISTS usuarios (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    nombre TEXT NOT NULL,
+    username TEXT NOT NULL UNIQUE COLLATE NOCASE,
+    email TEXT NOT NULL UNIQUE COLLATE NOCASE,
+    contrasena TEXT NOT NULL,
+    creado_en TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    ultimo_login TIMESTAMP
+);
+
+CREATE INDEX IF NOT EXISTS idx_usuarios_username ON usuarios(username);
+CREATE INDEX IF NOT EXISTS idx_usuarios_email ON usuarios(email);
+
+
+
+-- ====================================================================
+-- SISTEMA MULTIJUGADOR: SALAS, JUGADORES, MENSAJES Y ESTADÍSTICAS
+-- ====================================================================
+
+-- --------------------------------------------------------------------
+-- 10. TABLA: salas_batalla
+-- Almacena las salas activas e históricas con su código único de 6 chars
+-- --------------------------------------------------------------------
+CREATE TABLE IF NOT EXISTS salas_batalla (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    codigo TEXT NOT NULL UNIQUE COLLATE NOCASE, -- Código único de 6 caracteres (ej. 'PXXE69')
+    anfitrion_id INTEGER REFERENCES usuarios(id) ON DELETE SET NULL,
+    anfitrion_nombre TEXT NOT NULL,
+    estado TEXT NOT NULL DEFAULT 'esperando', -- 'esperando', 'en_combate', 'finalizada', 'cancelada'
+    pokemon_por_jugador INTEGER NOT NULL DEFAULT 3,
+    max_jugadores INTEGER NOT NULL DEFAULT 2,
+    jugadores_actuales INTEGER NOT NULL DEFAULT 1,
+    ganador_nombre TEXT,
+    creada_en TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    iniciada_en TIMESTAMP,
+    finalizada_en TIMESTAMP
+);
+
+CREATE INDEX IF NOT EXISTS idx_salas_codigo ON salas_batalla(codigo);
+CREATE INDEX IF NOT EXISTS idx_salas_estado ON salas_batalla(estado);
+
+-- --------------------------------------------------------------------
+-- 11. TABLA: sala_jugadores
+-- Registra a cada entrenador dentro de una sala específica
+-- --------------------------------------------------------------------
+CREATE TABLE IF NOT EXISTS sala_jugadores (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    sala_id INTEGER NOT NULL REFERENCES salas_batalla(id) ON DELETE CASCADE,
+    usuario_id INTEGER REFERENCES usuarios(id) ON DELETE SET NULL,
+    apodo TEXT NOT NULL,
+    es_anfitrion INTEGER NOT NULL DEFAULT 0, -- 1 = Anfitrión, 0 = Invitado
+    equipo_pokemon TEXT, -- JSON Array con IDs de Pokémon seleccionados
+    listo INTEGER NOT NULL DEFAULT 0, -- 1 = Listo para comenzar
+    conectado INTEGER NOT NULL DEFAULT 1, -- 1 = Conectado, 0 = Desconectado
+    unido_en TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    UNIQUE(sala_id, apodo)
+);
+
+CREATE INDEX IF NOT EXISTS idx_sala_jugadores_sala ON sala_jugadores(sala_id);
+
+-- --------------------------------------------------------------------
+-- 12. TABLA: sala_mensajes (Chat del Lobby)
+-- Historial completo de mensajes y eventos de sistema dentro de la sala
+-- --------------------------------------------------------------------
+CREATE TABLE IF NOT EXISTS sala_mensajes (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    sala_id INTEGER NOT NULL REFERENCES salas_batalla(id) ON DELETE CASCADE,
+    emisor TEXT NOT NULL, -- Apodo del jugador o 'SISTEMA'
+    mensaje TEXT NOT NULL,
+    es_sistema INTEGER NOT NULL DEFAULT 0, -- 1 = Evento de sistema, 0 = Chat de usuario
+    enviado_en TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
+
+CREATE INDEX IF NOT EXISTS idx_sala_mensajes_sala ON sala_mensajes(sala_id);
+
+-- --------------------------------------------------------------------
+-- 13. TABLA: sala_estadisticas (Historial y métricas de partidas)
+-- --------------------------------------------------------------------
+CREATE TABLE IF NOT EXISTS sala_estadisticas (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    sala_id INTEGER NOT NULL UNIQUE REFERENCES salas_batalla(id) ON DELETE CASCADE,
+    total_turnos INTEGER DEFAULT 0,
+    total_dano_causado INTEGER DEFAULT 0,
+    pokemon_debilitados INTEGER DEFAULT 0,
+    movimientos_usados INTEGER DEFAULT 0,
+    duracion_segundos INTEGER DEFAULT 0,
+    mvp_pokemon_id INTEGER REFERENCES pokemon(id),
+    datos_combate TEXT -- JSON detallado con el registro turno por turno
 );

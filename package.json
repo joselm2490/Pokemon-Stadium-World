@@ -1,0 +1,19 @@
+{
+  "name": "pokemon-stadium-world",
+  "version": "1.0.0",
+  "description": "Videojuego web Pokémon Stadium World con base de datos, sprites y sistema de combate",
+  "main": "index.html",
+  "scripts": {
+    "start": "python3 -m http.server 8080",
+    "dev": "python3 -m http.server 8080",
+    "serve": "npx serve ."
+  },
+  "keywords": [
+    "pokemon",
+    "stadium",
+    "sprites",
+    "battle"
+  ],
+  "author": "",
+  "license": "ISC"
+}

@@ -1,0 +1,282 @@
+{
+  "total": 55,
+  "downloadDate": "2026-10-27T20:55:37.707Z",
+  "source": "https://pokemon.fandom.com/es/wiki/Tipo",
+  "items": [
+    {
+      "filename": "Tipo_acero.gif",
+      "sizeBytes": 4036,
+      "url": "https://static.wikia.nocookie.net/espokemon/images/d/d9/Tipo_acero.gif/revision/latest?cb=20221120232749"
+    },
+    {
+      "filename": "Tipo_agua.gif",
+      "sizeBytes": 3812,
+      "url": "https://static.wikia.nocookie.net/espokemon/images/9/94/Tipo_agua.gif/revision/latest?cb=20221120232756"
+    },
+    {
+      "filename": "Tipo_bicho.gif",
+      "sizeBytes": 3992,
+      "url": "https://static.wikia.nocookie.net/espokemon/images/f/fe/Tipo_bicho.gif/revision/latest?cb=20221120232802"
+    },
+    {
+      "filename": "Tipo_dragón.gif",
+      "sizeBytes": 4136,
+      "url": "https://static.wikia.nocookie.net/espokemon/images/0/01/Tipo_drag%C3%B3n.gif/revision/latest?cb=20221120232809"
+    },
+    {
+      "filename": "Tipo_eléctrico.gif",
+      "sizeBytes": 4028,
+      "url": "https://static.wikia.nocookie.net/espokemon/images/1/1b/Tipo_el%C3%A9ctrico.gif/revision/latest?cb=20221120232815"
+    },
+    {
+      "filename": "Tipo_fantasma.gif",
+      "sizeBytes": 4178,
+      "url": "https://static.wikia.nocookie.net/espokemon/images/4/47/Tipo_fantasma.gif/revision/latest?cb=20221120232821"
+    },
+    {
+      "filename": "Tipo_fuego.gif",
+      "sizeBytes": 3778,
+      "url": "https://static.wikia.nocookie.net/espokemon/images/c/ce/Tipo_fuego.gif/revision/latest?cb=20221120232827"
+    },
+    {
+      "filename": "Tipo_hielo.gif",
+      "sizeBytes": 3626,
+      "url": "https://static.wikia.nocookie.net/espokemon/images/4/40/Tipo_hielo.gif/revision/latest?cb=20221120232838"
+    },
+    {
+      "filename": "Tipo_lucha.gif",
+      "sizeBytes": 3800,
+      "url": "https://static.wikia.nocookie.net/espokemon/images/b/b7/Tipo_lucha.gif/revision/latest?cb=20221120232844"
+    },
+    {
+      "filename": "Tipo_normal.gif",
+      "sizeBytes": 4008,
+      "url": "https://static.wikia.nocookie.net/espokemon/images/3/32/Tipo_normal.gif/revision/latest?cb=20221120232850"
+    },
+    {
+      "filename": "Tipo_planta.gif",
+      "sizeBytes": 3930,
+      "url": "https://static.wikia.nocookie.net/espokemon/images/d/d6/Tipo_planta.gif/revision/latest?cb=20221120232858"
+    },
+    {
+      "filename": "Tipo_psíquico.gif",
+      "sizeBytes": 4132,
+      "url": "https://static.wikia.nocookie.net/espokemon/images/1/15/Tipo_ps%C3%ADquico.gif/revision/latest?cb=20221120232908"
+    },
+    {
+      "filename": "Tipo_roca.gif",
+      "sizeBytes": 3896,
+      "url": "https://static.wikia.nocookie.net/espokemon/images/e/e0/Tipo_roca.gif/revision/latest?cb=20221120232914"
+    },
+    {
+      "filename": "Tipo_siniestro.gif",
+      "sizeBytes": 4166,
+      "url": "https://static.wikia.nocookie.net/espokemon/images/8/82/Tipo_siniestro.gif/revision/latest?cb=20221120232921"
+    },
+    {
+      "filename": "Tipo_hada.gif",
+      "sizeBytes": 3778,
+      "url": "https://static.wikia.nocookie.net/espokemon/images/b/bc/Tipo_hada.gif/revision/latest?cb=20221120232833"
+    },
+    {
+      "filename": "Tipo_tierra.gif",
+      "sizeBytes": 3900,
+      "url": "https://static.wikia.nocookie.net/espokemon/images/1/1d/Tipo_tierra.gif/revision/latest?cb=20221120232927"
+    },
+    {
+      "filename": "Tipo_veneno.gif",
+      "sizeBytes": 3982,
+      "url": "https://static.wikia.nocookie.net/espokemon/images/1/10/Tipo_veneno.gif/revision/latest?cb=20221120232933"
+    },
+    {
+      "filename": "Tipo_volador.gif",
+      "sizeBytes": 4008,
+      "url": "https://static.wikia.nocookie.net/espokemon/images/e/e1/Tipo_volador.gif/revision/latest?cb=20221120232940"
+    },
+    {
+      "filename": "Tipo_???.gif",
+      "sizeBytes": 314,
+      "url": "https://static.wikia.nocookie.net/espokemon/images/5/5d/Tipo_%3F%3F%3F.gif/revision/latest?cb=20221123215350"
+    },
+    {
+      "filename": "Tipo_pájaro.png",
+      "sizeBytes": 82,
+      "url": "https://static.wikia.nocookie.net/espokemon/images/f/f2/Tipo_p%C3%A1jaro.png/revision/latest?cb=20160405235754"
+    },
+    {
+      "filename": "Tipo_corto_alcance.gif",
+      "sizeBytes": 1022,
+      "url": "https://static.wikia.nocookie.net/espokemon/images/2/2c/Tipo_corto_alcance.gif/revision/latest?cb=20221004172431"
+    },
+    {
+      "filename": "Tipo_largo_alcance.gif",
+      "sizeBytes": 942,
+      "url": "https://static.wikia.nocookie.net/espokemon/images/3/33/Tipo_largo_alcance.gif/revision/latest?cb=20221004213235"
+    },
+    {
+      "filename": "Tipo_curación.gif",
+      "sizeBytes": 1018,
+      "url": "https://static.wikia.nocookie.net/espokemon/images/0/0b/Tipo_curaci%C3%B3n.gif/revision/latest?cb=20221004215150"
+    },
+    {
+      "filename": "Tipo_estado.png",
+      "sizeBytes": 1438,
+      "url": "https://static.wikia.nocookie.net/espokemon/images/c/c9/Tipo_estado.png/revision/latest?cb=20221120234608"
+    },
+    {
+      "filename": "Tipo_especial.png",
+      "sizeBytes": 2226,
+      "url": "https://static.wikia.nocookie.net/espokemon/images/5/5b/Tipo_especial.png/revision/latest?cb=20221120234609"
+    },
+    {
+      "filename": "Tipo_físico.png",
+      "sizeBytes": 1550,
+      "url": "https://static.wikia.nocookie.net/espokemon/images/b/be/Tipo_f%C3%ADsico.png/revision/latest?cb=20221120234610"
+    },
+    {
+      "filename": "Tipo_corto_alcance.png",
+      "sizeBytes": 1022,
+      "url": "https://static.wikia.nocookie.net/espokemon/images/2/2c/Tipo_corto_alcance.gif/revision/latest?cb=20221004172431"
+    },
+    {
+      "filename": "Tipo_largo_alcance.png",
+      "sizeBytes": 942,
+      "url": "https://static.wikia.nocookie.net/espokemon/images/3/33/Tipo_largo_alcance.gif/revision/latest?cb=20221004213235"
+    },
+    {
+      "filename": "Tipo_curación.png",
+      "sizeBytes": 1018,
+      "url": "https://static.wikia.nocookie.net/espokemon/images/0/0b/Tipo_curaci%C3%B3n.gif/revision/latest?cb=20221004215150"
+    },
+    {
+      "filename": "Tipo_beneficio.png",
+      "sizeBytes": 944,
+      "url": "https://static.wikia.nocookie.net/espokemon/images/5/55/Tipo_beneficio.gif/revision/latest?cb=20221004220350"
+    },
+    {
+      "filename": "Tipo_beneficio.gif",
+      "sizeBytes": 944,
+      "url": "https://static.wikia.nocookie.net/espokemon/images/5/55/Tipo_beneficio.gif/revision/latest?cb=20221004220350"
+    },
+    {
+      "filename": "Tipo_área.gif",
+      "sizeBytes": 1044,
+      "url": "https://static.wikia.nocookie.net/espokemon/images/2/23/Tipo_%C3%A1rea.gif/revision/latest?cb=20221005204141"
+    },
+    {
+      "filename": "Tipo_infalible.gif",
+      "sizeBytes": 1014,
+      "url": "https://static.wikia.nocookie.net/espokemon/images/e/ea/Tipo_infalible.gif/revision/latest?cb=20221005213519"
+    },
+    {
+      "filename": "Tipo_avance.gif",
+      "sizeBytes": 866,
+      "url": "https://static.wikia.nocookie.net/espokemon/images/1/12/Tipo_avance.gif/revision/latest?cb=20221005220447"
+    },
+    {
+      "filename": "Tipo_hada.png",
+      "sizeBytes": 328,
+      "url": "https://static.wikia.nocookie.net/espokemon/images/5/59/Tipo_hada.png/revision/latest?cb=20221120233433"
+    },
+    {
+      "filename": "Tipo_dragón.png",
+      "sizeBytes": 432,
+      "url": "https://static.wikia.nocookie.net/espokemon/images/c/cb/Tipo_drag%C3%B3n.png/revision/latest?cb=20221120233436"
+    },
+    {
+      "filename": "Tipo_eléctrico.png",
+      "sizeBytes": 310,
+      "url": "https://static.wikia.nocookie.net/espokemon/images/5/5d/Tipo_el%C3%A9ctrico.png/revision/latest?cb=20221120233439"
+    },
+    {
+      "filename": "Tipo_agua.png",
+      "sizeBytes": 340,
+      "url": "https://static.wikia.nocookie.net/espokemon/images/6/64/Tipo_agua.png/revision/latest?cb=20221120233441"
+    },
+    {
+      "filename": "Tipo_fuego.png",
+      "sizeBytes": 358,
+      "url": "https://static.wikia.nocookie.net/espokemon/images/a/a7/Tipo_fuego.png/revision/latest?cb=20221120233442"
+    },
+    {
+      "filename": "Tipo_acero.png",
+      "sizeBytes": 418,
+      "url": "https://static.wikia.nocookie.net/espokemon/images/e/e1/Tipo_acero.png/revision/latest?cb=20221120233443"
+    },
+    {
+      "filename": "Tipo_fantasma.png",
+      "sizeBytes": 382,
+      "url": "https://static.wikia.nocookie.net/espokemon/images/5/5f/Tipo_fantasma.png/revision/latest?cb=20221120233444"
+    },
+    {
+      "filename": "Tipo_bicho.png",
+      "sizeBytes": 414,
+      "url": "https://static.wikia.nocookie.net/espokemon/images/6/6e/Tipo_bicho.png/revision/latest?cb=20221120233446"
+    },
+    {
+      "filename": "Tipo_área.png",
+      "sizeBytes": 1044,
+      "url": "https://static.wikia.nocookie.net/espokemon/images/2/23/Tipo_%C3%A1rea.gif/revision/latest?cb=20221005204141"
+    },
+    {
+      "filename": "Tipo_infalible.png",
+      "sizeBytes": 1014,
+      "url": "https://static.wikia.nocookie.net/espokemon/images/e/ea/Tipo_infalible.gif/revision/latest?cb=20221005213519"
+    },
+    {
+      "filename": "Tipo_avance.png",
+      "sizeBytes": 866,
+      "url": "https://static.wikia.nocookie.net/espokemon/images/1/12/Tipo_avance.gif/revision/latest?cb=20221005220447"
+    },
+    {
+      "filename": "Tipo_siniestro.png",
+      "sizeBytes": 376,
+      "url": "https://static.wikia.nocookie.net/espokemon/images/5/5a/Tipo_siniestro.png/revision/latest?cb=20221120233434"
+    },
+    {
+      "filename": "Tipo_hielo.png",
+      "sizeBytes": 306,
+      "url": "https://static.wikia.nocookie.net/espokemon/images/1/13/Tipo_hielo.png/revision/latest?cb=20221120233437"
+    },
+    {
+      "filename": "Tipo_psíquico.png",
+      "sizeBytes": 340,
+      "url": "https://static.wikia.nocookie.net/espokemon/images/f/f5/Tipo_ps%C3%ADquico.png/revision/latest?cb=20221120233438"
+    },
+    {
+      "filename": "Tipo_planta.png",
+      "sizeBytes": 464,
+      "url": "https://static.wikia.nocookie.net/espokemon/images/c/ca/Tipo_planta.png/revision/latest?cb=20221120233440"
+    },
+    {
+      "filename": "Tipo_roca.png",
+      "sizeBytes": 390,
+      "url": "https://static.wikia.nocookie.net/espokemon/images/0/05/Tipo_roca.png/revision/latest?cb=20221120233447"
+    },
+    {
+      "filename": "Tipo_tierra.png",
+      "sizeBytes": 374,
+      "url": "https://static.wikia.nocookie.net/espokemon/images/7/7d/Tipo_tierra.png/revision/latest?cb=20221120233448"
+    },
+    {
+      "filename": "Tipo_veneno.png",
+      "sizeBytes": 392,
+      "url": "https://static.wikia.nocookie.net/espokemon/images/9/92/Tipo_veneno.png/revision/latest?cb=20221120233449"
+    },
+    {
+      "filename": "Tipo_volador.png",
+      "sizeBytes": 292,
+      "url": "https://static.wikia.nocookie.net/espokemon/images/9/9d/Tipo_volador.png/revision/latest?cb=20221120233450"
+    },
+    {
+      "filename": "Tipo_lucha.png",
+      "sizeBytes": 332,
+      "url": "https://static.wikia.nocookie.net/espokemon/images/f/f9/Tipo_lucha.png/revision/latest?cb=20221120233451"
+    },
+    {
+      "filename": "Tipo_normal.png",
+      "sizeBytes": 442,
+      "url": "https://static.wikia.nocookie.net/espokemon/images/c/c4/Tipo_normal.png/revision/latest?cb=20221120233452"
+    }
+  ]
+}
