@@ -1,0 +1,329 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Pokémon Stadium World - Juego Web</title>
+  <meta name="description" content="Pokémon Stadium World - Videojuego web de Pokémon con base de datos completa de movimientos, Pokémon y modo batalla estilo arena.">
+
+  <!-- Tipografía moderna -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;600;700;800;900&family=JetBrains+Mono:wght@400;600;700&display=swap" rel="stylesheet">
+
+  <!-- Estilos del Videojuego -->
+  <link rel="stylesheet" href="css/stadium.css?v=18">
+</head>
+<body>
+
+  <!-- Luces y rejilla de estadio -->
+  <div class="arena-grid-overlay"></div>
+  <div class="spotlight-left"></div>
+  <div class="spotlight-right"></div>
+
+  <div class="app-wrapper">
+    <!-- BARRA SUPERIOR -->
+    <header class="stadium-navbar">
+      <a href="#" class="brand-badge" id="brandHomeLink">
+        <div class="pokeball-icon-glow"></div>
+        <div class="brand-text">
+          <h1>Pokémon Stadium World</h1>
+          <div class="brand-tagline">Web Game Engine & Database</div>
+        </div>
+      </a>
+
+      <div class="nav-actions">
+        <div class="db-pill">
+          <span class="db-dot"></span>
+          <span id="dbMoveCount">Conectando...</span>
+        </div>
+        <div class="user-auth-widget" id="userAuthWidget">
+          <!-- Widget de Sesión / Login renderizado por AuthManager -->
+        </div>
+        <button class="sfx-toggle-btn" id="sfxToggleBtn" title="Activar/Desactivar Efectos de Sonido">
+          🔊 SFX: ON
+        </button>
+      </div>
+    </header>
+
+    <!-- MENÚ PRINCIPAL DEL JUEGO (HUB DOCK) -->
+    <nav class="stadium-menu-hub">
+      <!-- 1. POKÉMON (INICIO POR DEFECTO) -->
+      <div class="menu-card active" data-view="pokemon" id="menuItemPokemon">
+        <div class="menu-card-header">
+          <span class="menu-card-icon">🐾</span>
+          <span class="status-badge status-active">1082 Pokémon</span>
+        </div>
+        <div>
+          <h3>Pokédex Stadium</h3>
+          <p>Todos los Pokémon con estadísticas completas, tipos y ataques aprendibles.</p>
+        </div>
+      </div>
+
+      <!-- 2. MOVIMIENTOS -->
+      <div class="menu-card" data-view="movimientos" id="menuItemMovimientos">
+        <div class="menu-card-header">
+          <span class="menu-card-icon">⚡</span>
+          <span class="status-badge status-active">Activo</span>
+        </div>
+        <div>
+          <h3>Movimientos</h3>
+          <p>Catálogo oficial de 953 ataques, potencias, tipos, clases y efectos.</p>
+        </div>
+      </div>
+
+      <!-- 3. MODO BATALLA -->
+      <div class="menu-card" data-view="batalla" id="menuItemBatalla">
+        <div class="menu-card-header">
+          <span class="menu-card-icon">⚔️</span>
+          <span class="status-badge status-active">Arena En Vivo</span>
+        </div>
+        <div>
+          <h3>Modo Batalla</h3>
+          <p>Arena Stadium de combate por turnos, cálculo de daño y selección de equipo.</p>
+        </div>
+      </div>
+    </nav>
+
+    <!-- ====================================================================
+         SECCIÓN 1: VISTA DE POKÉMON (INICIO ACTIVO POR DEFECTO)
+         ==================================================================== -->
+    <section class="view-section active" id="view-pokemon">
+      <!-- CONTROLES Y FILTROS DE POKÉMON (ORDEN EXACTO MOCKUP IMAGEN 1) -->
+      <section class="moves-controls-panel pokemon-controls-panel">
+        <!-- FILA 1: FILTROS POR GENERACIÓN -->
+        <div class="filters-row-group">
+          <span class="group-title has-tooltip" data-tooltip="Filtrar por generación: Región de origen en el universo Pokémon.">🌐 GENERACIÓN:</span>
+          <div class="chips-scroll-wrap" id="pokemonGenFiltersRow">
+            <button class="filter-chip active has-tooltip" data-gen="all" data-tooltip="Mostrar Pokémon de todas las generaciones (Gen 1 a Gen 9).">Todas</button>
+            <button class="filter-chip has-tooltip" data-gen="1" data-tooltip="Generación 1: Pokémon originarios de la región de Kanto (#001 - #151).">Gen 1 (Kanto)</button>
+            <button class="filter-chip has-tooltip" data-gen="2" data-tooltip="Generación 2: Pokémon originarios de la región de Johto (#152 - #251).">Gen 2 (Johto)</button>
+            <button class="filter-chip has-tooltip" data-gen="3" data-tooltip="Generación 3: Pokémon originarios de la región de Hoenn (#252 - #386).">Gen 3 (Hoenn)</button>
+            <button class="filter-chip has-tooltip" data-gen="4" data-tooltip="Generación 4: Pokémon originarios de la región de Sinnoh (#387 - #493).">Gen 4 (Sinnoh)</button>
+            <button class="filter-chip has-tooltip" data-gen="5" data-tooltip="Generación 5: Pokémon originarios de la región de Teselia / Unova (#494 - #649).">Gen 5 (Teselia)</button>
+            <button class="filter-chip has-tooltip" data-gen="6" data-tooltip="Generación 6: Pokémon originarios de la región de Kalos (#650 - #721).">Gen 6 (Kalos)</button>
+            <button class="filter-chip has-tooltip" data-gen="7" data-tooltip="Generación 7: Pokémon originarios de la región de Alola (#722 - #809).">Gen 7 (Alola)</button>
+            <button class="filter-chip has-tooltip" data-gen="8" data-tooltip="Generación 8: Pokémon originarios de Galar y la ancestral Hisui (#810 - #905).">Gen 8 (Galar/Hisui)</button>
+            <button class="filter-chip has-tooltip" data-gen="9" data-tooltip="Generación 9: Pokémon originarios de la región de Paldea (#906 - #1025).">Gen 9 (Paldea)</button>
+          </div>
+        </div>
+
+        <!-- FILA 2: FILTROS POR FORMAS ESPECIALES (MEGAS, GIGAMAX, REGIONALES) -->
+        <div class="filters-row-group">
+          <span class="group-title has-tooltip" data-tooltip="Filtrar por forma especial: Variantes biológicas, transformaciones de combate y fenómenos regionales.">⭐ FORMA:</span>
+          <div class="chips-scroll-wrap" id="pokemonFormFiltersRow">
+            <button class="filter-chip active has-tooltip" data-form="all" data-tooltip="Mostrar todas las formas de Pokémon (estándar, megas, gigamax y regionales).">Todas</button>
+            <button class="filter-chip has-tooltip" data-form="standard" data-tooltip="Formas estándar: Pokémon en su forma base o evolutiva habitual sin transformaciones especiales.">Estándar</button>
+            <button class="filter-chip has-tooltip" data-form="mega" data-tooltip="Megaevoluciones: Transformaciones temporales en combate activadas por Megapiedras con estadísticas potenciadas.">⭐ Megas</button>
+            <button class="filter-chip has-tooltip" data-form="gmax" data-tooltip="Formas Gigamax: Fenómeno de crecimiento colosal originario de Galar con movimientos G-Max exclusivos.">💥 Gigamax</button>
+            <button class="filter-chip has-tooltip" data-form="regional" data-tooltip="Formas Regionales: Adaptaciones evolutivas y biológicas de Alola, Galar, Hisui y Paldea con tipos alternativos.">🌍 Regionales</button>
+          </div>
+        </div>
+
+        <!-- FILA 3: FILTROS POR TIPO ELEMENTAL -->
+        <div class="filters-row-group">
+          <span class="group-title has-tooltip" data-tooltip="Filtrar por tipo elemental: Selecciona 1 o 2 tipos simultáneos para buscar combinaciones elementales exactas.">🛡️ TIPO (1 O 2):</span>
+          <div class="chips-scroll-wrap" id="pokemonTypeFiltersRow">
+            <button class="filter-chip active has-tooltip" data-type="all" data-tooltip="Mostrar Pokémon de cualquier tipo elemental (sin restricción de tipo).">Todos los Tipos</button>
+            <!-- Chips generados por JS -->
+          </div>
+        </div>
+
+        <!-- FILA 4: BÚSQUEDA, ORDEN, CONTADOR Y MINI-PAGINACIÓN -->
+        <div class="search-and-sort-bar pokemon-search-sort-bar">
+          <div class="search-box has-tooltip" data-tooltip="Buscar Pokémon por nombre en español, nombre en inglés o número en la Pokédex Nacional (ej. Charizard, 25, Gengar).">
+            <span class="icon">🔍</span>
+            <input type="text" id="pokemonSearchInput" placeholder="Buscar Pokémon por nombre o Nº... (ej. Charizard, 25, Gengar, Lucario)" autocomplete="off">
+          </div>
+
+          <div class="sort-box has-tooltip" data-tooltip="Ordenar catálogo: Selecciona el criterio de ordenamiento (Número Pokédex, Estadísticas Base BST, Ataque, Velocidad o Nombre).">
+            <label for="pokemonSortSelect">ORDENAR:</label>
+            <select id="pokemonSortSelect" class="sort-select">
+              <option value="num_asc">Nº Pokédex (1 - 1025)</option>
+              <option value="num_desc">Nº Pokédex (1025 - 1)</option>
+              <option value="total_desc">Total Estadísticas (BST Max)</option>
+              <option value="total_asc">Total Estadísticas (BST Min)</option>
+              <option value="atk_desc">Mayor Ataque Físico</option>
+              <option value="spa_desc">Mayor Ataque Especial</option>
+              <option value="spe_desc">Mayor Velocidad</option>
+              <option value="name_asc">Nombre (A - Z)</option>
+            </select>
+          </div>
+
+          <div class="pokemon-count-badge has-tooltip" id="pokemonCountBadge" data-tooltip="Cantidad de Pokémon que coinciden con los criterios de búsqueda y filtros seleccionados.">
+            <span id="pokemonCountLabel">Mostrando 1082 de 1082 Pokémon</span>
+          </div>
+
+          <!-- MINI PAGINACIÓN DE LA BARRA INFERIOR (IMAGEN 1) -->
+          <div class="pokemon-mini-pagination has-tooltip" id="pokemonMiniPagination" data-tooltip="Paginación rápida: Navegar entre páginas del catálogo.">
+            <span class="mini-page-label">Pág. <b id="miniPageCurrent">1</b> de <b id="miniPageTotal">46</b></span>
+            <div class="mini-page-buttons">
+              <button class="mini-page-btn" id="miniPagePrevBtn" onclick="PokemonModule.goToPage(PokemonModule.currentPage - 1)" title="Página anterior" aria-label="Página anterior">‹</button>
+              <button class="mini-page-btn" id="miniPageNextBtn" onclick="PokemonModule.goToPage(PokemonModule.currentPage + 1)" title="Página siguiente" aria-label="Página siguiente">›</button>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- ARENA GRID DE POKÉMON -->
+      <section class="pokemon-arena-grid" id="pokemonArenaGrid">
+        <!-- Renderizado dinámicamente desde js/modules/pokemon.js -->
+      </section>
+
+      <!-- BARRA DE PAGINACIÓN DE POKÉMON -->
+      <div class="pagination-dock" id="pokemonPaginationDock"></div>
+    </section>
+
+    <!-- ====================================================================
+         SECCIÓN 2: VISTA DE MOVIMIENTOS
+         ==================================================================== -->
+    <main class="view-section" id="view-movimientos">
+      <!-- PANEL DE CONTROL Y FILTROS (ESTRUCTURA IDÉNTICA A POKÉMON) -->
+      <section class="moves-controls-panel">
+        <!-- FILA 1: FILTROS POR GENERACIÓN -->
+        <div class="filters-row-group">
+          <span class="group-title has-tooltip" data-tooltip="Filtrar por generación: Región de origen en el universo Pokémon donde se introdujo el movimiento.">🌐 GENERACIÓN:</span>
+          <div class="chips-scroll-wrap" id="genFiltersRow">
+            <button class="filter-chip active has-tooltip" data-gen="all" data-tooltip="Mostrar movimientos de todas las generaciones (Gen 1 a Gen 9).">Todas</button>
+            <button class="filter-chip has-tooltip" data-gen="1" data-tooltip="Generación 1: Movimientos originarios de Kanto (#001 - #165).">Gen 1 (Kanto)</button>
+            <button class="filter-chip has-tooltip" data-gen="2" data-tooltip="Generación 2: Movimientos originarios de Johto (#166 - #251).">Gen 2 (Johto)</button>
+            <button class="filter-chip has-tooltip" data-gen="3" data-tooltip="Generación 3: Movimientos originarios de Hoenn (#252 - #354).">Gen 3 (Hoenn)</button>
+            <button class="filter-chip has-tooltip" data-gen="4" data-tooltip="Generación 4: Movimientos originarios de Sinnoh (#355 - #467).">Gen 4 (Sinnoh)</button>
+            <button class="filter-chip has-tooltip" data-gen="5" data-tooltip="Generación 5: Movimientos originarios de Teselia / Unova (#468 - #559).">Gen 5 (Teselia)</button>
+            <button class="filter-chip has-tooltip" data-gen="6" data-tooltip="Generación 6: Movimientos originarios de Kalos (#560 - #621).">Gen 6 (Kalos)</button>
+            <button class="filter-chip has-tooltip" data-gen="7" data-tooltip="Generación 7: Movimientos originarios de Alola (#622 - #742).">Gen 7 (Alola)</button>
+            <button class="filter-chip has-tooltip" data-gen="8" data-tooltip="Generación 8: Movimientos originarios de Galar e Hisui (#743 - #850).">Gen 8 (Galar/Hisui)</button>
+            <button class="filter-chip has-tooltip" data-gen="9" data-tooltip="Generación 9: Movimientos originarios de Paldea (#851 - #919).">Gen 9 (Paldea)</button>
+          </div>
+        </div>
+
+        <!-- FILA 2: FILTRO POR CLASE (CATEGORÍA) -->
+        <div class="filters-row-group">
+          <span class="group-title has-tooltip" data-tooltip="Filtrar por categoría del movimiento: Físico (contacto), Especial (a distancia/energía) o Estado (alteraciones de campo/estados).">⚔️ CATEGORÍA:</span>
+          <div class="chips-scroll-wrap" id="classFiltersRow">
+            <button class="filter-chip active has-tooltip" data-class="all" data-tooltip="Mostrar movimientos de cualquier clase o categoría.">Todas</button>
+            <button class="filter-chip has-tooltip" data-class="Físico" data-tooltip="Ataques Físicos: Impacto directo con el cuerpo del rival. Su daño depende del Ataque del atacante y la Defensa del defensor.">💥 Físico</button>
+            <button class="filter-chip has-tooltip" data-class="Especial" data-tooltip="Ataques Especiales: Ataques basados en energía, rayos y proyectiles elementales. Su daño depende del At. Especial del atacante y la Def. Especial del defensor.">✨ Especial</button>
+            <button class="filter-chip has-tooltip" data-class="Estado" data-tooltip="Movimientos de Estado: No causan daño directo inmediato; alteran estadísticas, aplican problemas de estado o modifican el clima/campo.">🛡️ Estado</button>
+          </div>
+        </div>
+
+        <!-- FILA 3: FILTRO POR TIPO ELEMENTAL -->
+        <div class="filters-row-group">
+          <span class="group-title has-tooltip" data-tooltip="Filtrar por tipo elemental: Selecciona 1 o 2 tipos simultáneos para buscar movimientos de esos elementos.">🛡️ TIPO (1 O 2):</span>
+          <div class="chips-scroll-wrap" id="typeFiltersRow">
+            <button class="filter-chip active has-tooltip" data-type="all" data-tooltip="Mostrar movimientos de cualquier tipo elemental (sin restricción).">Todos los Tipos</button>
+          </div>
+        </div>
+
+        <!-- FILA 4: BÚSQUEDA, ORDEN, CONTADOR Y MINI-PAGINACIÓN -->
+        <div class="search-and-sort-bar pokemon-search-sort-bar moves-search-sort-bar">
+          <div class="search-box has-tooltip" data-tooltip="Buscar movimiento por nombre en español, nombre en inglés o ID (ej. Terremoto, Rayo, Lanzallamas).">
+            <span class="icon">🔍</span>
+            <input type="text" id="moveSearchInput" placeholder="Buscar movimiento por nombre o Nº... (ej. Terremoto, Rayo, Lanzallamas)" autocomplete="off">
+          </div>
+
+          <div class="sort-box has-tooltip" data-tooltip="Ordenar catálogo: Selecciona el criterio de ordenamiento (ID, Potencia, Precisión, PP, Nombre o Generación).">
+            <label for="sortSelect">ORDENAR:</label>
+            <select class="sort-select" id="sortSelect">
+              <option value="id_asc">Nº ID (1 - 826)</option>
+              <option value="id_desc">Nº ID (826 - 1)</option>
+              <option value="potencia_desc">Mayor Potencia</option>
+              <option value="potencia_asc">Menor Potencia</option>
+              <option value="precision_desc">Mayor Precisión</option>
+              <option value="pp_desc">Mayor PP</option>
+              <option value="nombre_asc">Nombre (A - Z)</option>
+              <option value="gen_asc">Generación (1 - 9)</option>
+            </select>
+          </div>
+
+          <div class="pokemon-count-badge has-tooltip" id="moveCountBadge" data-tooltip="Cantidad de movimientos que coinciden con los criterios de búsqueda y filtros seleccionados.">
+            <span id="moveCountLabel">Mostrando 826 de 826 Movimientos</span>
+          </div>
+
+          <!-- MINI PAGINACIÓN DE LA BARRA INFERIOR (ESTILO POKÉMON STADIUM) -->
+          <div class="pokemon-mini-pagination has-tooltip" id="moveMiniPagination" data-tooltip="Paginación rápida: Navegar entre páginas del catálogo de movimientos.">
+            <span class="mini-page-label">Pág. <b id="moveMiniPageCurrent">1</b> de <b id="moveMiniPageTotal">21</b></span>
+            <div class="mini-page-buttons">
+              <button class="mini-page-btn" id="moveMiniPagePrevBtn" onclick="MovimientosModule.goToPage(MovimientosModule.currentPage - 1)" title="Página anterior" aria-label="Página anterior">‹</button>
+              <button class="mini-page-btn" id="moveMiniPageNextBtn" onclick="MovimientosModule.goToPage(MovimientosModule.currentPage + 1)" title="Página siguiente" aria-label="Página siguiente">›</button>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- ESTADO DE CARGA -->
+      <div id="loadingState" style="text-align: center; padding: 40px; color: var(--neon-cyan);">
+        Cargando base de datos de movimientos...
+      </div>
+
+      <!-- GRID DE TARJETAS DE MOVIMIENTO -->
+      <div class="moves-arena-grid" id="movesArenaGrid"></div>
+
+      <!-- PAGINACIÓN DINÁMICA DE MOVIMIENTOS -->
+      <div class="pagination-dock" id="movesPaginationDock"></div>
+    </main>
+
+    <!-- ====================================================================
+         SECCIÓN 3: VISTA DE MODO BATALLA STADIUM
+         ==================================================================== -->
+    <section class="view-section" id="view-batalla">
+      <!-- Renderizado dinámicamente desde js/modules/batallas.js -->
+    </section>
+
+  </div>
+
+  <!-- MODAL DE DETALLE DE MOVIMIENTO (ESTRUCTURA STADIUM CON POKÉMON COMPATIBLES) -->
+  <div class="modal-backdrop" id="moveDetailModal">
+    <div class="modal-hud-window move-modal-window">
+      <!-- CABECERA FIJA SIEMPRE VISIBLE AL SCROLLEAR -->
+      <div class="move-modal-sticky-header" id="moveModalStickyHeader">
+        <div class="move-modal-header-meta" id="modalMoveHeaderMeta">
+          <!-- #002 Gen 1 -->
+        </div>
+        <button class="modal-close-btn" id="modalCloseBtn" aria-label="Cerrar modal">✕</button>
+      </div>
+
+      <!-- CUERPO CON SCROLL PARA DETALLES Y POKÉMON COMPATIBLES -->
+      <div class="move-modal-scrollable-body" id="modalMoveContent">
+        <!-- Contenido generado dinámicamente desde js/modules/movimientos.js -->
+      </div>
+    </div>
+  </div>
+
+  <!-- MODAL DE DETALLE DE POKÉMON (ESTADÍSTICAS + ATAQUES) -->
+  <div class="modal-backdrop" id="pokemonDetailModal">
+    <div class="modal-hud-window pokemon-modal-window">
+      <!-- CABECERA FIJA SIEMPRE VISIBLE AL SCROLLEAR -->
+      <div class="pokemon-modal-sticky-header" id="pokemonModalStickyHeader">
+        <div class="pokemon-modal-header" id="modalPokemonHeaderContent">
+          <!-- Título (#001 Gen 1 Bulbasaur) -->
+        </div>
+        <button class="modal-close-btn" id="pokemonModalCloseBtn" aria-label="Cerrar modal">✕</button>
+      </div>
+
+      <!-- CUERPO CON SCROLL PARA STATS Y LISTA DE ATAQUES -->
+      <div class="pokemon-modal-scrollable-body" id="modalPokemonContent">
+        <!-- Contenido generado dinámicamente desde js/modules/pokemon.js -->
+      </div>
+    </div>
+  </div>
+
+  <!-- BASES DE DATOS DEL VIDEOJUEGO -->
+  <script src="js/movimientos_data.js?v=18"></script>
+  <script src="js/pokemon_data.js?v=18"></script>
+
+  <!-- MÓDULOS DE ARQUITECTURA STADIUM -->
+  <script src="js/modules/sprites.js?v=18"></script>
+  <script src="js/modules/audio.js?v=18"></script>
+  <script src="js/modules/auth.js?v=18"></script>
+  <script src="js/modules/router.js?v=18"></script>
+  <script src="js/modules/pokemon.js?v=18"></script>
+  <script src="js/modules/movimientos.js?v=18"></script>
+  <script src="js/modules/battle_store.js?v=18"></script>
+  <script src="js/modules/batallas.js?v=18"></script>
+
+  <!-- MOTOR PRINCIPAL Y ORQUESTADOR -->
+  <script src="js/app.js?v=18"></script>
+</body>
+</html>

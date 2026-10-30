@@ -1,0 +1,41 @@
+{
+  "version": 2,
+  "cleanUrls": true,
+  "trailingSlash": false,
+  "rewrites": [
+    { "source": "/pokemon", "destination": "/pokemon.html" },
+    { "source": "/pokemones", "destination": "/pokemones.html" },
+    { "source": "/movimientos", "destination": "/movimientos.html" },
+    { "source": "/batallas", "destination": "/batallas.html" },
+    { "source": "/batalla", "destination": "/batallas.html" }
+  ],
+  "headers": [
+    {
+      "source": "/sprites/(.*)",
+      "headers": [
+        {
+          "key": "Cache-Control",
+          "value": "public, max-age=31536000, immutable"
+        }
+      ]
+    },
+    {
+      "source": "/css/(.*)",
+      "headers": [
+        {
+          "key": "Cache-Control",
+          "value": "public, max-age=86400"
+        }
+      ]
+    },
+    {
+      "source": "/js/(.*)",
+      "headers": [
+        {
+          "key": "Cache-Control",
+          "value": "public, max-age=86400"
+        }
+      ]
+    }
+  ]
+}

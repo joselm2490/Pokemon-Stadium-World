@@ -9,18 +9,23 @@ Bienvenido al proyecto **Pokémon Stadium World**. Este repositorio contiene la 
 ```
 Pokemon-Stadium-World/
 ├── database/
-│   └── schema.sql             # Esquema DDL SQL completo para el videojuego
-├── data/
-│   ├── pokemon_game.db        # Base de datos SQLite lista para usar
+│   ├── pokemon_game.db        # Base de datos SQLite completa lista para producción
+│   ├── pokemon_stadium.sql    # Volcado SQL universal con todas las tablas e inserts
+│   ├── schema.sql             # Esquema DDL SQL del videojuego
+│   ├── pokemon.json           # Catálogo Pokédex estructurado con stats y learnsets
 │   ├── movimientos.json       # 953 movimientos en formato JSON estructurado
-│   ├── movimientos.csv        # 953 movimientos en CSV (Excel/Sheets)
-│   └── movimientos_dump.sql   # Volcado SQL universal con todos los INSERTs
+│   └── movimientos.csv        # 953 movimientos en CSV (Excel/Sheets)
+├── js/
+│   ├── app.js                 # Motor principal del juego y gestión de sprites (AttackSpriteManager)
+│   ├── movimientos_data.js    # Carga de datos de movimientos para el navegador
+│   └── pokemon_data.js        # Carga de datos de la Pokédex para el navegador
+├── css/
+│   └── stadium.css            # Estilos visuales del juego estilo Pokémon Stadium
 ├── scripts/
-│   ├── build_database.py      # Pipeline ETL que procesa WikiDex y genera los datos
-│   └── query_moves.py         # Herramienta CLI de búsqueda y consulta en terminal
-├── viewer/
-│   ├── index.html             # Interfaz web interactiva estilo Pokémon Stadium
-│   └── movimientos_data.json  # Copia de datos para el visor web
+│   ├── build_pokemon.mjs      # Generador de datos de Pokédex y learnsets
+│   └── populate_pokemon_db.py # Script para poblar SQLite desde los JSON
+├── sprites/                   # Badges e íconos oficiales descargados de tipos y categorías
+├── index.html                 # Videojuego y explorador web interactivo
 └── README.md                  # Documentación
 ```
 
@@ -58,10 +63,14 @@ El archivo [`database/schema.sql`](file:///home/jose/Pokemon-Stadium-World/datab
 - `clases_movimiento`: `Físico`, `Especial`, `Estado`.
 - `movimientos`: Catálogo completo con claves foráneas a `tipos` y `clases_movimiento`.
 - `efectividad_tipos`: Matriz de debilidades, resistencias e inmunidades.
-- `pokemon`: Especies de Pokémon, número de Pokédex, tipos, altura, peso, etc. *(preparada para el siguiente paso)*.
+- `pokemon`: Especies de Pokémon, número de Pokédex, tipos, altura, peso, stats y `movimientos_predeterminados` (JSON Array con los 4 movimientos predeterminados oficiales extraídos de anexos).
 - `estadisticas_base`: HP, Ataque, Defensa, At. Especial, Def. Especial, Velocidad y Stat Total *(preparada)*.
 - `habilidades`: Habilidades pasivas de combate *(preparada)*.
 - `pokemon_movimientos`: Tabla relacional de qué movimientos aprende cada Pokémon por nivel, MT, tutor o huevo *(preparada)*.
+- `salas_batalla`: Gestión de salas multijugador con código único aleatorio de 6 caracteres (ej. `PXXE69`), anfitrión, estado (`esperando`, `en_combate`, etc.) y reglas.
+- `sala_jugadores`: Registro de entrenadores presentes en la sala, condición de anfitrión, estado de preparación y equipo.
+- `sala_mensajes`: Historial completo del chat del lobby y eventos de sistema en tiempo real.
+- `sala_estadisticas`: Registro de métricas de combate, turnos, daño, Pokémon debilitados y duración.
 
 ---
 
@@ -100,7 +109,7 @@ python3 -m http.server 8000
 ```python
 import sqlite3
 
-conn = sqlite3.connect("data/pokemon_game.db")
+conn = sqlite3.connect("database/pokemon_game.db")
 cursor = conn.cursor()
 
 # Obtener todos los ataques de Fuego con potencia > 80
