@@ -215,14 +215,26 @@ class BatallaModule {
         </footer>
       </div>
 
-      <!-- MODAL PARA UNIRSE A SALA MEDIANTE CÓDIGO ÚNICO -->
+      <!-- MODAL PARA UNIRSE A SALA: POR CÓDIGO O LISTA DE SALAS DISPONIBLES -->
       <div class="battle-modal-overlay" id="joinRoomModal" style="display: none;">
         <div class="battle-modal-card">
           <div class="battle-modal-header">
             <h3>🔑 Unirse a una Sala</h3>
             <button class="battle-modal-close" onclick="BatallaModule.closeJoinModal()">✕</button>
           </div>
-          <div class="battle-modal-body">
+
+          <!-- PESTAÑAS DE MODAL -->
+          <div class="join-modal-tabs">
+            <button class="join-tab-btn active" id="tabBtnCode" onclick="BatallaModule.switchJoinTab('code')">
+              <span>⌨️</span> Por Código
+            </button>
+            <button class="join-tab-btn" id="tabBtnRooms" onclick="BatallaModule.switchJoinTab('rooms')">
+              <span>🌐</span> Salas Disponibles
+            </button>
+          </div>
+
+          <!-- CONTENIDO TAB 1: BÚSQUEDA POR CÓDIGO -->
+          <div class="join-tab-content" id="joinTabContentCode">
             <p style="color: var(--text-secondary); font-size: 0.9rem; margin-bottom: 14px;">
               Ingresa el código único de 6 caracteres que te compartió el anfitrión:
             </p>
@@ -235,8 +247,8 @@ class BatallaModule {
               style="text-transform: uppercase;"
               autocomplete="off"
             />
-            <div id="joinModalErrorMsg" style="color: #ef4444; font-size: 0.8rem; margin-top: 8px; display: none;"></div>
-            <div class="battle-modal-actions" style="margin-top: 18px; display: flex; gap: 10px;">
+            <div id="joinModalErrorMsg" style="color: #ef4444; font-size: 0.82rem; margin-top: 10px; display: none;"></div>
+            <div class="battle-modal-actions" style="margin-top: 20px; display: flex; gap: 10px;">
               <button class="battle-primary-action-btn btn-crear-sala" style="flex: 1; padding: 12px;" onclick="BatallaModule.submitJoinRoom()">
                 Entrar a la Sala
               </button>
@@ -245,6 +257,31 @@ class BatallaModule {
               </button>
             </div>
           </div>
+
+          <!-- CONTENIDO TAB 2: EXPLORADOR DE SALAS DISPONIBLES -->
+          <div class="join-tab-content" id="joinTabContentRooms" style="display: none;">
+            <div class="rooms-browser-header">
+              <span class="rooms-browser-title">Salas en vivo</span>
+              <button class="btn-refresh-rooms" onclick="BatallaModule.loadAvailableRoomsList()">
+                <span>🔄</span> Actualizar
+              </button>
+            </div>
+
+            <div class="rooms-scroll-list" id="roomsListContainer">
+              <div style="text-align: center; color: #94a3b8; padding: 24px;">
+                Cargando salas disponibles...
+              </div>
+            </div>
+
+            <div id="joinRoomsListErrorMsg" style="color: #ef4444; font-size: 0.82rem; margin-top: 10px; display: none;"></div>
+
+            <div class="battle-modal-actions" style="margin-top: 16px; display: flex; justify-content: flex-end;">
+              <button class="battle-secondary-action-btn" style="padding: 10px 18px;" onclick="BatallaModule.closeJoinModal()">
+                Cerrar
+              </button>
+            </div>
+          </div>
+
         </div>
       </div>
     `;
@@ -491,13 +528,13 @@ class BatallaModule {
   // ------------------------------------------------------------------
   // OPERACIONES DE SALA (INTEGRADAS CON BASE DE DATOS Y STORAGE)
   // ------------------------------------------------------------------
-  static createRoom() {
+  static async createRoom() {
     const nick = (this.userNickname || 'Jose').trim() || 'Entrenador';
     localStorage.setItem('stadium_battle_nickname', nick);
 
     let room = null;
     if (window.BattleRoomStore) {
-      room = window.BattleRoomStore.createRoom({
+      room = await window.BattleRoomStore.createRoom({
         hostNickname: nick,
         pokemonCount: 3,
         maxPlayers: 2
@@ -528,6 +565,7 @@ class BatallaModule {
     const modal = document.getElementById('joinRoomModal');
     if (modal) {
       modal.style.display = 'flex';
+      this.switchJoinTab('code');
       const errorDiv = document.getElementById('joinModalErrorMsg');
       if (errorDiv) errorDiv.style.display = 'none';
       const input = document.getElementById('joinRoomCodeInput');
@@ -543,7 +581,166 @@ class BatallaModule {
     if (modal) modal.style.display = 'none';
   }
 
-  static submitJoinRoom() {
+  static switchJoinTab(tabName) {
+    const tabBtnCode = document.getElementById('tabBtnCode');
+    const tabBtnRooms = document.getElementById('tabBtnRooms');
+    const tabContentCode = document.getElementById('joinTabContentCode');
+    const tabContentRooms = document.getElementById('joinTabContentRooms');
+
+    if (tabName === 'code') {
+      if (tabBtnCode) tabBtnCode.classList.add('active');
+      if (tabBtnRooms) tabBtnRooms.classList.remove('active');
+      if (tabContentCode) tabContentCode.style.display = 'flex';
+      if (tabContentRooms) tabContentRooms.style.display = 'none';
+      const input = document.getElementById('joinRoomCodeInput');
+      if (input) input.focus();
+    } else {
+      if (tabBtnCode) tabBtnCode.classList.remove('active');
+      if (tabBtnRooms) tabBtnRooms.classList.add('active');
+      if (tabContentCode) tabContentCode.style.display = 'none';
+      if (tabContentRooms) tabContentRooms.style.display = 'flex';
+      this.loadAvailableRoomsList();
+    }
+
+    if (window.SFX) window.SFX.playCardClick();
+  }
+
+  static async loadAvailableRoomsList() {
+    const container = document.getElementById('roomsListContainer');
+    const errorDiv = document.getElementById('joinRoomsListErrorMsg');
+    if (errorDiv) errorDiv.style.display = 'none';
+    if (!container) return;
+
+    container.innerHTML = `
+      <div style="text-align: center; color: #94a3b8; padding: 24px;">
+        <span style="display: inline-block; animation: spin 1s infinite linear;">⚡</span> Consultando salas activas...
+      </div>
+    `;
+
+    try {
+      const rooms = window.BattleRoomStore 
+        ? await window.BattleRoomStore.fetchAvailableRooms() 
+        : [];
+
+      if (!rooms || rooms.length === 0) {
+        container.innerHTML = `
+          <div style="text-align: center; color: #64748b; padding: 28px 16px;">
+            <p style="font-size: 1.1rem; margin-bottom: 6px;">🕹️ No hay salas creadas en este momento</p>
+            <p style="font-size: 0.8rem; color: #94a3b8;">¡Crea la primera sala y desafía a tus amigos!</p>
+          </div>
+        `;
+        return;
+      }
+
+      container.innerHTML = rooms.map(room => {
+        const estado = (room.estado || 'esperando').toLowerCase();
+        const playersCount = room.jugadores_actuales !== undefined 
+          ? room.jugadores_actuales 
+          : (room.jugadores ? room.jugadores.length : 1);
+        
+        // REGLA SOLICITADA POR EL USUARIO:
+        // Solo unirse a las que estén disponibles (estado esperando Y que solo tenga 1 jugador).
+        // Si tiene 2 o más jugadores no se puede unir.
+        const isAvailable = (estado === 'esperando') && (playersCount === 1);
+
+        let statusClass = 'status-badge-esperando';
+        let statusLabel = '🟢 DISPONIBLE';
+
+        if (estado !== 'esperando') {
+          statusClass = estado === 'en_combate' ? 'status-badge-combate' : 'status-badge-finalizada';
+          statusLabel = estado === 'en_combate' ? '⚔️ EN COMBATE' : '⏹️ FINALIZADA';
+        } else if (playersCount >= 2) {
+          statusClass = 'status-badge-combate';
+          statusLabel = '🔴 SALA LLENA';
+        }
+
+        const dateStr = room.creada_en 
+          ? new Date(room.creada_en).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }) 
+          : '--:--';
+
+        return `
+          <div class="room-item-card ${isAvailable ? '' : 'is-full'}">
+            <div class="room-info-left">
+              <div class="room-code-tag">
+                <span>🔑</span> ${this.escapeHtml(room.codigo)}
+              </div>
+              <div class="room-host-line">
+                Anfitrión: <span class="room-host-name">${this.escapeHtml(room.anfitrion_nombre || 'Entrenador')}</span>
+              </div>
+              <div class="room-meta-sub">
+                <span>🕒 Creada: ${dateStr}</span>
+                <span>•</span>
+                <span>🎮 ${room.pokemon_por_jugador || 3} vs ${room.pokemon_por_jugador || 3}</span>
+              </div>
+            </div>
+
+            <div class="room-info-right">
+              <span class="room-status-badge ${statusClass}">
+                ${statusLabel}
+              </span>
+              <span class="room-players-pill">
+                👥 ${playersCount}/${room.max_jugadores || 2} Jugadores
+              </span>
+              ${isAvailable ? `
+                <button 
+                  class="btn-join-room-action"
+                  onclick="BatallaModule.joinRoomDirectly('${this.escapeHtml(room.codigo)}')"
+                >
+                  Unirme
+                </button>
+              ` : `
+                <button class="btn-join-room-action disabled" disabled title="Sala no disponible">
+                  ${playersCount >= 2 ? 'Completa' : 'No disponible'}
+                </button>
+              `}
+            </div>
+          </div>
+        `;
+      }).join('');
+    } catch (err) {
+      console.error('Error cargando lista de salas:', err);
+      container.innerHTML = `
+        <div style="text-align: center; color: #ef4444; padding: 20px;">
+          Error al consultar las salas. Intenta nuevamente.
+        </div>
+      `;
+    }
+  }
+
+  static async joinRoomDirectly(code) {
+    const errorDiv = document.getElementById('joinRoomsListErrorMsg');
+    if (errorDiv) errorDiv.style.display = 'none';
+
+    const nick = (this.userNickname || 'Invitado').trim() || 'Entrenador';
+    localStorage.setItem('stadium_battle_nickname', nick);
+
+    if (window.BattleRoomStore) {
+      const res = await window.BattleRoomStore.joinRoom({
+        code: code,
+        userNickname: nick
+      });
+
+      if (!res.ok) {
+        if (errorDiv) {
+          errorDiv.textContent = res.error;
+          errorDiv.style.display = 'block';
+        } else {
+          alert(res.error);
+        }
+        return;
+      }
+
+      this.currentRoom = res.room;
+    }
+
+    sessionStorage.setItem('stadium_active_room_code', code);
+    this.closeJoinModal();
+    if (window.SFX) window.SFX.playSuccess();
+    this.currentScreen = 'lobby';
+    this.renderCurrentView();
+  }
+
+  static async submitJoinRoom() {
     const input = document.getElementById('joinRoomCodeInput');
     const code = (input ? input.value : '').trim().toUpperCase();
     const errorDiv = document.getElementById('joinModalErrorMsg');
@@ -560,7 +757,7 @@ class BatallaModule {
     localStorage.setItem('stadium_battle_nickname', nick);
 
     if (window.BattleRoomStore) {
-      const res = window.BattleRoomStore.joinRoom({
+      const res = await window.BattleRoomStore.joinRoom({
         code: code,
         userNickname: nick
       });

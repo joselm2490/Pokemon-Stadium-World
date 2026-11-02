@@ -1,14 +1,15 @@
 // ====================================================================
 // GESTOR DE ALMACENAMIENTO Y SINCRONIZACIÓN DE SALAS DE BATALLA
-// Administra salas_batalla, sala_jugadores, sala_mensajes y sala_estadisticas
-// Sincroniza entre pestañas/ventanas con BroadcastChannel y Storage Events
+// Administra salas_batalla, sala_jugadores, sala_mensajes
+// Sincroniza en tiempo real con Supabase REST + BroadcastChannel + LocalStorage
 // ====================================================================
 
 class BattleRoomStore {
   static ROOMS_STORAGE_KEY = 'stadium_salas_batalla_db';
-  static SESSIONS_STORAGE_KEY = 'stadium_current_session_room';
   static channel = null;
   static listeners = new Set();
+  static pollingTimer = null;
+  static activeRoomCode = null;
 
   static init() {
     if (typeof BroadcastChannel !== 'undefined') {
@@ -18,16 +19,19 @@ class BattleRoomStore {
           this.handleBroadcast(event.data);
         };
       } catch (e) {
-        console.warn('BroadcastChannel no disponible, usando Storage Events');
+        console.warn('BroadcastChannel no disponible');
       }
     }
 
-    // Escuchar eventos de almacenamiento en otras pestañas/ventanas
+    // Escuchar eventos de almacenamiento en otras pestañas
     window.addEventListener('storage', (e) => {
       if (e.key === this.ROOMS_STORAGE_KEY) {
         this.notifyListeners('rooms_updated', this.getAllRooms());
       }
     });
+
+    // Iniciar sondeo en segundo plano con Supabase para sincronización en tiempo real
+    this.startSupabasePolling();
   }
 
   static subscribe(callback) {
@@ -59,7 +63,91 @@ class BattleRoomStore {
   }
 
   // ------------------------------------------------------------------
-  // OPERACIONES CRUD DE SALAS (salas_batalla)
+  // SINCRONIZACIÓN CON SUPABASE
+  // ------------------------------------------------------------------
+  static startSupabasePolling() {
+    if (this.pollingTimer) clearInterval(this.pollingTimer);
+
+    // Polling regular cada 3 segundos para sincronizar chat y jugadores activos
+    this.pollingTimer = setInterval(() => {
+      this.syncActiveRoomFromSupabase();
+    }, 3000);
+  }
+
+  static setActiveRoomCode(code) {
+    this.activeRoomCode = code;
+    if (code) {
+      this.syncActiveRoomFromSupabase();
+    }
+  }
+
+  static async syncActiveRoomFromSupabase() {
+    if (!this.activeRoomCode || !window.StadiumSupabase) return;
+
+    try {
+      const code = this.activeRoomCode;
+      // Consultar la sala en Supabase
+      const roomRes = await window.StadiumSupabase.request(`salas_batalla?codigo=eq.${encodeURIComponent(code)}&select=*`);
+      if (!roomRes.ok || !roomRes.data || roomRes.data.length === 0) return;
+
+      const remoteRoom = roomRes.data[0];
+
+      // Consultar jugadores de la sala
+      const playersRes = await window.StadiumSupabase.request(`sala_jugadores?sala_id=eq.${remoteRoom.id}&select=*&order=id.asc`);
+      const remotePlayers = playersRes.ok && playersRes.data ? playersRes.data : [];
+
+      // Consultar mensajes de la sala
+      const msgsRes = await window.StadiumSupabase.request(`sala_mensajes?sala_id=eq.${remoteRoom.id}&select=*&order=id.asc`);
+      const remoteMsgs = msgsRes.ok && msgsRes.data ? msgsRes.data : [];
+
+      // Mapear al modelo unificado de sala
+      const currentLocal = this.getRoomByCode(code);
+      const unifiedRoom = {
+        id: remoteRoom.id,
+        codigo: remoteRoom.codigo,
+        anfitrion_nombre: remoteRoom.anfitrion_nombre,
+        anfitrion_id: remoteRoom.anfitrion_id,
+        estado: remoteRoom.estado,
+        pokemon_por_jugador: remoteRoom.pokemon_por_jugador || 3,
+        max_jugadores: remoteRoom.max_jugadores || 2,
+        jugadores_actuales: remotePlayers.length || remoteRoom.jugadores_actuales || 1,
+        creada_en: remoteRoom.creada_en,
+        finalizada_en: remoteRoom.finalizada_en,
+        jugadores: remotePlayers.map(p => ({
+          id: p.id,
+          apodo: p.apodo,
+          es_anfitrion: p.es_anfitrion === 1 || p.es_anfitrion === true,
+          listo: p.listo === 1 || p.listo === true,
+          conectado: p.conectado === 1 || p.conectado === true,
+          unido_en: p.unido_en,
+          equipo_pokemon: p.equipo_pokemon ? (typeof p.equipo_pokemon === 'string' ? JSON.parse(p.equipo_pokemon) : p.equipo_pokemon) : []
+        })),
+        mensajes: remoteMsgs.map(m => ({
+          id: m.id,
+          emisor: m.emisor,
+          mensaje: m.mensaje,
+          es_sistema: m.es_sistema === 1 || m.es_sistema === true,
+          enviado_en: m.enviado_en
+        }))
+      };
+
+      // Si los datos remotos son más completos, actualizar local y notificar
+      const localRooms = this.getAllRooms();
+      const idx = localRooms.findIndex(r => r.codigo === code);
+      if (idx !== -1) {
+        localRooms[idx] = unifiedRoom;
+      } else {
+        localRooms.push(unifiedRoom);
+      }
+      localStorage.setItem(this.ROOMS_STORAGE_KEY, JSON.stringify(localRooms));
+      this.notifyListeners('room_changed', unifiedRoom);
+    } catch (err) {
+      console.warn('Error en syncActiveRoomFromSupabase:', err);
+    }
+  }
+
+  // ------------------------------------------------------------------
+  // OPERACIONES CRUD LOCALES Y REMOTAS
   // ------------------------------------------------------------------
   static getAllRooms() {
     try {
@@ -87,7 +175,7 @@ class BattleRoomStore {
   }
 
   static generateUniqueRoomCode() {
-    const chars = 'ABCDEFGHJKLMNPQRSTUVWXYZ23456789'; // Excluye I, O, 0, 1 para evitar confusiones
+    const chars = 'ABCDEFGHJKLMNPQRSTUVWXYZ23456789';
     let code = '';
     let exists = true;
     let attempts = 0;
@@ -103,8 +191,25 @@ class BattleRoomStore {
     return code;
   }
 
-  // Crear una nueva sala en la base de datos
-  static createRoom({ hostNickname, pokemonCount = 3, maxPlayers = 2 }) {
+  // Obtener lista de salas disponibles desde Supabase (con fallback a local)
+  static async fetchAvailableRooms() {
+    if (window.StadiumSupabase) {
+      try {
+        const res = await window.StadiumSupabase.request(
+          'salas_batalla?select=id,codigo,anfitrion_nombre,estado,pokemon_por_jugador,max_jugadores,jugadores_actuales,creada_en,finalizada_en&order=creada_en.desc&limit=30'
+        );
+        if (res.ok && Array.isArray(res.data)) {
+          return res.data;
+        }
+      } catch (e) {
+        console.warn('Error trayendo salas desde Supabase, usando local:', e);
+      }
+    }
+    return this.getAllRooms();
+  }
+
+  // Crear una nueva sala
+  static async createRoom({ hostNickname, pokemonCount = 3, maxPlayers = 2, password = null }) {
     const code = this.generateUniqueRoomCode();
     const now = new Date().toISOString();
 
@@ -120,7 +225,6 @@ class BattleRoomStore {
       iniciada_en: null,
       finalizada_en: null,
       ganador_nombre: null,
-      // TABLA sala_jugadores
       jugadores: [
         {
           id: `player_${Date.now()}_${Math.random().toString(36).substr(2, 5)}`,
@@ -132,7 +236,6 @@ class BattleRoomStore {
           equipo_pokemon: []
         }
       ],
-      // TABLA sala_mensajes
       mensajes: [
         {
           id: 1,
@@ -141,51 +244,146 @@ class BattleRoomStore {
           es_sistema: true,
           enviado_en: now
         }
-      ],
-      // TABLA sala_estadisticas
-      estadisticas: {
-        total_turnos: 0,
-        total_dano_causado: 0,
-        pokemon_debilitados: 0,
-        movimientos_usados: 0,
-        duracion_segundos: 0,
-        datos_combate: []
-      }
+      ]
     };
 
+    // Guardar localmente de inmediato
     const rooms = this.getAllRooms();
-    rooms.push(newRoom);
+    rooms.unshift(newRoom);
     this.saveAllRooms(rooms);
+    this.setActiveRoomCode(code);
+
+    // Guardar en Supabase en segundo plano
+    if (window.StadiumSupabase) {
+      try {
+        const payload = {
+          codigo: code,
+          anfitrion_nombre: hostNickname,
+          estado: 'esperando',
+          pokemon_por_jugador: pokemonCount,
+          max_jugadores: maxPlayers,
+          jugadores_actuales: 1
+        };
+
+        const res = await window.StadiumSupabase.request('salas_batalla', {
+          method: 'POST',
+          headers: { 'Prefer': 'return=representation' },
+          body: JSON.stringify(payload)
+        });
+
+        if (res.ok && res.data && res.data[0]) {
+          const dbRoom = res.data[0];
+          newRoom.id = dbRoom.id;
+
+          // Registrar anfitrión en sala_jugadores
+          await window.StadiumSupabase.request('sala_jugadores', {
+            method: 'POST',
+            body: JSON.stringify({
+              sala_id: dbRoom.id,
+              apodo: hostNickname,
+              es_anfitrion: 1,
+              listo: 1,
+              conectado: 1
+            })
+          });
+
+          // Registrar mensaje inicial del sistema
+          await window.StadiumSupabase.request('sala_mensajes', {
+            method: 'POST',
+            body: JSON.stringify({
+              sala_id: dbRoom.id,
+              emisor: 'SISTEMA',
+              mensaje: `¡Sala ${code} creada con éxito! Comparte el código para jugar.`,
+              es_sistema: 1
+            })
+          });
+        }
+      } catch (err) {
+        console.warn('Error guardando sala en Supabase:', err);
+      }
+    }
 
     return newRoom;
   }
 
-  // Unir a un nuevo usuario a una sala existente mediante su código único
-  static joinRoom({ code, userNickname }) {
-    const room = this.getRoomByCode(code);
+  // Unirse a una sala
+  static async joinRoom({ code, userNickname }) {
+    const cleanCode = (code || '').trim().toUpperCase();
+    let room = this.getRoomByCode(cleanCode);
+
+    // Intentar buscar en Supabase primero para asegurar datos actualizados
+    if (window.StadiumSupabase) {
+      try {
+        const res = await window.StadiumSupabase.request(`salas_batalla?codigo=eq.${encodeURIComponent(cleanCode)}&select=*`);
+        if (res.ok && res.data && res.data.length > 0) {
+          const dbRoom = res.data[0];
+          
+          // Traer jugadores actuales
+          const playersRes = await window.StadiumSupabase.request(`sala_jugadores?sala_id=eq.${dbRoom.id}&select=*`);
+          const players = playersRes.ok && playersRes.data ? playersRes.data : [];
+
+          // Traer mensajes
+          const msgsRes = await window.StadiumSupabase.request(`sala_mensajes?sala_id=eq.${dbRoom.id}&select=*&order=id.asc`);
+          const msgs = msgsRes.ok && msgsRes.data ? msgsRes.data : [];
+
+          room = {
+            id: dbRoom.id,
+            codigo: dbRoom.codigo,
+            anfitrion_nombre: dbRoom.anfitrion_nombre,
+            anfitrion_id: dbRoom.anfitrion_id,
+            estado: dbRoom.estado,
+            pokemon_por_jugador: dbRoom.pokemon_por_jugador || 3,
+            max_jugadores: dbRoom.max_jugadores || 2,
+            jugadores_actuales: players.length || dbRoom.jugadores_actuales || 1,
+            creada_en: dbRoom.creada_en,
+            finalizada_en: dbRoom.finalizada_en,
+            jugadores: players.map(p => ({
+              id: p.id,
+              apodo: p.apodo,
+              es_anfitrion: p.es_anfitrion === 1,
+              listo: p.listo === 1,
+              conectado: p.conectado === 1,
+              unido_en: p.unido_en,
+              equipo_pokemon: []
+            })),
+            mensajes: msgs.map(m => ({
+              id: m.id,
+              emisor: m.emisor,
+              mensaje: m.mensaje,
+              es_sistema: m.es_sistema === 1,
+              enviado_en: m.enviado_en
+            }))
+          };
+        }
+      } catch (e) {
+        console.warn('Error verificando sala en Supabase:', e);
+      }
+    }
+
     if (!room) {
-      return { ok: false, error: `No existe ninguna sala con el código "${code}". Verifica el código ingresado.` };
+      return { ok: false, error: `No existe ninguna sala con el código "${cleanCode}". Verifica el código ingresado.` };
     }
 
+    // Regla 1: Debe estar en estado esperando
     if (room.estado !== 'esperando') {
-      return { ok: false, error: 'La sala ya no está disponible (la partida ya inició o finalizó).' };
+      return { ok: false, error: `La sala no está disponible. Estado actual: ${room.estado.toUpperCase()}.` };
     }
 
-    // Verificar si el jugador ya está en la sala por su apodo
-    const existingPlayer = room.jugadores.find(
+    const currentPlayers = room.jugadores || [];
+    const existingPlayer = currentPlayers.find(
       (j) => j.apodo.toLowerCase() === userNickname.toLowerCase()
     );
+
+    // Regla 2: Solo unirse si solo tiene 1 jugador (o si es el mismo reingresando)
+    if (!existingPlayer && currentPlayers.length >= 2) {
+      return { ok: false, error: 'Esta sala ya está completa (tiene 2 o más jugadores). Solo puedes unirte a salas con 1 jugador.' };
+    }
 
     const now = new Date().toISOString();
 
     if (existingPlayer) {
-      // Re-conectar al jugador existente
       existingPlayer.conectado = true;
     } else {
-      if (room.jugadores.length >= room.max_jugadores) {
-        return { ok: false, error: `La sala está llena (Máximo ${room.max_jugadores} jugadores).` };
-      }
-
       const newPlayer = {
         id: `player_${Date.now()}_${Math.random().toString(36).substr(2, 5)}`,
         apodo: userNickname,
@@ -196,9 +394,11 @@ class BattleRoomStore {
         equipo_pokemon: []
       };
 
-      room.jugadores.push(newPlayer);
-      room.jugadores_actuales = room.jugadores.length;
+      currentPlayers.push(newPlayer);
+      room.jugadores = currentPlayers;
+      room.jugadores_actuales = currentPlayers.length;
 
+      if (!room.mensajes) room.mensajes = [];
       room.mensajes.push({
         id: room.mensajes.length + 1,
         emisor: 'SISTEMA',
@@ -206,9 +406,43 @@ class BattleRoomStore {
         es_sistema: true,
         enviado_en: now
       });
+
+      // Registrar jugador en Supabase
+      if (window.StadiumSupabase && room.id) {
+        try {
+          await window.StadiumSupabase.request('sala_jugadores', {
+            method: 'POST',
+            body: JSON.stringify({
+              sala_id: room.id,
+              apodo: userNickname,
+              es_anfitrion: 0,
+              listo: 0,
+              conectado: 1
+            })
+          });
+
+          await window.StadiumSupabase.request(`salas_batalla?id=eq.${room.id}`, {
+            method: 'PATCH',
+            body: JSON.stringify({ jugadores_actuales: currentPlayers.length })
+          });
+
+          await window.StadiumSupabase.request('sala_mensajes', {
+            method: 'POST',
+            body: JSON.stringify({
+              sala_id: room.id,
+              emisor: 'SISTEMA',
+              mensaje: `Entrenador ${userNickname} se ha unido a la sala.`,
+              es_sistema: 1
+            })
+          });
+        } catch (e) {
+          console.warn('Error registrando jugador en Supabase:', e);
+        }
+      }
     }
 
     this.updateRoom(room);
+    this.setActiveRoomCode(cleanCode);
     return { ok: true, room };
   }
 
@@ -218,13 +452,15 @@ class BattleRoomStore {
     const index = rooms.findIndex((r) => r.codigo === updatedRoom.codigo);
     if (index !== -1) {
       rooms[index] = updatedRoom;
-      this.saveAllRooms(rooms);
-      this.broadcast('room_changed', updatedRoom);
+    } else {
+      rooms.unshift(updatedRoom);
     }
+    this.saveAllRooms(rooms);
+    this.broadcast('room_changed', updatedRoom);
   }
 
-  // Enviar mensaje al chat de la sala (sala_mensajes)
-  static addMessage(code, emisor, mensaje) {
+  // Enviar mensaje al chat de la sala
+  static async addMessage(code, emisor, mensaje) {
     const room = this.getRoomByCode(code);
     if (!room) return null;
 
@@ -239,27 +475,53 @@ class BattleRoomStore {
     if (!room.mensajes) room.mensajes = [];
     room.mensajes.push(msgObj);
     this.updateRoom(room);
+
+    // Replicar en Supabase
+    if (window.StadiumSupabase && room.id) {
+      try {
+        await window.StadiumSupabase.request('sala_mensajes', {
+          method: 'POST',
+          body: JSON.stringify({
+            sala_id: room.id,
+            emisor,
+            mensaje,
+            es_sistema: 0
+          })
+        });
+      } catch (e) {
+        console.warn('Error enviando mensaje a Supabase:', e);
+      }
+    }
+
     return msgObj;
   }
 
   // Salir de una sala
-  static leaveRoom(code, userNickname) {
+  static async leaveRoom(code, userNickname) {
     const room = this.getRoomByCode(code);
     if (!room) return;
 
-    const isHost = room.anfitrion_nombre.toLowerCase() === userNickname.toLowerCase();
+    this.setActiveRoomCode(null);
+    const isHost = (room.anfitrion_nombre || '').toLowerCase() === (userNickname || '').toLowerCase();
 
-    if (isHost && room.jugadores.length <= 1) {
-      // Si el anfitrión sale y está solo, marcar cancelada
+    if (isHost && (!room.jugadores || room.jugadores.length <= 1)) {
       room.estado = 'cancelada';
       this.updateRoom(room);
+
+      if (window.StadiumSupabase && room.id) {
+        try {
+          await window.StadiumSupabase.request(`salas_batalla?id=eq.${room.id}`, {
+            method: 'PATCH',
+            body: JSON.stringify({ estado: 'cancelada', finalizada_en: new Date().toISOString() })
+          });
+        } catch (e) {}
+      }
     } else {
-      room.jugadores = room.jugadores.filter(
-        (j) => j.apodo.toLowerCase() !== userNickname.toLowerCase()
+      room.jugadores = (room.jugadores || []).filter(
+        (j) => j.apodo.toLowerCase() !== (userNickname || '').toLowerCase()
       );
       room.jugadores_actuales = room.jugadores.length;
 
-      // Si el anfitrión salió pero quedan jugadores, transferir anfitrión
       if (isHost && room.jugadores.length > 0) {
         room.jugadores[0].es_anfitrion = true;
         room.anfitrion_nombre = room.jugadores[0].apodo;
@@ -274,6 +536,21 @@ class BattleRoomStore {
       });
 
       this.updateRoom(room);
+
+      if (window.StadiumSupabase && room.id) {
+        try {
+          await window.StadiumSupabase.request(`sala_jugadores?sala_id=eq.${room.id}&apodo=eq.${encodeURIComponent(userNickname)}`, {
+            method: 'DELETE'
+          });
+          await window.StadiumSupabase.request(`salas_batalla?id=eq.${room.id}`, {
+            method: 'PATCH',
+            body: JSON.stringify({
+              anfitrion_nombre: room.anfitrion_nombre,
+              jugadores_actuales: room.jugadores.length
+            })
+          });
+        } catch (e) {}
+      }
     }
   }
 }
@@ -281,4 +558,3 @@ class BattleRoomStore {
 if (typeof window !== 'undefined') {
   window.BattleRoomStore = BattleRoomStore;
 }
-

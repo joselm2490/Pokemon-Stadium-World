@@ -5,21 +5,34 @@
 const SUPABASE_PROJECT_URL = 'https://kxsyygajkghokcyxavhe.supabase.co';
 const SUPABASE_ANON_KEY = 'sb_publishable_gz3oSIkDrPk07nVYV9dvBA_ACKfEQ5B';
 
-// Cliente global accesible en window.StadiumSupabase
-let stadiumSupabaseClient = null;
-
-if (typeof window !== 'undefined' && window.supabase && typeof window.supabase.createClient === 'function') {
-  stadiumSupabaseClient = window.supabase.createClient(SUPABASE_PROJECT_URL, SUPABASE_ANON_KEY);
-}
-
 window.StadiumSupabase = {
   url: SUPABASE_PROJECT_URL,
   key: SUPABASE_ANON_KEY,
-  client: stadiumSupabaseClient,
-  getClient() {
-    if (!this.client && window.supabase && typeof window.supabase.createClient === 'function') {
-      this.client = window.supabase.createClient(this.url, this.key);
+
+  async request(endpoint, options = {}) {
+    const url = `${this.url}/rest/v1/${endpoint}`;
+    const headers = {
+      'apikey': this.key,
+      'Authorization': `Bearer ${this.key}`,
+      'Content-Type': 'application/json',
+      ...(options.headers || {})
+    };
+
+    try {
+      const resp = await fetch(url, { ...options, headers });
+      if (!resp.ok) {
+        let errBody = null;
+        try { errBody = await resp.json(); } catch(e) {}
+        return { ok: false, status: resp.status, error: errBody };
+      }
+      if (resp.status === 204) {
+        return { ok: true, data: null };
+      }
+      const data = await resp.json();
+      return { ok: true, data };
+    } catch (err) {
+      console.error('Supabase fetch error:', err);
+      return { ok: false, error: err.message };
     }
-    return this.client;
   }
 };

@@ -148,12 +148,14 @@ CREATE INDEX IF NOT EXISTS idx_usuarios_email ON usuarios(LOWER(email));
 CREATE TABLE IF NOT EXISTS salas_batalla (
     id SERIAL PRIMARY KEY,
     codigo VARCHAR(20) NOT NULL UNIQUE,
+    contrasena TEXT DEFAULT NULL, -- Contraseña opcional de la sala privada
     anfitrion_id INTEGER REFERENCES usuarios(id) ON DELETE SET NULL,
     anfitrion_nombre TEXT NOT NULL,
     estado TEXT NOT NULL DEFAULT 'esperando', -- 'esperando', 'en_combate', 'finalizada', 'cancelada'
     pokemon_por_jugador INTEGER NOT NULL DEFAULT 3,
     max_jugadores INTEGER NOT NULL DEFAULT 2,
     jugadores_actuales INTEGER NOT NULL DEFAULT 1,
+    jugadores TEXT DEFAULT NULL, -- JSON opcional con el arreglo de jugadores [{ id, apodo, es_anfitrion, listo, conectado }]
     ganador_nombre TEXT,
     creada_en TIMESTAMPTZ DEFAULT CURRENT_TIMESTAMP,
     iniciada_en TIMESTAMPTZ,
