@@ -86,12 +86,17 @@ class BatallaModule {
         const hadDifferentMessages = JSON.stringify(this.currentRoom.mensajes) !== JSON.stringify(updated.mensajes);
         const hadDifferentPlayers = JSON.stringify(this.currentRoom.jugadores) !== JSON.stringify(updated.jugadores);
         const hadDifferentSettings = this.currentRoom.pokemon_por_jugador !== updated.pokemon_por_jugador || this.currentRoom.max_jugadores !== updated.max_jugadores;
+        const hadDifferentFilters = JSON.stringify(this.currentRoom.ajustes) !== JSON.stringify(updated.ajustes);
         const hadDifferentHost = this.currentRoom.anfitrion_nombre !== updated.anfitrion_nombre;
+        const enteredCombat = this.currentRoom.estado !== 'en_combate' && updated.estado === 'en_combate';
         
         this.currentRoom = updated;
 
         if (this.currentScreen === 'lobby') {
-          if (hadDifferentPlayers || hadDifferentSettings || hadDifferentHost) {
+          if (enteredCombat) {
+            this.renderCurrentView();
+            this.showAssignedTeamModal();
+          } else if (hadDifferentPlayers || hadDifferentSettings || hadDifferentHost || hadDifferentFilters) {
             this.renderCurrentView();
           } else if (hadDifferentMessages) {
             this.renderChatOnly();
@@ -445,7 +450,7 @@ class BatallaModule {
           </section>
 
           <!-- COLUMNA 2: AJUSTES DE PARTIDA (TABLA: salas_batalla) -->
-          <section class="lobby-card-panel settings-card-panel">
+          <section class="lobby-card-panel settings-card-panel" style="overflow-y: auto; max-height: 520px;">
             <div class="panel-header-row">
               <div class="panel-title-wrap">
                 <span class="panel-icon">⚙️</span>
@@ -479,8 +484,44 @@ class BatallaModule {
                 </div>
               </div>
 
+              <!-- FILTRO 1: GENERACIÓN DE POKÉMON -->
+              <div class="filter-setting-block">
+                <div class="filter-setting-header">
+                  <span>🌐</span> Generación:
+                </div>
+                <div class="filter-pills-row">
+                  ${this.renderGenFilterPills(room.ajustes, isHost)}
+                </div>
+              </div>
+
+              <!-- FILTRO 2: FORMA DE POKÉMON -->
+              <div class="filter-setting-block">
+                <div class="filter-setting-header">
+                  <span>⭐</span> Forma:
+                </div>
+                <div class="filter-pills-row">
+                  ${this.renderFormFilterPills(room.ajustes, isHost)}
+                </div>
+              </div>
+
+              <!-- FILTRO 3: LEGENDARIO -->
+              <div class="filter-setting-block">
+                <div class="filter-setting-header">
+                  <span>👑</span> Legendarios:
+                </div>
+                <div class="filter-pills-row">
+                  ${this.renderLegendaryFilterPills(room.ajustes, isHost)}
+                </div>
+              </div>
+
+              <!-- CONTADOR DE POKÉMON DISPONIBLES EN POOL -->
+              <div class="pool-status-preview">
+                <span>🎯 Criaturas en pool disponibles:</span>
+                <span class="pool-count-badge" id="poolCountBadge">${this.getFilteredPokemonCount(room.ajustes)} Pokémon</span>
+              </div>
+
               <!-- RESUMEN DE ESTADÍSTICAS DE LA SALA -->
-              <div style="margin-top: auto; padding: 12px; background: rgba(8, 12, 22, 0.6); border-radius: 8px; border: 1px solid rgba(255,255,255,0.05); font-size: 0.78rem; color: #94a3b8;">
+              <div style="margin-top: 6px; padding: 12px; background: rgba(8, 12, 22, 0.6); border-radius: 8px; border: 1px solid rgba(255,255,255,0.05); font-size: 0.78rem; color: #94a3b8;">
                 <div style="font-weight: 700; color: #38bdf8; margin-bottom: 4px;">📊 Registro de la Sala</div>
                 <div>Código ID: <span style="color:#fff; font-family: monospace;">${room.codigo}</span></div>
                 <div>Estado: <span style="color:#2ed573;">${room.estado.toUpperCase()}</span></div>
@@ -1039,8 +1080,362 @@ class BatallaModule {
     if (window.SFX) window.SFX.playCardClick();
   }
 
+  // ------------------------------------------------------------------
+  // FILTROS Y AJUSTES DE PARTIDA (GENERACIÓN, FORMA, LEGENDARIOS)
+  // ------------------------------------------------------------------
+  static LEGENDARY_NUMS = new Set([
+    144, 145, 146, 150, 151,
+    243, 244, 245, 249, 250, 251,
+    377, 378, 379, 380, 381, 382, 383, 384, 385, 386,
+    480, 481, 482, 483, 484, 485, 486, 487, 488, 489, 490, 491, 492, 493,
+    494, 638, 639, 640, 641, 642, 643, 644, 645, 646, 647, 648, 649,
+    716, 717, 718, 719, 720, 721,
+    772, 773, 785, 786, 787, 788, 789, 790, 791, 792,
+    793, 794, 795, 796, 797, 798, 799, 800, 801, 802, 803, 804, 805, 806, 807, 808, 809,
+    888, 889, 890, 891, 892, 893, 894, 895, 896, 897, 898, 905,
+    1001, 1002, 1003, 1004, 1007, 1008, 1014, 1015, 1016, 1017, 1024, 1025
+  ]);
+
+  static REGIONAL_SUFFIXES = ['-Alola', '-Galar', '-Hisui', '-Paldea'];
+
+  static isRegionalPokemon(p) {
+    if (!p || !p.name) return false;
+    return this.REGIONAL_SUFFIXES.some(suffix => p.name.endsWith(suffix) || p.name.includes(suffix + '-'));
+  }
+
+  static isLegendaryPokemon(p) {
+    if (!p) return false;
+    return this.LEGENDARY_NUMS.has(p.num);
+  }
+
+  static renderGenFilterPills(ajustes = {}, isHost = true) {
+    const gens = ajustes.generaciones || ['todas'];
+    const allSelected = gens.includes('todas');
+
+    const genItems = [
+      { id: 'todas', label: 'Todas' },
+      { id: '1', label: 'Gen 1 (Kanto)' },
+      { id: '2', label: 'Gen 2 (Johto)' },
+      { id: '3', label: 'Gen 3 (Hoenn)' },
+      { id: '4', label: 'Gen 4 (Sinnoh)' },
+      { id: '5', label: 'Gen 5 (Teselia)' },
+      { id: '6', label: 'Gen 6 (Kalos)' },
+      { id: '7', label: 'Gen 7 (Alola)' },
+      { id: '8', label: 'Gen 8 (Galar/Hisui)' },
+      { id: '9', label: 'Gen 9 (Paldea)' }
+    ];
+
+    return genItems.map(item => {
+      const active = allSelected ? item.id === 'todas' : gens.includes(item.id);
+      return `
+        <button 
+          class="filter-pill-btn ${active ? 'active' : ''}" 
+          ${isHost ? '' : 'disabled'}
+          onclick="BatallaModule.toggleGenFilter('${item.id}')"
+        >
+          ${item.label}
+        </button>
+      `;
+    }).join('');
+  }
+
+  static renderFormFilterPills(ajustes = {}, isHost = true) {
+    const formas = ajustes.formas || ['todas'];
+    const allSelected = formas.includes('todas');
+
+    const formItems = [
+      { id: 'todas', label: 'Todas' },
+      { id: 'estandar', label: 'Estándar' },
+      { id: 'regionales', label: '🌎 Regionales' }
+    ];
+
+    return formItems.map(item => {
+      const active = allSelected ? item.id === 'todas' : formas.includes(item.id);
+      return `
+        <button 
+          class="filter-pill-btn ${active ? 'active' : ''}" 
+          ${isHost ? '' : 'disabled'}
+          onclick="BatallaModule.toggleFormFilter('${item.id}')"
+        >
+          ${item.label}
+        </button>
+      `;
+    }).join('');
+  }
+
+  static renderLegendaryFilterPills(ajustes = {}, isHost = true) {
+    const val = ajustes.legendarios || 'no';
+
+    return `
+      <button 
+        class="filter-pill-btn ${val === 'si' ? 'active' : ''}" 
+        ${isHost ? '' : 'disabled'}
+        onclick="BatallaModule.setLegendaryFilter('si')"
+      >
+        ✅ Permitidos
+      </button>
+      <button 
+        class="filter-pill-btn ${val === 'no' ? 'active' : ''}" 
+        ${isHost ? '' : 'disabled'}
+        onclick="BatallaModule.setLegendaryFilter('no')"
+      >
+        🚫 Prohibidos
+      </button>
+    `;
+  }
+
+  static toggleGenFilter(genId) {
+    if (!this.currentRoom) return;
+    if (!this.currentRoom.ajustes) {
+      this.currentRoom.ajustes = { generaciones: ['todas'], formas: ['todas'], legendarios: 'no' };
+    }
+
+    let gens = [...(this.currentRoom.ajustes.generaciones || ['todas'])];
+
+    if (genId === 'todas') {
+      gens = ['todas'];
+    } else {
+      gens = gens.filter(g => g !== 'todas');
+      if (gens.includes(genId)) {
+        gens = gens.filter(g => g !== genId);
+      } else {
+        gens.push(genId);
+      }
+      if (gens.length === 0) {
+        gens = ['todas'];
+      }
+    }
+
+    this.currentRoom.ajustes.generaciones = gens;
+    if (window.BattleRoomStore) {
+      window.BattleRoomStore.updateRoom(this.currentRoom);
+    }
+    this.renderCurrentView();
+    if (window.SFX) window.SFX.playCardClick();
+  }
+
+  static toggleFormFilter(formId) {
+    if (!this.currentRoom) return;
+    if (!this.currentRoom.ajustes) {
+      this.currentRoom.ajustes = { generaciones: ['todas'], formas: ['todas'], legendarios: 'no' };
+    }
+
+    let formas = [...(this.currentRoom.ajustes.formas || ['todas'])];
+
+    if (formId === 'todas') {
+      formas = ['todas'];
+    } else {
+      formas = formas.filter(f => f !== 'todas');
+      if (formas.includes(formId)) {
+        formas = formas.filter(f => f !== formId);
+      } else {
+        formas.push(formId);
+      }
+      if (formas.length === 0) {
+        formas = ['todas'];
+      }
+    }
+
+    this.currentRoom.ajustes.formas = formas;
+    if (window.BattleRoomStore) {
+      window.BattleRoomStore.updateRoom(this.currentRoom);
+    }
+    this.renderCurrentView();
+    if (window.SFX) window.SFX.playCardClick();
+  }
+
+  static setLegendaryFilter(val) {
+    if (!this.currentRoom) return;
+    if (!this.currentRoom.ajustes) {
+      this.currentRoom.ajustes = { generaciones: ['todas'], formas: ['todas'], legendarios: 'no' };
+    }
+
+    this.currentRoom.ajustes.legendarios = val;
+    if (window.BattleRoomStore) {
+      window.BattleRoomStore.updateRoom(this.currentRoom);
+    }
+    this.renderCurrentView();
+    if (window.SFX) window.SFX.playCardClick();
+  }
+
+  static getFilteredPokemonPool(ajustes = {}) {
+    const all = window.POKEMON_DATA || [];
+    const gens = ajustes.generaciones || ['todas'];
+    const formas = ajustes.formas || ['todas'];
+    const allowLegendaries = (ajustes.legendarios || 'no') === 'si';
+
+    return all.filter(p => {
+      // 1. Filtro de Leyendas
+      if (!allowLegendaries && this.isLegendaryPokemon(p)) {
+        return false;
+      }
+
+      // 2. Filtro de Formas
+      const isReg = this.isRegionalPokemon(p);
+      if (!formas.includes('todas')) {
+        const wantsRegional = formas.includes('regionales');
+        const wantsStandard = formas.includes('estandar');
+
+        if (isReg && !wantsRegional) return false;
+        if (!isReg && !wantsStandard) return false;
+      }
+
+      // 3. Filtro de Generaciones
+      if (!gens.includes('todas')) {
+        // En Pokémon Stadium World, las formas regionales tienen número de dex original o gen específico
+        // Verificamos si su gen de origen o num de dex coincide
+        const pGen = String(p.gen);
+        const matchesGen = gens.includes(pGen);
+        if (!matchesGen) return false;
+      }
+
+      return true;
+    });
+  }
+
+  static getFilteredPokemonCount(ajustes = {}) {
+    return this.getFilteredPokemonPool(ajustes).length;
+  }
+
   static startMatch() {
-    alert('⚔️ ¡Partida iniciada! Continuando la construcción de las batallas paso a paso...');
+    if (!this.currentRoom) return;
+    const room = this.currentRoom;
+    const canStart = room.jugadores && room.jugadores.length >= 2;
+
+    if (!canStart) {
+      alert('Se necesita al menos 2 jugadores para iniciar la partida.');
+      return;
+    }
+
+    const pool = this.getFilteredPokemonPool(room.ajustes);
+    const countNeeded = room.pokemon_por_jugador || 3;
+
+    if (pool.length < countNeeded) {
+      alert(`⚠️ No hay suficientes Pokémon en la reserva con los filtros seleccionados (Disponibles: ${pool.length}, Necesarios por jugador: ${countNeeded}). Ajusta los filtros para ampliar la reserva.`);
+      return;
+    }
+
+    // Seleccionar de manera aleatoria los Pokémon para cada participante
+    // con sus ataques predeterminados
+    const players = room.jugadores || [];
+    const usedIndices = new Set();
+
+    players.forEach(player => {
+      const team = [];
+      let attempts = 0;
+      while (team.length < countNeeded && attempts < 500) {
+        attempts++;
+        const randIndex = Math.floor(Math.random() * pool.length);
+        if (!usedIndices.has(randIndex) || pool.length <= countNeeded * players.length) {
+          usedIndices.add(randIndex);
+          const basePoke = pool[randIndex];
+
+          // Resolver movimientos predeterminados
+          const moveIds = basePoke.movimientos_predeterminados || [];
+          const resolvedMoves = [];
+          if (window.MOVIMIENTOS_DATA) {
+            moveIds.forEach(mid => {
+              const m = window.MOVIMIENTOS_DATA.find(mv => mv.id === mid);
+              if (m) resolvedMoves.push(m);
+            });
+          }
+
+          team.push({
+            id: basePoke.id,
+            num: basePoke.num,
+            name: basePoke.name,
+            gen: basePoke.gen,
+            types: basePoke.types,
+            stats: basePoke.stats,
+            abilities: basePoke.abilities,
+            movimientos: resolvedMoves,
+            movimientos_predeterminados: moveIds
+          });
+        }
+      }
+      player.equipo_pokemon = team;
+      player.listo = true;
+    });
+
+    room.estado = 'en_combate';
+    room.iniciada_en = new Date().toISOString();
+
+    room.mensajes.push({
+      id: (room.mensajes ? room.mensajes.length : 0) + 1,
+      emisor: 'SISTEMA',
+      mensaje: `⚔️ ¡El combate ha comenzado! Se han asignado ${countNeeded} Pokémon aleatorios con sus movimientos oficiales a cada entrenador.`,
+      es_sistema: true,
+      enviado_en: new Date().toISOString()
+    });
+
+    if (window.BattleRoomStore) {
+      window.BattleRoomStore.updateRoom(room);
+    }
+
+    if (window.SFX) window.SFX.playSuccess();
+    this.renderCurrentView();
+    this.showAssignedTeamModal();
+  }
+
+  static showAssignedTeamModal() {
+    const myNick = (this.userNickname || '').toLowerCase();
+    const myPlayer = (this.currentRoom.jugadores || []).find(p => (p.apodo || '').toLowerCase() === myNick);
+    if (!myPlayer || !myPlayer.equipo_pokemon || myPlayer.equipo_pokemon.length === 0) return;
+
+    let modal = document.getElementById('assignedTeamModal');
+    if (!modal) {
+      modal = document.createElement('div');
+      modal.id = 'assignedTeamModal';
+      modal.className = 'battle-modal-overlay';
+      document.body.appendChild(modal);
+    }
+
+    modal.innerHTML = `
+      <div class="battle-modal-card" style="max-width: 650px;">
+        <div class="battle-modal-header">
+          <h3>🎮 ¡Tu Equipo Pokémon Asignado!</h3>
+          <button class="battle-modal-close" onclick="document.getElementById('assignedTeamModal').style.display='none'">✕</button>
+        </div>
+        <div class="battle-modal-body">
+          <p style="color: #94a3b8; font-size: 0.88rem; margin-bottom: 12px;">
+            Generados aleatoriamente según los filtros activos de la sala (${this.currentRoom.pokemon_por_jugador} Pokémon con movimientos predeterminados):
+          </p>
+
+          <div class="assigned-team-grid">
+            ${myPlayer.equipo_pokemon.map(poke => {
+              const sprite = window.PokemonModule 
+                ? window.PokemonModule.getPokemonSpriteUrl(poke) 
+                : `https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/${poke.num}.png`;
+
+              const moveNames = poke.movimientos && poke.movimientos.length > 0 
+                ? poke.movimientos.map(m => m.nombre).join(', ') 
+                : 'Ataques listos';
+
+              return `
+                <div class="assigned-pokemon-card">
+                  <img src="${sprite}" alt="${poke.name}" class="assigned-pokemon-img" onerror="this.src='https://play.pokemonshowdown.com/sprites/gen5/${poke.name.toLowerCase()}.png'" />
+                  <div class="assigned-pokemon-name">${poke.name}</div>
+                  <div class="assigned-pokemon-types">
+                    ${(poke.types || []).map(t => `<span class="badge-type type-${t}" style="font-size:0.65rem; padding: 2px 6px;">${t}</span>`).join('')}
+                  </div>
+                  <div class="assigned-pokemon-moves" title="${moveNames}">
+                    ${moveNames}
+                  </div>
+                </div>
+              `;
+            }).join('')}
+          </div>
+
+          <div class="battle-modal-actions" style="margin-top: 18px; display: flex; justify-content: flex-end;">
+            <button class="battle-primary-action-btn btn-crear-sala" style="width: auto; padding: 10px 24px;" onclick="document.getElementById('assignedTeamModal').style.display='none'">
+              ¡Entendido, al combate!
+            </button>
+          </div>
+        </div>
+      </div>
+    `;
+
+    modal.style.display = 'flex';
   }
 
   static escapeHtml(str) {

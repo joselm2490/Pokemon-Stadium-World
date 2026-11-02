@@ -68,7 +68,7 @@ class BattleRoomStore {
   static startSupabasePolling() {
     if (this.pollingTimer) clearInterval(this.pollingTimer);
 
-    // Polling regular cada 2.5 segundos para sincronizar chat y jugadores activos
+    // Polling regular cada 2.5 segundos para sincronizar chat, filtros y jugadores activos
     this.pollingTimer = setInterval(() => {
       this.syncActiveRoomFromSupabase();
     }, 2500);
@@ -114,6 +114,12 @@ class BattleRoomStore {
         jugadores_actuales: remotePlayers.length || remoteRoom.jugadores_actuales || 1,
         creada_en: remoteRoom.creada_en,
         finalizada_en: remoteRoom.finalizada_en,
+        // Ajustes de partida con filtros de Pokémon
+        ajustes: (currentLocal && currentLocal.ajustes) || {
+          generaciones: ['todas'],
+          formas: ['todas'],
+          legendarios: 'no'
+        },
         jugadores: remotePlayers.map(p => ({
           id: p.id,
           apodo: p.apodo,
@@ -121,7 +127,9 @@ class BattleRoomStore {
           listo: p.listo === 1 || p.listo === true,
           conectado: p.conectado === 1 || p.conectado === true,
           unido_en: p.unido_en,
-          equipo_pokemon: p.equipo_pokemon ? (typeof p.equipo_pokemon === 'string' ? JSON.parse(p.equipo_pokemon) : p.equipo_pokemon) : []
+          equipo_pokemon: p.equipo_pokemon 
+            ? (typeof p.equipo_pokemon === 'string' ? JSON.parse(p.equipo_pokemon) : p.equipo_pokemon) 
+            : ((currentLocal && currentLocal.jugadores && currentLocal.jugadores.find(cj => cj.apodo.toLowerCase() === p.apodo.toLowerCase())?.equipo_pokemon) || [])
         })),
         mensajes: remoteMsgs.map(m => ({
           id: m.id,
@@ -193,10 +201,14 @@ class BattleRoomStore {
   }
 
   // Obtener lista de salas disponibles desde Supabase (combinadas con local)
+  // FILTRO OBLIGATORIO:
+  // Si una sala tiene estado 'finalizada' o 'cancelada' y han pasado más de 5 minutos, debe desaparecer.
   static async fetchAvailableRooms() {
     const localRooms = this.getAllRooms();
     const localMap = new Map();
     localRooms.forEach(r => localMap.set(r.codigo, r));
+
+    let allCandidates = [];
 
     if (window.StadiumSupabase) {
       try {
@@ -204,7 +216,7 @@ class BattleRoomStore {
           'salas_batalla?select=id,codigo,anfitrion_nombre,estado,pokemon_por_jugador,max_jugadores,jugadores_actuales,creada_en,finalizada_en&order=creada_en.desc&limit=30'
         );
         if (res.ok && Array.isArray(res.data)) {
-          return res.data.map(remote => {
+          allCandidates = res.data.map(remote => {
             const loc = localMap.get(remote.codigo);
             return {
               ...remote,
@@ -217,17 +229,42 @@ class BattleRoomStore {
         console.warn('Error trayendo salas desde Supabase, usando local:', e);
       }
     }
-    return localRooms.map(r => ({
-      ...r,
-      tiene_contrasena: !!r.contrasena
-    }));
+
+    if (allCandidates.length === 0) {
+      allCandidates = localRooms.map(r => ({
+        ...r,
+        tiene_contrasena: !!r.contrasena
+      }));
+    }
+
+    // Filtrar salas finalizadas/canceladas tras 5 minutos
+    const nowMs = Date.now();
+    const FIVE_MINUTES_MS = 5 * 60 * 1000;
+
+    return allCandidates.filter(room => {
+      const estado = (room.estado || '').toLowerCase();
+      if (estado === 'finalizada' || estado === 'cancelada') {
+        const finishedTime = room.finalizada_en ? new Date(room.finalizada_en).getTime() : 0;
+        if (finishedTime && (nowMs - finishedTime) > FIVE_MINUTES_MS) {
+          return false; // Desaparece tras 5 minutos
+        }
+      }
+      return true;
+    });
   }
 
   // Crear una nueva sala
-  static async createRoom({ hostNickname, pokemonCount = 3, maxPlayers = 2, password = null }) {
+  static async createRoom({ hostNickname, pokemonCount = 3, maxPlayers = 2, password = null, ajustes = null }) {
     const code = this.generateUniqueRoomCode();
     const now = new Date().toISOString();
     const cleanPassword = (password || '').trim() || null;
+
+    const defaultAjustes = {
+      generaciones: ['todas'],
+      formas: ['todas'],
+      legendarios: 'no',
+      ...(ajustes || {})
+    };
 
     const newRoom = {
       id: Date.now(),
@@ -243,6 +280,7 @@ class BattleRoomStore {
       iniciada_en: null,
       finalizada_en: null,
       ganador_nombre: null,
+      ajustes: defaultAjustes,
       jugadores: [
         {
           id: `player_${Date.now()}_${Math.random().toString(36).substr(2, 5)}`,
@@ -359,6 +397,11 @@ class BattleRoomStore {
             jugadores_actuales: players.length || dbRoom.jugadores_actuales || 1,
             creada_en: dbRoom.creada_en,
             finalizada_en: dbRoom.finalizada_en,
+            ajustes: (existingLocal && existingLocal.ajustes) || {
+              generaciones: ['todas'],
+              formas: ['todas'],
+              legendarios: 'no'
+            },
             jugadores: players.map(p => ({
               id: p.id,
               apodo: p.apodo,

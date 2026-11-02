@@ -156,6 +156,7 @@ CREATE TABLE IF NOT EXISTS salas_batalla (
     max_jugadores INTEGER NOT NULL DEFAULT 2,
     jugadores_actuales INTEGER NOT NULL DEFAULT 1,
     jugadores TEXT DEFAULT NULL, -- JSON opcional con el arreglo de jugadores [{ id, apodo, es_anfitrion, listo, conectado }]
+    ajustes TEXT DEFAULT NULL, -- JSON con filtros de partida: { generaciones: ['todas'], formas: ['todas'], legendarios: 'no' }
     ganador_nombre TEXT,
     creada_en TIMESTAMPTZ DEFAULT CURRENT_TIMESTAMP,
     iniciada_en TIMESTAMPTZ,
