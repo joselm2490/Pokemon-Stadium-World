@@ -83,8 +83,11 @@ CREATE TABLE IF NOT EXISTS pokemon (
     ratio_captura INTEGER,
     experiencia_base INTEGER,
     curva_crecimiento TEXT,
+    categoria_rareza TEXT NOT NULL DEFAULT 'estandar', -- 'estandar', 'legendario', 'pseudolegendario'
     movimientos_predeterminados TEXT -- JSON Array con los 4 IDs de movimientos predeterminados
 );
+
+CREATE INDEX IF NOT EXISTS idx_poke_categoria_rareza ON pokemon(categoria_rareza);
 
 -- --------------------------------------------------------------------
 -- 6. TABLA: estadisticas_base (Stats de cada Pokémon)

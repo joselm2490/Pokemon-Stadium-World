@@ -1105,7 +1105,26 @@ class BatallaModule {
 
   static isLegendaryPokemon(p) {
     if (!p) return false;
+    if (p.categoria_rareza) {
+      return p.categoria_rareza === 'legendario';
+    }
     return this.LEGENDARY_NUMS.has(p.num);
+  }
+
+  static isPseudoLegendaryPokemon(p) {
+    if (!p) return false;
+    if (p.categoria_rareza) {
+      return p.categoria_rareza === 'pseudolegendario';
+    }
+    return [149, 248, 373, 376, 445, 635, 706, 784, 887, 998].includes(p.num);
+  }
+
+  static getPokemonRarityCategory(p) {
+    if (!p) return 'estandar';
+    if (p.categoria_rareza) return p.categoria_rareza;
+    if (this.isLegendaryPokemon(p)) return 'legendario';
+    if (this.isPseudoLegendaryPokemon(p)) return 'pseudolegendario';
+    return 'estandar';
   }
 
   static renderGenFilterPills(ajustes = {}, isHost = true) {
