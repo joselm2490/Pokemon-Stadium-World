@@ -1,6 +1,6 @@
 {
   "name": "pokemon-stadium-world",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "Videojuego web Pokémon Stadium World con base de datos, sprites y sistema de combate",
   "main": "index.html",
   "scripts": {
@@ -16,8 +16,8 @@
   ],
   "author": "",
   "license": "ISC",
-      "bcryptjs": "^2.4.3",
-
+  "dependencies": {
+    "bcryptjs": "^2.4.3",
     "@supabase/supabase-js": "^2.118.0"
   }
 }
