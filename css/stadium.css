@@ -427,12 +427,16 @@ body {
 /* =============================================================
    MODO BATALLA – Pantalla completa
    ============================================================= */
+.battle-mode .stadium-navbar {
+  display: none !important;
+}
+
 .battle-mode .stadium-menu-hub {
-  display: none;
+  display: none !important;
 }
 
 .battle-mode #view-batalla {
-  min-height: calc(100vh - 80px);
+  min-height: 100vh;
   padding: 0;
 }
 
@@ -4530,7 +4534,7 @@ body {
    ==================================================================== */
 
 .stadium-battle-wrapper {
-  min-height: calc(100vh - 180px);
+  min-height: 100vh;
   display: flex;
   flex-direction: column;
   justify-content: space-between;
@@ -4538,6 +4542,7 @@ body {
   font-family: 'Outfit', sans-serif;
   color: #fff;
   user-select: none;
+  padding: 0;
 }
 
 /* Header superior del modo batalla */

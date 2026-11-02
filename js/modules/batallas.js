@@ -69,13 +69,22 @@ class BatallaModule {
   static handleStoreUpdate(eventType, data) {
     if (!this.currentRoom) return;
 
-    // Si la sala activa fue actualizada en otra pestaña
+    // Si la sala activa fue actualizada en otra pestaña o mediante Supabase/Storage
     if (window.BattleRoomStore) {
       const updated = window.BattleRoomStore.getRoomByCode(this.currentRoom.codigo);
       if (updated) {
+        const hadDifferentMessages = JSON.stringify(this.currentRoom.mensajes) !== JSON.stringify(updated.mensajes);
+        const hadDifferentPlayers = JSON.stringify(this.currentRoom.jugadores) !== JSON.stringify(updated.jugadores);
+        const hadDifferentSettings = this.currentRoom.pokemon_por_jugador !== updated.pokemon_por_jugador || this.currentRoom.max_jugadores !== updated.max_jugadores;
+        
         this.currentRoom = updated;
+
         if (this.currentScreen === 'lobby') {
-          this.renderCurrentView();
+          if (hadDifferentPlayers || hadDifferentSettings) {
+            this.renderCurrentView();
+          } else if (hadDifferentMessages) {
+            this.renderChatOnly();
+          }
         }
       }
     }
@@ -92,6 +101,22 @@ class BatallaModule {
     } else if (this.currentScreen === 'lobby') {
       this.renderLobbyScreen(container);
     }
+  }
+
+  static renderChatOnly() {
+    const chatContainer = document.getElementById('lobbyChatContainer');
+    if (!chatContainer || !this.currentRoom) return;
+
+    chatContainer.innerHTML = (this.currentRoom.mensajes || []).map((msg) => `
+      <div class="chat-msg-row ${msg.es_sistema ? 'msg-system' : ''}">
+        ${msg.es_sistema
+          ? `<span class="sys-msg">${this.escapeHtml(msg.mensaje)}</span>`
+          : `<strong>${this.escapeHtml(msg.emisor)}:</strong> <span>${this.escapeHtml(msg.mensaje)}</span>`
+        }
+      </div>
+    `).join('');
+
+    chatContainer.scrollTop = chatContainer.scrollHeight;
   }
 
   // ------------------------------------------------------------------
@@ -247,6 +272,13 @@ class BatallaModule {
         <!-- BARRA SUPERIOR DEL LOBBY -->
         <header class="lobby-header-bar">
           <div class="lobby-header-left">
+            <div class="battle-branding-header" style="margin-right: 12px;">
+              <div class="footer-pokeball-mini"></div>
+              <div class="footer-brand-text">
+                <strong>POKÉMON STADIUM WORLD</strong>
+                <span>WEB GAME ENGINE & DATABASE</span>
+              </div>
+            </div>
             <div class="lobby-pokeball-brand"></div>
             <h2 class="lobby-brand-title">Arena Stadium</h2>
             <div class="lobby-status-pill">SALA DE ESPERA</div>
@@ -380,15 +412,7 @@ class BatallaModule {
 
         <!-- FOOTER DEL LOBBY -->
         <footer class="lobby-footer-bar">
-          <div class="battle-branding-footer">
-            <div class="footer-pokeball-mini"></div>
-            <div class="footer-brand-text">
-              <strong>POKÉMON STADIUM WORLD</strong>
-              <span>WEB GAME ENGINE & DATABASE</span>
-            </div>
-          </div>
-
-          <div class="lobby-start-action-center">
+          <div class="lobby-start-action-center" style="width: 100%;">
             <div class="lobby-waiting-hint" id="lobbyWaitingStatusText">
               ${canStart 
                 ? '✅ ¡Todos los entrenadores listos! Puedes iniciar la partida.'
@@ -659,7 +683,7 @@ class BatallaModule {
       });
     }
 
-    this.renderCurrentView();
+    this.renderChatOnly();
     if (window.SFX) window.SFX.playCardClick();
   }
 
