@@ -1,15 +1,12 @@
 -- ====================================================================
--- ESQUEMA DE BASE DE DATOS: POKÉMON STADIUM WORLD
--- Diseñado para motores de videojuegos (Godot, Unity, Web, Python, etc.)
+-- ESQUEMA DE BASE DE DATOS: POKÉMON STADIUM WORLD (POSTGRESQL / SUPABASE)
 -- ====================================================================
-
-PRAGMA foreign_keys = ON;
 
 -- --------------------------------------------------------------------
 -- 1. TABLA: tipos
 -- --------------------------------------------------------------------
 CREATE TABLE IF NOT EXISTS tipos (
-    id INTEGER PRIMARY KEY,
+    id SERIAL PRIMARY KEY,
     nombre TEXT NOT NULL UNIQUE,
     nombre_ingles TEXT NOT NULL,
     color_hex TEXT NOT NULL
@@ -19,7 +16,7 @@ CREATE TABLE IF NOT EXISTS tipos (
 -- 2. TABLA: clases_movimiento
 -- --------------------------------------------------------------------
 CREATE TABLE IF NOT EXISTS clases_movimiento (
-    id INTEGER PRIMARY KEY,
+    id SERIAL PRIMARY KEY,
     nombre TEXT NOT NULL UNIQUE,
     nombre_ingles TEXT NOT NULL,
     color_hex TEXT NOT NULL
@@ -29,10 +26,9 @@ CREATE TABLE IF NOT EXISTS clases_movimiento (
 -- 3. TABLA: movimientos
 -- --------------------------------------------------------------------
 CREATE TABLE IF NOT EXISTS movimientos (
-    id INTEGER PRIMARY KEY,
+    id SERIAL PRIMARY KEY,
     codigo TEXT NOT NULL UNIQUE,
     nombre TEXT NOT NULL,
-    apellido TEXT NOT NULL,
     nombre_alt TEXT,
     nombre_ingles TEXT NOT NULL,
     gen INTEGER NOT NULL,
@@ -72,13 +68,12 @@ CREATE TABLE IF NOT EXISTS efectividad_tipos (
 );
 
 -- --------------------------------------------------------------------
--- 5. TABLA: pokemon (Preparada para la siguiente fase de datos)
+-- 5. TABLA: pokemon
 -- --------------------------------------------------------------------
 CREATE TABLE IF NOT EXISTS pokemon (
-    id INTEGER PRIMARY KEY,
+    id SERIAL PRIMARY KEY,
     numero_pokedex INTEGER NOT NULL,
     nombre TEXT NOT NULL,
-    apellido TEXT NOT NULL,
     nombre_ingles TEXT NOT NULL,
     gen INTEGER NOT NULL,
     tipo1_id INTEGER NOT NULL REFERENCES tipos(id),
@@ -109,9 +104,8 @@ CREATE TABLE IF NOT EXISTS estadisticas_base (
 -- 7. TABLA: habilidades
 -- --------------------------------------------------------------------
 CREATE TABLE IF NOT EXISTS habilidades (
-    id INTEGER PRIMARY KEY,
+    id SERIAL PRIMARY KEY,
     nombre TEXT NOT NULL,
-    apellido TEXT NOT NULL,
     nombre_ingles TEXT NOT NULL,
     descripcion TEXT
 );
@@ -131,20 +125,18 @@ CREATE TABLE IF NOT EXISTS pokemon_movimientos (
 -- 9. TABLA: usuarios (Sistema de registro y autenticación)
 -- --------------------------------------------------------------------
 CREATE TABLE IF NOT EXISTS usuarios (
-    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    id SERIAL PRIMARY KEY,
     nombre TEXT NOT NULL,
     apellido TEXT NOT NULL,
-    username TEXT NOT NULL UNIQUE COLLATE NOCASE,
-    email TEXT NOT NULL UNIQUE COLLATE NOCASE,
+    username VARCHAR(100) NOT NULL UNIQUE,
+    email VARCHAR(255) NOT NULL UNIQUE,
     contrasena TEXT NOT NULL,
-    creado_en TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-    ultimo_login TIMESTAMP
+    creado_en TIMESTAMPTZ DEFAULT CURRENT_TIMESTAMP,
+    ultimo_login TIMESTAMPTZ
 );
 
-CREATE INDEX IF NOT EXISTS idx_usuarios_username ON usuarios(username);
-CREATE INDEX IF NOT EXISTS idx_usuarios_email ON usuarios(email);
-
-
+CREATE INDEX IF NOT EXISTS idx_usuarios_username ON usuarios(LOWER(username));
+CREATE INDEX IF NOT EXISTS idx_usuarios_email ON usuarios(LOWER(email));
 
 -- ====================================================================
 -- SISTEMA MULTIJUGADOR: SALAS, JUGADORES, MENSAJES Y ESTADÍSTICAS
@@ -152,11 +144,10 @@ CREATE INDEX IF NOT EXISTS idx_usuarios_email ON usuarios(email);
 
 -- --------------------------------------------------------------------
 -- 10. TABLA: salas_batalla
--- Almacena las salas activas e históricas con su código único de 6 chars
 -- --------------------------------------------------------------------
 CREATE TABLE IF NOT EXISTS salas_batalla (
-    id INTEGER PRIMARY KEY AUTOINCREMENT,
-    codigo TEXT NOT NULL UNIQUE COLLATE NOCASE, -- Código único de 6 caracteres (ej. 'PXXE69')
+    id SERIAL PRIMARY KEY,
+    codigo VARCHAR(20) NOT NULL UNIQUE,
     anfitrion_id INTEGER REFERENCES usuarios(id) ON DELETE SET NULL,
     anfitrion_nombre TEXT NOT NULL,
     estado TEXT NOT NULL DEFAULT 'esperando', -- 'esperando', 'en_combate', 'finalizada', 'cancelada'
@@ -164,20 +155,19 @@ CREATE TABLE IF NOT EXISTS salas_batalla (
     max_jugadores INTEGER NOT NULL DEFAULT 2,
     jugadores_actuales INTEGER NOT NULL DEFAULT 1,
     ganador_nombre TEXT,
-    creada_en TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-    iniciada_en TIMESTAMP,
-    finalizada_en TIMESTAMP
+    creada_en TIMESTAMPTZ DEFAULT CURRENT_TIMESTAMP,
+    iniciada_en TIMESTAMPTZ,
+    finalizada_en TIMESTAMPTZ
 );
 
-CREATE INDEX IF NOT EXISTS idx_salas_codigo ON salas_batalla(codigo);
+CREATE INDEX IF NOT EXISTS idx_salas_codigo ON salas_batalla(LOWER(codigo));
 CREATE INDEX IF NOT EXISTS idx_salas_estado ON salas_batalla(estado);
 
 -- --------------------------------------------------------------------
 -- 11. TABLA: sala_jugadores
--- Registra a cada entrenador dentro de una sala específica
 -- --------------------------------------------------------------------
 CREATE TABLE IF NOT EXISTS sala_jugadores (
-    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    id SERIAL PRIMARY KEY,
     sala_id INTEGER NOT NULL REFERENCES salas_batalla(id) ON DELETE CASCADE,
     usuario_id INTEGER REFERENCES usuarios(id) ON DELETE SET NULL,
     apodo TEXT NOT NULL,
@@ -185,7 +175,7 @@ CREATE TABLE IF NOT EXISTS sala_jugadores (
     equipo_pokemon TEXT, -- JSON Array con IDs de Pokémon seleccionados
     listo INTEGER NOT NULL DEFAULT 0, -- 1 = Listo para comenzar
     conectado INTEGER NOT NULL DEFAULT 1, -- 1 = Conectado, 0 = Desconectado
-    unido_en TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    unido_en TIMESTAMPTZ DEFAULT CURRENT_TIMESTAMP,
     UNIQUE(sala_id, apodo)
 );
 
@@ -193,15 +183,14 @@ CREATE INDEX IF NOT EXISTS idx_sala_jugadores_sala ON sala_jugadores(sala_id);
 
 -- --------------------------------------------------------------------
 -- 12. TABLA: sala_mensajes (Chat del Lobby)
--- Historial completo de mensajes y eventos de sistema dentro de la sala
 -- --------------------------------------------------------------------
 CREATE TABLE IF NOT EXISTS sala_mensajes (
-    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    id SERIAL PRIMARY KEY,
     sala_id INTEGER NOT NULL REFERENCES salas_batalla(id) ON DELETE CASCADE,
     emisor TEXT NOT NULL, -- Apodo del jugador o 'SISTEMA'
     mensaje TEXT NOT NULL,
     es_sistema INTEGER NOT NULL DEFAULT 0, -- 1 = Evento de sistema, 0 = Chat de usuario
-    enviado_en TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+    enviado_en TIMESTAMPTZ DEFAULT CURRENT_TIMESTAMP
 );
 
 CREATE INDEX IF NOT EXISTS idx_sala_mensajes_sala ON sala_mensajes(sala_id);
@@ -210,7 +199,7 @@ CREATE INDEX IF NOT EXISTS idx_sala_mensajes_sala ON sala_mensajes(sala_id);
 -- 13. TABLA: sala_estadisticas (Historial y métricas de partidas)
 -- --------------------------------------------------------------------
 CREATE TABLE IF NOT EXISTS sala_estadisticas (
-    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    id SERIAL PRIMARY KEY,
     sala_id INTEGER NOT NULL UNIQUE REFERENCES salas_batalla(id) ON DELETE CASCADE,
     total_turnos INTEGER DEFAULT 0,
     total_dano_causado INTEGER DEFAULT 0,
