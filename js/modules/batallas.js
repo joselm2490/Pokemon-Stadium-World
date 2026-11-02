@@ -104,7 +104,15 @@ class BatallaModule {
       <div class="stadium-battle-wrapper battle-landing-wrapper">
         <!-- BARRA SUPERIOR DE ESTADO DEL SERVIDOR -->
         <header class="battle-topbar">
-          <div class="battle-topbar-left"></div>
+          <div class="battle-topbar-left">
+            <div class="battle-branding-header">
+              <div class="footer-pokeball-mini"></div>
+              <div class="footer-brand-text">
+                <strong>POKÉMON STADIUM WORLD</strong>
+                <span>WEB GAME ENGINE & DATABASE</span>
+              </div>
+            </div>
+          </div>
           <div class="battle-topbar-right">
             <div class="server-status-pill">
               <span class="status-indicator-dot online"></span>
@@ -176,14 +184,7 @@ class BatallaModule {
 
         <!-- FOOTER INFORMATIVO -->
         <footer class="battle-landing-footer">
-          <div class="battle-branding-footer">
-            <div class="footer-pokeball-mini"></div>
-            <div class="footer-brand-text">
-              <strong>POKÉMON STADIUM WORLD</strong>
-              <span>WEB GAME ENGINE & DATABASE</span>
-            </div>
-          </div>
-          <div class="battle-footer-hint">
+          <div class="battle-footer-hint" style="margin: 0 auto; text-align: center;">
             <span class="hint-icon">💡</span> Comparte el código de 6 caracteres para jugar juntos desde cualquier pantalla
           </div>
         </footer>
