@@ -22,7 +22,39 @@
   <div class="spotlight-right"></div>
 
   <div class="app-wrapper">
-    <!-- BARRA SUPERIOR -->
+    <!-- Auth Modals -->
+<div id="registerModal" class="modal" style="display:none;">
+  <div class="modal-content">
+    <span class="close" id="closeRegister">&times;</span>
+    <h2>Registro</h2>
+    <form id="registerForm">
+      <input type="text" id="regNombre" placeholder="Nombre" required />
+      <input type="text" id="regApellido" placeholder="Apellido" required />
+      <input type="text" id="regUsername" placeholder="Usuario" required />
+      <input type="email" id="regEmail" placeholder="Correo" required />
+      <input type="password" id="regPassword" placeholder="Contraseña" required />
+      <input type="password" id="regConfirmPassword" placeholder="Confirmar Contraseña" required />
+      <button type="submit">Registrarse</button>
+    </form>
+  </div>
+</div>
+
+<div id="loginModal" class="modal" style="display:none;">
+  <div class="modal-content">
+    <span class="close" id="closeLogin">&times;</span>
+    <h2>Iniciar sesión</h2>
+    <form id="loginForm">
+      <input type="text" id="loginUserOrEmail" placeholder="Usuario o correo" required />
+      <input type="password" id="loginPassword" placeholder="Contraseña" required />
+      <button type="submit">Entrar</button>
+    </form>
+  </div>
+</div>
+
+<!-- Scripts -->
+<script src="https://cdn.jsdelivr.net/npm/bcryptjs@2.4.3/dist/bcrypt.min.js"></script>
+<script type="module" src="js/auth.js"></script>
+
     <header class="stadium-navbar">
       <a href="#" class="brand-badge" id="brandHomeLink">
         <div class="pokeball-icon-glow"></div>

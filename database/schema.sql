@@ -32,6 +32,7 @@ CREATE TABLE IF NOT EXISTS movimientos (
     id INTEGER PRIMARY KEY,
     codigo TEXT NOT NULL UNIQUE,
     nombre TEXT NOT NULL,
+    apellido TEXT NOT NULL,
     nombre_alt TEXT,
     nombre_ingles TEXT NOT NULL,
     gen INTEGER NOT NULL,
@@ -77,6 +78,7 @@ CREATE TABLE IF NOT EXISTS pokemon (
     id INTEGER PRIMARY KEY,
     numero_pokedex INTEGER NOT NULL,
     nombre TEXT NOT NULL,
+    apellido TEXT NOT NULL,
     nombre_ingles TEXT NOT NULL,
     gen INTEGER NOT NULL,
     tipo1_id INTEGER NOT NULL REFERENCES tipos(id),
@@ -109,6 +111,7 @@ CREATE TABLE IF NOT EXISTS estadisticas_base (
 CREATE TABLE IF NOT EXISTS habilidades (
     id INTEGER PRIMARY KEY,
     nombre TEXT NOT NULL,
+    apellido TEXT NOT NULL,
     nombre_ingles TEXT NOT NULL,
     descripcion TEXT
 );
@@ -130,6 +133,7 @@ CREATE TABLE IF NOT EXISTS pokemon_movimientos (
 CREATE TABLE IF NOT EXISTS usuarios (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
     nombre TEXT NOT NULL,
+    apellido TEXT NOT NULL,
     username TEXT NOT NULL UNIQUE COLLATE NOCASE,
     email TEXT NOT NULL UNIQUE COLLATE NOCASE,
     contrasena TEXT NOT NULL,

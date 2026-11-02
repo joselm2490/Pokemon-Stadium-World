@@ -15,5 +15,9 @@
     "battle"
   ],
   "author": "",
-  "license": "ISC"
+  "license": "ISC",
+      "bcryptjs": "^2.4.3",
+
+    "@supabase/supabase-js": "^2.118.0"
+  }
 }
