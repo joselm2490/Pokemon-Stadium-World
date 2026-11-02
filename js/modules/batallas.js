@@ -391,13 +391,6 @@ class BatallaModule {
         <!-- BARRA SUPERIOR DEL LOBBY -->
         <header class="lobby-header-bar">
           <div class="lobby-header-left">
-            <div class="battle-branding-header" style="margin-right: 12px;">
-              <div class="footer-pokeball-mini"></div>
-              <div class="footer-brand-text">
-                <strong>POKÉMON STADIUM WORLD</strong>
-                <span>WEB GAME ENGINE & DATABASE</span>
-              </div>
-            </div>
             <div class="lobby-pokeball-brand"></div>
             <h2 class="lobby-brand-title">Arena Stadium</h2>
             <div class="lobby-status-pill">SALA DE ESPERA</div>
@@ -450,7 +443,7 @@ class BatallaModule {
           </section>
 
           <!-- COLUMNA 2: AJUSTES DE PARTIDA (TABLA: salas_batalla) -->
-          <section class="lobby-card-panel settings-card-panel" style="overflow-y: auto; max-height: 520px;">
+          <section class="lobby-card-panel settings-card-panel">
             <div class="panel-header-row">
               <div class="panel-title-wrap">
                 <span class="panel-icon">⚙️</span>
@@ -460,27 +453,30 @@ class BatallaModule {
             </div>
 
             <div class="settings-content-wrap">
-              <!-- AJUSTE 1: POKÉMONES -->
-              <div class="setting-row-item">
-                <div class="setting-label-col">
-                  <span class="setting-item-icon">🎴</span>
-                  <span class="setting-item-name">Pokemones:</span>
+              <!-- AJUSTES PRINCIPALES EN UNA FILA COMPACTA -->
+              <div class="settings-summary-grid">
+                <!-- AJUSTE 1: POKÉMONES -->
+                <div class="setting-row-item">
+                  <div class="setting-label-col">
+                    <span class="setting-item-icon">🎴</span>
+                    <span class="setting-item-name">Pokémon:</span>
+                  </div>
+                  <div class="stepper-controls">
+                    <button class="stepper-btn" ${isHost ? '' : 'disabled style="opacity: 0.4;"'} onclick="BatallaModule.adjustPokemonCount(-1)">-</button>
+                    <span class="stepper-value" id="settingPokemonVal">${room.pokemon_por_jugador}</span>
+                    <button class="stepper-btn" ${isHost ? '' : 'disabled style="opacity: 0.4;"'} onclick="BatallaModule.adjustPokemonCount(1)">+</button>
+                  </div>
                 </div>
-                <div class="stepper-controls">
-                  <button class="stepper-btn" ${isHost ? '' : 'disabled style="opacity: 0.4;"'} onclick="BatallaModule.adjustPokemonCount(-1)">-</button>
-                  <span class="stepper-value" id="settingPokemonVal">${room.pokemon_por_jugador}</span>
-                  <button class="stepper-btn" ${isHost ? '' : 'disabled style="opacity: 0.4;"'} onclick="BatallaModule.adjustPokemonCount(1)">+</button>
-                </div>
-              </div>
 
-              <!-- AJUSTE 2: MÁX. JUGADORES -->
-              <div class="setting-row-item">
-                <div class="setting-label-col">
-                  <span class="setting-item-icon">👥</span>
-                  <span class="setting-item-name">Máx. Jugadores:</span>
-                </div>
-                <div class="stepper-controls">
-                  <span class="stepper-value" id="settingMaxPlayersVal">2</span>
+                <!-- AJUSTE 2: MÁX. JUGADORES -->
+                <div class="setting-row-item">
+                  <div class="setting-label-col">
+                    <span class="setting-item-icon">👥</span>
+                    <span class="setting-item-name">Máx. Jugadores:</span>
+                  </div>
+                  <div class="stepper-controls">
+                    <span class="stepper-value" id="settingMaxPlayersVal">2</span>
+                  </div>
                 </div>
               </div>
 
@@ -514,18 +510,10 @@ class BatallaModule {
                 </div>
               </div>
 
-              <!-- CONTADOR DE POKÉMON DISPONIBLES EN POOL -->
+              <!-- BARRA INFERIOR DE AJUSTES: POOL & INFO COMPACTA -->
               <div class="pool-status-preview">
-                <span>🎯 Criaturas en pool disponibles:</span>
-                <span class="pool-count-badge" id="poolCountBadge">${this.getFilteredPokemonCount(room.ajustes)} Pokémon</span>
-              </div>
-
-              <!-- RESUMEN DE ESTADÍSTICAS DE LA SALA -->
-              <div style="margin-top: 6px; padding: 12px; background: rgba(8, 12, 22, 0.6); border-radius: 8px; border: 1px solid rgba(255,255,255,0.05); font-size: 0.78rem; color: #94a3b8;">
-                <div style="font-weight: 700; color: #38bdf8; margin-bottom: 4px;">📊 Registro de la Sala</div>
-                <div>Código ID: <span style="color:#fff; font-family: monospace;">${room.codigo}</span></div>
-                <div>Estado: <span style="color:#2ed573;">${room.estado.toUpperCase()}</span></div>
-                <div>Creada: <span style="color:#fff;">${new Date(room.creada_en).toLocaleTimeString()}</span></div>
+                <span>🎯 Pool disponible: <strong class="pool-count-badge" id="poolCountBadge">${this.getFilteredPokemonCount(room.ajustes)} Pokémon</strong></span>
+                <span class="room-mini-badge">ID: ${room.codigo}</span>
               </div>
             </div>
           </section>

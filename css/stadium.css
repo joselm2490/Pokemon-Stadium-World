@@ -4953,30 +4953,38 @@ body {
    IMAGEN 2: SALA DE ESPERA / LOBBY MULTIJUGADOR
    -------------------------------------------------------------------- */
 .battle-lobby-wrapper {
-  padding-bottom: 20px;
+  padding: 0;
+  height: 100vh;
+  max-height: 100vh;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  box-sizing: border-box;
 }
 
 .lobby-header-bar {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  padding: 14px 20px;
+  padding: 10px 20px;
   background: rgba(11, 17, 33, 0.7);
   border-bottom: 1px solid rgba(255, 255, 255, 0.06);
-  border-radius: 12px 12px 0 0;
-  flex-wrap: wrap;
-  gap: 16px;
+  border-radius: 0;
+  flex-wrap: nowrap;
+  gap: 12px;
+  flex-shrink: 0;
 }
 
 .lobby-header-left {
   display: flex;
   align-items: center;
-  gap: 14px;
+  gap: 10px;
 }
 
 .lobby-pokeball-brand {
-  width: 36px;
-  height: 36px;
+  width: 28px;
+  height: 28px;
   border-radius: 50%;
   background: linear-gradient(180deg, #e53935 48%, #1e293b 48%, #1e293b 52%, #ffffff 52%);
   border: 2px solid #0f172a;
@@ -4989,26 +4997,26 @@ body {
 
 .lobby-pokeball-brand::after {
   content: "";
-  width: 10px;
-  height: 10px;
+  width: 8px;
+  height: 8px;
   background: #ffffff;
   border: 2px solid #0f172a;
   border-radius: 50%;
 }
 
 .lobby-brand-title {
-  font-size: 1.35rem;
+  font-size: 1.15rem;
   font-weight: 800;
   color: #ffffff;
   margin: 0;
 }
 
 .lobby-status-pill {
-  padding: 4px 12px;
+  padding: 3px 10px;
   background: rgba(2, 132, 199, 0.2);
   border: 1px solid rgba(56, 189, 248, 0.4);
   border-radius: 6px;
-  font-size: 0.72rem;
+  font-size: 0.68rem;
   font-weight: 800;
   color: #38bdf8;
   letter-spacing: 0.5px;
@@ -5017,18 +5025,18 @@ body {
 .lobby-header-right {
   display: flex;
   align-items: center;
-  gap: 14px;
+  gap: 10px;
 }
 
 .room-code-tag {
   display: inline-flex;
   align-items: center;
-  gap: 8px;
-  padding: 6px 14px;
+  gap: 6px;
+  padding: 5px 12px;
   background: rgba(8, 145, 178, 0.25);
   border: 1px solid #06b6d4;
   border-radius: 6px;
-  font-size: 0.84rem;
+  font-size: 0.8rem;
   font-weight: 800;
   color: #22d3ee;
   letter-spacing: 0.8px;
@@ -5043,55 +5051,63 @@ body {
 
 .room-code-val {
   font-family: 'JetBrains Mono', monospace;
-  font-size: 0.95rem;
+  font-size: 0.9rem;
 }
 
 .copy-icon {
-  font-size: 0.85rem;
+  font-size: 0.8rem;
   opacity: 0.8;
 }
 
 /* Lobby 3 columnas */
 .lobby-main-grid {
   display: grid;
-  grid-template-columns: 1fr 1fr 1.35fr;
-  gap: 18px;
-  padding: 24px 16px;
+  grid-template-columns: 280px 1.4fr 1fr;
+  gap: 14px;
+  padding: 12px 18px;
   align-items: stretch;
+  flex: 1;
+  min-height: 0;
+  overflow: hidden;
+  box-sizing: border-box;
 }
 
 .lobby-card-panel {
   background: rgba(13, 20, 36, 0.92);
   border: 1px solid rgba(255, 255, 255, 0.08);
-  border-radius: 14px;
-  padding: 20px;
+  border-radius: 12px;
+  padding: 14px 16px;
   display: flex;
   flex-direction: column;
-  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.4);
-  min-height: 440px;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.4);
+  min-height: 0;
+  height: 100%;
+  box-sizing: border-box;
+  overflow: hidden;
 }
 
 .panel-header-row {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  margin-bottom: 20px;
-  padding-bottom: 12px;
+  margin-bottom: 10px;
+  padding-bottom: 8px;
   border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+  flex-shrink: 0;
 }
 
 .panel-title-wrap {
   display: flex;
   align-items: center;
-  gap: 8px;
+  gap: 6px;
 }
 
 .panel-icon {
-  font-size: 1rem;
+  font-size: 0.9rem;
 }
 
 .panel-title {
-  font-size: 0.82rem;
+  font-size: 0.78rem;
   font-weight: 800;
   letter-spacing: 0.8px;
   color: #38bdf8;
@@ -5100,16 +5116,16 @@ body {
 .panel-counter-badge {
   background: rgba(15, 23, 42, 0.8);
   border: 1px solid rgba(255, 255, 255, 0.1);
-  padding: 2px 10px;
+  padding: 1px 8px;
   border-radius: 999px;
-  font-size: 0.72rem;
+  font-size: 0.7rem;
   font-weight: 700;
   color: #94a3b8;
   font-family: 'JetBrains Mono', monospace;
 }
 
 .panel-subhint {
-  font-size: 0.7rem;
+  font-size: 0.68rem;
   color: #64748b;
   font-weight: 500;
 }
@@ -5118,18 +5134,21 @@ body {
 .players-list-scroll {
   display: flex;
   flex-direction: column;
-  gap: 10px;
+  gap: 8px;
   flex: 1;
+  overflow-y: auto;
+  min-height: 0;
+  padding-right: 4px;
 }
 
 .player-slot-item {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  padding: 12px 16px;
+  padding: 10px 14px;
   background: rgba(19, 29, 51, 0.7);
   border: 1px solid rgba(255, 255, 255, 0.06);
-  border-radius: 10px;
+  border-radius: 8px;
   transition: all 0.2s;
 }
 
@@ -5141,7 +5160,7 @@ body {
 .player-info-meta {
   display: flex;
   flex-direction: column;
-  gap: 2px;
+  gap: 1px;
 }
 
 .player-name-line {
@@ -5149,53 +5168,62 @@ body {
   align-items: center;
   gap: 6px;
   font-weight: 700;
-  font-size: 0.95rem;
+  font-size: 0.9rem;
 }
 
 .crown-icon {
-  font-size: 0.85rem;
+  font-size: 0.8rem;
 }
 
 .self-tag {
   color: #38bdf8;
-  font-size: 0.78rem;
+  font-size: 0.74rem;
   font-weight: 800;
 }
 
 .player-role-sub {
-  font-size: 0.72rem;
+  font-size: 0.7rem;
   color: #ffd700;
   font-weight: 600;
 }
 
 .star-icon {
   color: #ffd700;
-  font-size: 1.1rem;
+  font-size: 1rem;
 }
 
 /* Columna 2: Ajustes */
 .settings-content-wrap {
   display: flex;
   flex-direction: column;
-  gap: 18px;
+  gap: 8px;
   flex: 1;
+  min-height: 0;
+  overflow-y: auto;
+  padding-right: 4px;
+}
+
+.settings-summary-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 8px;
 }
 
 .setting-row-item {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  padding: 12px 14px;
+  padding: 6px 10px;
   background: rgba(19, 29, 51, 0.5);
   border: 1px solid rgba(255, 255, 255, 0.05);
-  border-radius: 10px;
+  border-radius: 8px;
 }
 
 .setting-label-col {
   display: flex;
   align-items: center;
-  gap: 8px;
-  font-size: 0.9rem;
+  gap: 6px;
+  font-size: 0.8rem;
   font-weight: 700;
   color: #e2e8f0;
 }
@@ -5203,21 +5231,22 @@ body {
 .stepper-controls {
   display: flex;
   align-items: center;
-  gap: 6px;
+  gap: 4px;
   background: rgba(8, 12, 22, 0.8);
-  padding: 3px 5px;
-  border-radius: 8px;
+  padding: 2px 4px;
+  border-radius: 6px;
   border: 1px solid rgba(255, 255, 255, 0.08);
 }
 
 .stepper-btn {
-  width: 28px;
-  height: 28px;
-  border-radius: 6px;
+  width: 24px;
+  height: 24px;
+  border-radius: 5px;
   background: rgba(30, 41, 59, 0.8);
   border: 1px solid rgba(255, 255, 255, 0.1);
   color: #ffffff;
   font-weight: 800;
+  font-size: 0.82rem;
   cursor: pointer;
   display: flex;
   align-items: center;
@@ -5231,32 +5260,37 @@ body {
 }
 
 .stepper-value {
-  width: 32px;
+  width: 26px;
   text-align: center;
   font-family: 'JetBrains Mono', monospace;
-  font-size: 0.95rem;
+  font-size: 0.88rem;
   font-weight: 800;
   color: #38bdf8;
 }
 
 /* Columna 3: Chat */
+.chat-card-panel {
+  display: flex;
+  flex-direction: column;
+}
+
 .chat-messages-container {
   flex: 1;
   background: rgba(8, 12, 22, 0.6);
   border: 1px solid rgba(255, 255, 255, 0.05);
-  border-radius: 10px;
-  padding: 14px;
+  border-radius: 8px;
+  padding: 10px;
   overflow-y: auto;
   display: flex;
   flex-direction: column;
-  gap: 8px;
-  margin-bottom: 12px;
-  max-height: 320px;
+  gap: 6px;
+  margin-bottom: 8px;
+  min-height: 0;
 }
 
 .chat-msg-row {
-  font-size: 0.84rem;
-  line-height: 1.4;
+  font-size: 0.8rem;
+  line-height: 1.35;
   color: #e2e8f0;
   word-break: break-word;
 }
@@ -5268,17 +5302,18 @@ body {
 .chat-msg-row.msg-system {
   color: #94a3b8;
   font-style: italic;
-  font-size: 0.78rem;
+  font-size: 0.74rem;
 }
 
 .chat-input-bar {
   display: flex;
   align-items: center;
-  gap: 8px;
+  gap: 6px;
   background: rgba(8, 12, 22, 0.8);
   border: 1px solid rgba(255, 255, 255, 0.1);
-  border-radius: 10px;
-  padding: 4px 6px 4px 14px;
+  border-radius: 8px;
+  padding: 3px 4px 3px 10px;
+  flex-shrink: 0;
 }
 
 .chat-input-bar:focus-within {
@@ -5290,15 +5325,15 @@ body {
   background: transparent;
   border: none;
   color: #ffffff;
-  font-size: 0.88rem;
+  font-size: 0.82rem;
   outline: none;
   font-family: inherit;
 }
 
 .chat-send-btn {
-  width: 34px;
-  height: 34px;
-  border-radius: 8px;
+  width: 28px;
+  height: 28px;
+  border-radius: 6px;
   background: #06b6d4;
   border: none;
   color: #0f172a;
@@ -5307,6 +5342,7 @@ body {
   align-items: center;
   justify-content: center;
   font-weight: 900;
+  font-size: 0.85rem;
   transition: all 0.2s;
 }
 
@@ -5318,36 +5354,38 @@ body {
 /* Footer del lobby */
 .lobby-footer-bar {
   display: flex;
-  justify-content: space-between;
+  justify-content: center;
   align-items: center;
-  padding: 20px 24px;
+  padding: 8px 18px 12px;
   border-top: 1px solid rgba(255, 255, 255, 0.06);
-  flex-wrap: wrap;
-  gap: 20px;
+  flex-shrink: 0;
+  background: rgba(7, 11, 20, 0.4);
 }
 
 .lobby-start-action-center {
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 10px;
+  gap: 6px;
   margin: 0 auto;
 }
 
 .lobby-waiting-hint {
-  font-size: 0.78rem;
+  font-size: 0.74rem;
   color: #94a3b8;
   font-weight: 500;
 }
 
 .btn-iniciar-partida {
-  padding: 12px 36px;
+  padding: 8px 32px;
   border-radius: 8px;
-  font-size: 0.9rem;
+  font-size: 0.85rem;
   font-weight: 900;
-  letter-spacing: 1px;
+  letter-spacing: 0.8px;
   cursor: pointer;
   border: none;
+  transition: all 0.2s;
+}
   transition: all 0.2s;
 }
 
@@ -5743,20 +5781,20 @@ body {
 .filter-setting-block {
   display: flex;
   flex-direction: column;
-  gap: 8px;
+  gap: 5px;
   background: rgba(10, 16, 30, 0.65);
   border: 1px solid rgba(255, 255, 255, 0.06);
-  border-radius: 12px;
-  padding: 12px 14px;
+  border-radius: 8px;
+  padding: 6px 10px;
 }
 
 .filter-setting-header {
   display: flex;
   align-items: center;
-  gap: 8px;
-  font-size: 0.82rem;
+  gap: 6px;
+  font-size: 0.74rem;
   font-weight: 800;
-  letter-spacing: 0.5px;
+  letter-spacing: 0.4px;
   color: #38bdf8;
   text-transform: uppercase;
 }
@@ -5764,7 +5802,7 @@ body {
 .filter-pills-row {
   display: flex;
   flex-wrap: wrap;
-  gap: 6px;
+  gap: 4px;
 }
 
 .filter-pill-btn {
@@ -5772,8 +5810,8 @@ body {
   border: 1px solid rgba(255, 255, 255, 0.1);
   color: #94a3b8;
   border-radius: 999px;
-  padding: 5px 12px;
-  font-size: 0.76rem;
+  padding: 3px 8px;
+  font-size: 0.7rem;
   font-weight: 700;
   cursor: pointer;
   transition: all 0.2s ease;
@@ -5781,7 +5819,7 @@ body {
   font-family: 'Outfit', sans-serif;
   display: inline-flex;
   align-items: center;
-  gap: 5px;
+  gap: 4px;
 }
 
 .filter-pill-btn:hover:not(:disabled) {
@@ -5794,7 +5832,7 @@ body {
   background: #0284c7;
   border-color: #38bdf8;
   color: #ffffff;
-  box-shadow: 0 0 12px rgba(56, 189, 248, 0.4);
+  box-shadow: 0 0 8px rgba(56, 189, 248, 0.4);
 }
 
 .filter-pill-btn:disabled {
@@ -5806,11 +5844,11 @@ body {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  padding: 8px 12px;
+  padding: 6px 10px;
   background: rgba(14, 116, 144, 0.12);
   border: 1px solid rgba(56, 189, 248, 0.2);
-  border-radius: 8px;
-  font-size: 0.78rem;
+  border-radius: 6px;
+  font-size: 0.74rem;
   color: #cbd5e1;
 }
 
@@ -5818,6 +5856,16 @@ body {
   font-family: 'JetBrains Mono', monospace;
   font-weight: 800;
   color: #38bdf8;
+}
+
+.room-mini-badge {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 0.7rem;
+  color: #94a3b8;
+  background: rgba(15, 23, 42, 0.6);
+  padding: 1px 6px;
+  border-radius: 4px;
+  border: 1px solid rgba(255, 255, 255, 0.08);
 }
 
 /* Modal de equipo asignado */
