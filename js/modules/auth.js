@@ -53,13 +53,15 @@ class AuthManager {
     return this.getCurrentUser() !== null;
   }
 
-  static register({ nombre, username, email, contrasena }) {
+  static register({ nombre, apellido, username, email, contrasena }) {
     const cleanNombre = (nombre || '').trim();
+    const cleanApellido = (apellido || '').trim();
     const cleanUsername = (username || '').trim().toLowerCase();
     const cleanEmail = (email || '').trim().toLowerCase();
     const cleanPass = (contrasena || '').trim();
 
-    if (!cleanNombre) return { ok: false, error: 'Por favor, ingresa tu nombre completo.' };
+    if (!cleanNombre) return { ok: false, error: 'Por favor, ingresa tu nombre.' };
+    if (!cleanApellido) return { ok: false, error: 'Por favor, ingresa tu apellido.' };
     if (!cleanUsername) return { ok: false, error: 'Por favor, ingresa un nombre de usuario.' };
     if (cleanUsername.length < 3) return { ok: false, error: 'El usuario debe tener al menos 3 caracteres.' };
     if (!cleanEmail || !cleanEmail.includes('@') || !cleanEmail.includes('.')) {
@@ -80,6 +82,7 @@ class AuthManager {
     const newUser = {
       id: Date.now(),
       nombre: cleanNombre,
+      apellido: cleanApellido,
       username: cleanUsername,
       email: cleanEmail,
       contrasena: cleanPass,
@@ -265,9 +268,15 @@ class AuthManager {
 
             <!-- FORMULARIO DE REGISTRO -->
             <form id="authFormRegister" class="auth-form" style="display: none;" onsubmit="event.preventDefault();">
-              <div class="auth-field">
-                <label for="regNombre">Nombre Completo:</label>
-                <input type="text" id="regNombre" placeholder="ej. Ash Ketchum" autocomplete="name">
+              <div class="auth-row-2col">
+                <div class="auth-field">
+                  <label for="regNombre">Nombre:</label>
+                  <input type="text" id="regNombre" placeholder="ej. Ash" autocomplete="given-name">
+                </div>
+                <div class="auth-field">
+                  <label for="regApellido">Apellido:</label>
+                  <input type="text" id="regApellido" placeholder="ej. Ketchum" autocomplete="family-name">
+                </div>
               </div>
               <div class="auth-field">
                 <label for="regUsername">Nombre de Usuario (Username):</label>
@@ -342,11 +351,12 @@ class AuthManager {
     const formReg = document.getElementById('authFormRegister');
     formReg?.addEventListener('submit', () => {
       const nombre = document.getElementById('regNombre')?.value;
+      const apellido = document.getElementById('regApellido')?.value;
       const username = document.getElementById('regUsername')?.value;
       const email = document.getElementById('regEmail')?.value;
       const pass = document.getElementById('regPassword')?.value;
 
-      const res = AuthManager.register({ nombre, username, email, contrasena: pass });
+      const res = AuthManager.register({ nombre, apellido, username, email, contrasena: pass });
       if (res.ok) {
         AuthManager.showMessage(`¡Registro exitoso! Bienvenido a Pokémon Stadium, ${res.user.nombre}.`, true);
         setTimeout(() => AuthManager.closeModal(), 1200);
