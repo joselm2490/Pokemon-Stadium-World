@@ -33,7 +33,11 @@ function initStadiumApp() {
 
   // 4. Inicializar Módulos de Catálogo
   if (window.PokemonModule) {
-    window.PokemonModule.loadFromSupabase();
+    if (typeof window.PokemonModule.loadFromSupabase === 'function') {
+      window.PokemonModule.loadFromSupabase();
+    } else {
+      window.PokemonModule.init(GameState.pokemon, GameState.movesById);
+    }
   }
 
   if (window.MovimientosModule) {
