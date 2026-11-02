@@ -176,12 +176,16 @@ class AuthManager {
     }
     this.switchTab(tab);
     modal.classList.add('open');
+    modal.style.setProperty('display', 'flex', 'important');
     if (window.SFX) window.SFX.playModalOpen();
   }
 
   static closeModal() {
     const modal = document.getElementById('authModal');
-    if (modal) modal.classList.remove('open');
+    if (modal) {
+      modal.classList.remove('open');
+      modal.style.setProperty('display', 'none', 'important');
+    }
   }
 
   static switchTab(tab) {
@@ -220,8 +224,8 @@ class AuthManager {
 
   static createAuthModalDOM() {
     const modalHtml = `
-      <div class="stadium-modal-backdrop" id="authModal">
-        <div class="auth-modal-window">
+      <div class="stadium-modal-backdrop modal-backdrop" id="authModal" style="position: fixed !important; top: 0 !important; left: 0 !important; width: 100vw !important; height: 100vh !important; background: rgba(3, 5, 9, 0.88) !important; backdrop-filter: blur(8px) !important; z-index: 999999 !important; display: none; align-items: center !important; justify-content: center !important; padding: 20px !important;">
+        <div class="auth-modal-window" style="margin: auto !important; position: relative !important;">
           <div class="auth-modal-header">
             <div class="auth-modal-title-wrap">
               <span class="auth-stadium-icon">🏟️</span>
