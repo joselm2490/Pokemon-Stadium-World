@@ -73,14 +73,25 @@ class BatallaModule {
     if (window.BattleRoomStore) {
       const updated = window.BattleRoomStore.getRoomByCode(this.currentRoom.codigo);
       if (updated) {
+        // Si el anfitrión cerró la sala mientras otro estaba adentro o se canceló
+        if (updated.estado === 'cancelada') {
+          sessionStorage.removeItem('stadium_active_room_code');
+          this.currentRoom = null;
+          this.currentScreen = 'landing';
+          alert('⚠️ El anfitrión ha salido y la sala fue cerrada.');
+          this.renderCurrentView();
+          return;
+        }
+
         const hadDifferentMessages = JSON.stringify(this.currentRoom.mensajes) !== JSON.stringify(updated.mensajes);
         const hadDifferentPlayers = JSON.stringify(this.currentRoom.jugadores) !== JSON.stringify(updated.jugadores);
         const hadDifferentSettings = this.currentRoom.pokemon_por_jugador !== updated.pokemon_por_jugador || this.currentRoom.max_jugadores !== updated.max_jugadores;
+        const hadDifferentHost = this.currentRoom.anfitrion_nombre !== updated.anfitrion_nombre;
         
         this.currentRoom = updated;
 
         if (this.currentScreen === 'lobby') {
-          if (hadDifferentPlayers || hadDifferentSettings) {
+          if (hadDifferentPlayers || hadDifferentSettings || hadDifferentHost) {
             this.renderCurrentView();
           } else if (hadDifferentMessages) {
             this.renderChatOnly();
@@ -215,6 +226,58 @@ class BatallaModule {
         </footer>
       </div>
 
+      <!-- MODAL PARA CREAR SALA (CON OPCIÓN DE CONTRASEÑA) -->
+      <div class="battle-modal-overlay" id="createRoomModal" style="display: none;">
+        <div class="battle-modal-card" style="max-width: 440px;">
+          <div class="battle-modal-header">
+            <h3>🚀 Crear Nueva Sala</h3>
+            <button class="battle-modal-close" onclick="BatallaModule.closeCreateModal()">✕</button>
+          </div>
+          <div class="battle-modal-body">
+            <div class="create-room-form-group">
+              <label class="create-room-label">Pokémon por entrenador</label>
+              <select id="createRoomPokemonCount" class="create-room-select">
+                <option value="1">1 Pokémon (Duelo Rápido)</option>
+                <option value="3" selected>3 Pokémon (Formato Estándar)</option>
+                <option value="6">6 Pokémon (Combate Completo)</option>
+              </select>
+            </div>
+
+            <div class="create-room-form-group" style="margin-top: 14px;">
+              <label class="password-toggle-row">
+                <input type="checkbox" id="createRoomHasPassword" onchange="BatallaModule.toggleCreatePasswordInput()" />
+                <span class="password-toggle-text">🔒 Proteger sala con contraseña</span>
+              </label>
+
+              <div id="createRoomPasswordContainer" class="password-field-container" style="display: none;">
+                <input 
+                  type="password" 
+                  id="createRoomPasswordInput" 
+                  class="create-room-input" 
+                  placeholder="Ingresa la contraseña de la sala"
+                  maxlength="20"
+                  autocomplete="new-password"
+                />
+                <span style="font-size: 0.76rem; color: #94a3b8; display: block; margin-top: 5px;">
+                  Solo los entrenadores que ingresen esta clave podrán unirse.
+                </span>
+              </div>
+            </div>
+
+            <div id="createModalErrorMsg" style="color: #ef4444; font-size: 0.82rem; margin-top: 10px; display: none;"></div>
+
+            <div class="battle-modal-actions" style="margin-top: 22px; display: flex; gap: 10px;">
+              <button class="battle-primary-action-btn btn-crear-sala" style="flex: 1; padding: 12px;" onclick="BatallaModule.submitCreateRoom()">
+                Confirmar y Crear
+              </button>
+              <button class="battle-secondary-action-btn" style="width: auto; padding: 12px 18px;" onclick="BatallaModule.closeCreateModal()">
+                Cancelar
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+
       <!-- MODAL PARA UNIRSE A SALA: POR CÓDIGO O LISTA DE SALAS DISPONIBLES -->
       <div class="battle-modal-overlay" id="joinRoomModal" style="display: none;">
         <div class="battle-modal-card">
@@ -247,6 +310,20 @@ class BatallaModule {
               style="text-transform: uppercase;"
               autocomplete="off"
             />
+
+            <!-- Campo de contraseña opcional si la sala la requiere -->
+            <div id="joinPasswordGroup" style="margin-top: 14px; display: none;">
+              <label class="create-room-label">🔒 Esta sala requiere contraseña:</label>
+              <input 
+                type="password" 
+                id="joinRoomPasswordInput" 
+                class="create-room-input" 
+                placeholder="Contraseña de la sala" 
+                maxlength="20"
+                autocomplete="off"
+              />
+            </div>
+
             <div id="joinModalErrorMsg" style="color: #ef4444; font-size: 0.82rem; margin-top: 10px; display: none;"></div>
             <div class="battle-modal-actions" style="margin-top: 20px; display: flex; gap: 10px;">
               <button class="battle-primary-action-btn btn-crear-sala" style="flex: 1; padding: 12px;" onclick="BatallaModule.submitJoinRoom()">
@@ -506,7 +583,7 @@ class BatallaModule {
     const btnCrear = document.getElementById('btnCrearSala');
     if (btnCrear) {
       btnCrear.addEventListener('click', () => {
-        this.createRoom();
+        this.openCreateModal();
       });
     }
 
@@ -528,25 +605,74 @@ class BatallaModule {
   // ------------------------------------------------------------------
   // OPERACIONES DE SALA (INTEGRADAS CON BASE DE DATOS Y STORAGE)
   // ------------------------------------------------------------------
-  static async createRoom() {
+  static openCreateModal() {
+    const modal = document.getElementById('createRoomModal');
+    if (modal) {
+      modal.style.display = 'flex';
+      const checkbox = document.getElementById('createRoomHasPassword');
+      if (checkbox) checkbox.checked = false;
+      const passContainer = document.getElementById('createRoomPasswordContainer');
+      if (passContainer) passContainer.style.display = 'none';
+      const passInput = document.getElementById('createRoomPasswordInput');
+      if (passInput) passInput.value = '';
+      const err = document.getElementById('createModalErrorMsg');
+      if (err) err.style.display = 'none';
+    }
+  }
+
+  static closeCreateModal() {
+    const modal = document.getElementById('createRoomModal');
+    if (modal) modal.style.display = 'none';
+  }
+
+  static toggleCreatePasswordInput() {
+    const checkbox = document.getElementById('createRoomHasPassword');
+    const container = document.getElementById('createRoomPasswordContainer');
+    const input = document.getElementById('createRoomPasswordInput');
+    if (checkbox && container) {
+      container.style.display = checkbox.checked ? 'block' : 'none';
+      if (checkbox.checked && input) {
+        input.focus();
+      }
+    }
+  }
+
+  static async submitCreateRoom() {
     const nick = (this.userNickname || 'Jose').trim() || 'Entrenador';
     localStorage.setItem('stadium_battle_nickname', nick);
+
+    const selectPokemon = document.getElementById('createRoomPokemonCount');
+    const pokemonCount = selectPokemon ? parseInt(selectPokemon.value, 10) : 3;
+
+    const hasPassword = document.getElementById('createRoomHasPassword')?.checked;
+    const passInput = document.getElementById('createRoomPasswordInput');
+    const password = hasPassword && passInput ? passInput.value.trim() : null;
+
+    if (hasPassword && !password) {
+      const err = document.getElementById('createModalErrorMsg');
+      if (err) {
+        err.textContent = 'Por favor escribe la contraseña que deseas asignar a la sala.';
+        err.style.display = 'block';
+      }
+      return;
+    }
 
     let room = null;
     if (window.BattleRoomStore) {
       room = await window.BattleRoomStore.createRoom({
         hostNickname: nick,
-        pokemonCount: 3,
-        maxPlayers: 2
+        pokemonCount: pokemonCount,
+        maxPlayers: 2,
+        password: password
       });
     } else {
-      // Respaldo en memoria
       const code = 'PXXE' + Math.floor(10 + Math.random() * 90);
       room = {
         codigo: code,
         anfitrion_nombre: nick,
+        contrasena: password,
         estado: 'esperando',
-        pokemon_por_jugador: 3,
+        pokemon_por_jugador: pokemonCount,
         max_jugadores: 2,
         jugadores: [{ id: '1', apodo: nick, es_anfitrion: true }],
         mensajes: [{ id: 1, emisor: 'SISTEMA', mensaje: `¡Sala ${code} creada!`, es_sistema: true }]
@@ -556,9 +682,14 @@ class BatallaModule {
     this.currentRoom = room;
     sessionStorage.setItem('stadium_active_room_code', room.codigo);
 
+    this.closeCreateModal();
     if (window.SFX) window.SFX.playSuccess();
     this.currentScreen = 'lobby';
     this.renderCurrentView();
+  }
+
+  static async createRoom() {
+    this.openCreateModal();
   }
 
   static openJoinModal() {
@@ -642,6 +773,7 @@ class BatallaModule {
         // Solo unirse a las que estén disponibles (estado esperando Y que solo tenga 1 jugador).
         // Si tiene 2 o más jugadores no se puede unir.
         const isAvailable = (estado === 'esperando') && (playersCount === 1);
+        const hasPass = room.tiene_contrasena || !!room.contrasena;
 
         let statusClass = 'status-badge-esperando';
         let statusLabel = '🟢 DISPONIBLE';
@@ -663,6 +795,7 @@ class BatallaModule {
             <div class="room-info-left">
               <div class="room-code-tag">
                 <span>🔑</span> ${this.escapeHtml(room.codigo)}
+                ${hasPass ? `<span class="room-password-tag">🔒 Clave</span>` : ''}
               </div>
               <div class="room-host-line">
                 Anfitrión: <span class="room-host-name">${this.escapeHtml(room.anfitrion_nombre || 'Entrenador')}</span>
@@ -684,7 +817,7 @@ class BatallaModule {
               ${isAvailable ? `
                 <button 
                   class="btn-join-room-action"
-                  onclick="BatallaModule.joinRoomDirectly('${this.escapeHtml(room.codigo)}')"
+                  onclick="BatallaModule.joinRoomDirectly('${this.escapeHtml(room.codigo)}', ${hasPass ? 'true' : 'false'})"
                 >
                   Unirme
                 </button>
@@ -707,9 +840,16 @@ class BatallaModule {
     }
   }
 
-  static async joinRoomDirectly(code) {
+  static async joinRoomDirectly(code, requiresPassword = false) {
     const errorDiv = document.getElementById('joinRoomsListErrorMsg');
     if (errorDiv) errorDiv.style.display = 'none';
+
+    let enteredPassword = '';
+    if (requiresPassword) {
+      const pass = prompt('🔒 Esta sala es privada. Ingresa la contraseña de la sala:');
+      if (pass === null) return; // Cancelado por el usuario
+      enteredPassword = pass.trim();
+    }
 
     const nick = (this.userNickname || 'Invitado').trim() || 'Entrenador';
     localStorage.setItem('stadium_battle_nickname', nick);
@@ -717,10 +857,16 @@ class BatallaModule {
     if (window.BattleRoomStore) {
       const res = await window.BattleRoomStore.joinRoom({
         code: code,
-        userNickname: nick
+        userNickname: nick,
+        password: enteredPassword
       });
 
       if (!res.ok) {
+        if (res.requiresPassword && !requiresPassword) {
+          // Si no sabíamos que tenía clave, volver a solicitar
+          return this.joinRoomDirectly(code, true);
+        }
+
         if (errorDiv) {
           errorDiv.textContent = res.error;
           errorDiv.style.display = 'block';
@@ -744,6 +890,9 @@ class BatallaModule {
     const input = document.getElementById('joinRoomCodeInput');
     const code = (input ? input.value : '').trim().toUpperCase();
     const errorDiv = document.getElementById('joinModalErrorMsg');
+    const passGroup = document.getElementById('joinPasswordGroup');
+    const passInput = document.getElementById('joinRoomPasswordInput');
+    const enteredPassword = passInput ? passInput.value.trim() : '';
 
     if (!code || code.length < 4) {
       if (errorDiv) {
@@ -759,10 +908,16 @@ class BatallaModule {
     if (window.BattleRoomStore) {
       const res = await window.BattleRoomStore.joinRoom({
         code: code,
-        userNickname: nick
+        userNickname: nick,
+        password: enteredPassword
       });
 
       if (!res.ok) {
+        if (res.requiresPassword) {
+          if (passGroup) passGroup.style.display = 'block';
+          if (passInput) passInput.focus();
+        }
+
         if (errorDiv) {
           errorDiv.textContent = res.error;
           errorDiv.style.display = 'block';

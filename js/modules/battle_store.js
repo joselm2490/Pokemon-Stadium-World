@@ -68,10 +68,10 @@ class BattleRoomStore {
   static startSupabasePolling() {
     if (this.pollingTimer) clearInterval(this.pollingTimer);
 
-    // Polling regular cada 3 segundos para sincronizar chat y jugadores activos
+    // Polling regular cada 2.5 segundos para sincronizar chat y jugadores activos
     this.pollingTimer = setInterval(() => {
       this.syncActiveRoomFromSupabase();
-    }, 3000);
+    }, 2500);
   }
 
   static setActiveRoomCode(code) {
@@ -100,11 +100,12 @@ class BattleRoomStore {
       const msgsRes = await window.StadiumSupabase.request(`sala_mensajes?sala_id=eq.${remoteRoom.id}&select=*&order=id.asc`);
       const remoteMsgs = msgsRes.ok && msgsRes.data ? msgsRes.data : [];
 
-      // Mapear al modelo unificado de sala
       const currentLocal = this.getRoomByCode(code);
       const unifiedRoom = {
         id: remoteRoom.id,
         codigo: remoteRoom.codigo,
+        contrasena: (currentLocal && currentLocal.contrasena) || null,
+        tiene_contrasena: (currentLocal && !!currentLocal.contrasena) || false,
         anfitrion_nombre: remoteRoom.anfitrion_nombre,
         anfitrion_id: remoteRoom.anfitrion_id,
         estado: remoteRoom.estado,
@@ -191,31 +192,48 @@ class BattleRoomStore {
     return code;
   }
 
-  // Obtener lista de salas disponibles desde Supabase (con fallback a local)
+  // Obtener lista de salas disponibles desde Supabase (combinadas con local)
   static async fetchAvailableRooms() {
+    const localRooms = this.getAllRooms();
+    const localMap = new Map();
+    localRooms.forEach(r => localMap.set(r.codigo, r));
+
     if (window.StadiumSupabase) {
       try {
         const res = await window.StadiumSupabase.request(
           'salas_batalla?select=id,codigo,anfitrion_nombre,estado,pokemon_por_jugador,max_jugadores,jugadores_actuales,creada_en,finalizada_en&order=creada_en.desc&limit=30'
         );
         if (res.ok && Array.isArray(res.data)) {
-          return res.data;
+          return res.data.map(remote => {
+            const loc = localMap.get(remote.codigo);
+            return {
+              ...remote,
+              contrasena: loc ? loc.contrasena : null,
+              tiene_contrasena: loc ? !!loc.contrasena : false
+            };
+          });
         }
       } catch (e) {
         console.warn('Error trayendo salas desde Supabase, usando local:', e);
       }
     }
-    return this.getAllRooms();
+    return localRooms.map(r => ({
+      ...r,
+      tiene_contrasena: !!r.contrasena
+    }));
   }
 
   // Crear una nueva sala
   static async createRoom({ hostNickname, pokemonCount = 3, maxPlayers = 2, password = null }) {
     const code = this.generateUniqueRoomCode();
     const now = new Date().toISOString();
+    const cleanPassword = (password || '').trim() || null;
 
     const newRoom = {
       id: Date.now(),
       codigo: code,
+      contrasena: cleanPassword,
+      tiene_contrasena: !!cleanPassword,
       anfitrion_nombre: hostNickname,
       estado: 'esperando', // 'esperando', 'en_combate', 'finalizada', 'cancelada'
       pokemon_por_jugador: pokemonCount,
@@ -306,8 +324,8 @@ class BattleRoomStore {
     return newRoom;
   }
 
-  // Unirse a una sala
-  static async joinRoom({ code, userNickname }) {
+  // Unirse a una sala (con validación de contraseña y límite de jugadores)
+  static async joinRoom({ code, userNickname, password = '' }) {
     const cleanCode = (code || '').trim().toUpperCase();
     let room = this.getRoomByCode(cleanCode);
 
@@ -326,9 +344,13 @@ class BattleRoomStore {
           const msgsRes = await window.StadiumSupabase.request(`sala_mensajes?sala_id=eq.${dbRoom.id}&select=*&order=id.asc`);
           const msgs = msgsRes.ok && msgsRes.data ? msgsRes.data : [];
 
+          const existingLocal = this.getRoomByCode(cleanCode);
+
           room = {
             id: dbRoom.id,
             codigo: dbRoom.codigo,
+            contrasena: (existingLocal && existingLocal.contrasena) || null,
+            tiene_contrasena: (existingLocal && !!existingLocal.contrasena) || false,
             anfitrion_nombre: dbRoom.anfitrion_nombre,
             anfitrion_id: dbRoom.anfitrion_id,
             estado: dbRoom.estado,
@@ -377,6 +399,17 @@ class BattleRoomStore {
     // Regla 2: Solo unirse si solo tiene 1 jugador (o si es el mismo reingresando)
     if (!existingPlayer && currentPlayers.length >= 2) {
       return { ok: false, error: 'Esta sala ya está completa (tiene 2 o más jugadores). Solo puedes unirte a salas con 1 jugador.' };
+    }
+
+    // Regla 3: Validación de contraseña de la sala
+    if (room.contrasena) {
+      const inputPass = (password || '').trim();
+      if (!inputPass) {
+        return { ok: false, requiresPassword: true, error: 'Esta sala es privada y requiere contraseña.' };
+      }
+      if (inputPass !== room.contrasena) {
+        return { ok: false, requiresPassword: true, error: 'Contraseña de sala incorrecta. Intenta nuevamente.' };
+      }
     }
 
     const now = new Date().toISOString();
@@ -496,7 +529,9 @@ class BattleRoomStore {
     return msgObj;
   }
 
-  // Salir de una sala
+  // Salir de una sala:
+  // Si el anfitrión sale y está solo: se cancela/cierra la sala.
+  // Si hay otro jugador: ese jugador pasa automáticamente a ser el anfitrión.
   static async leaveRoom(code, userNickname) {
     const room = this.getRoomByCode(code);
     if (!room) return;
@@ -504,36 +539,59 @@ class BattleRoomStore {
     this.setActiveRoomCode(null);
     const isHost = (room.anfitrion_nombre || '').toLowerCase() === (userNickname || '').toLowerCase();
 
+    // Caso 1: El anfitrión sale y no hay más jugadores (está solo en la sala)
     if (isHost && (!room.jugadores || room.jugadores.length <= 1)) {
       room.estado = 'cancelada';
+      room.finalizada_en = new Date().toISOString();
+      room.jugadores = [];
+      room.jugadores_actuales = 0;
       this.updateRoom(room);
 
       if (window.StadiumSupabase && room.id) {
         try {
+          await window.StadiumSupabase.request(`sala_jugadores?sala_id=eq.${room.id}`, {
+            method: 'DELETE'
+          });
           await window.StadiumSupabase.request(`salas_batalla?id=eq.${room.id}`, {
             method: 'PATCH',
-            body: JSON.stringify({ estado: 'cancelada', finalizada_en: new Date().toISOString() })
+            body: JSON.stringify({ 
+              estado: 'cancelada', 
+              jugadores_actuales: 0,
+              finalizada_en: new Date().toISOString() 
+            })
           });
         } catch (e) {}
       }
     } else {
+      // Caso 2: Hay otro jugador en la sala
       room.jugadores = (room.jugadores || []).filter(
         (j) => j.apodo.toLowerCase() !== (userNickname || '').toLowerCase()
       );
       room.jugadores_actuales = room.jugadores.length;
 
+      let newHostNick = null;
       if (isHost && room.jugadores.length > 0) {
+        // El siguiente jugador pasa automáticamente a ser el anfitrión
         room.jugadores[0].es_anfitrion = true;
         room.anfitrion_nombre = room.jugadores[0].apodo;
-      }
+        newHostNick = room.jugadores[0].apodo;
 
-      room.mensajes.push({
-        id: (room.mensajes ? room.mensajes.length : 0) + 1,
-        emisor: 'SISTEMA',
-        mensaje: `Entrenador ${userNickname} ha salido de la sala.`,
-        es_sistema: true,
-        enviado_en: new Date().toISOString()
-      });
+        room.mensajes.push({
+          id: (room.mensajes ? room.mensajes.length : 0) + 1,
+          emisor: 'SISTEMA',
+          mensaje: `El anfitrión ${userNickname} ha salido. ${newHostNick} es ahora el nuevo anfitrión de la sala.`,
+          es_sistema: true,
+          enviado_en: new Date().toISOString()
+        });
+      } else {
+        room.mensajes.push({
+          id: (room.mensajes ? room.mensajes.length : 0) + 1,
+          emisor: 'SISTEMA',
+          mensaje: `Entrenador ${userNickname} ha salido de la sala.`,
+          es_sistema: true,
+          enviado_en: new Date().toISOString()
+        });
+      }
 
       this.updateRoom(room);
 
@@ -542,13 +600,39 @@ class BattleRoomStore {
           await window.StadiumSupabase.request(`sala_jugadores?sala_id=eq.${room.id}&apodo=eq.${encodeURIComponent(userNickname)}`, {
             method: 'DELETE'
           });
-          await window.StadiumSupabase.request(`salas_batalla?id=eq.${room.id}`, {
-            method: 'PATCH',
-            body: JSON.stringify({
-              anfitrion_nombre: room.anfitrion_nombre,
-              jugadores_actuales: room.jugadores.length
-            })
-          });
+
+          if (newHostNick) {
+            // Actualizar en Supabase al nuevo anfitrión
+            await window.StadiumSupabase.request(`sala_jugadores?sala_id=eq.${room.id}&apodo=eq.${encodeURIComponent(newHostNick)}`, {
+              method: 'PATCH',
+              body: JSON.stringify({ es_anfitrion: 1 })
+            });
+
+            await window.StadiumSupabase.request(`salas_batalla?id=eq.${room.id}`, {
+              method: 'PATCH',
+              body: JSON.stringify({
+                anfitrion_nombre: newHostNick,
+                jugadores_actuales: room.jugadores.length
+              })
+            });
+
+            await window.StadiumSupabase.request('sala_mensajes', {
+              method: 'POST',
+              body: JSON.stringify({
+                sala_id: room.id,
+                emisor: 'SISTEMA',
+                mensaje: `El anfitrión ${userNickname} ha salido. ${newHostNick} es ahora el nuevo anfitrión de la sala.`,
+                es_sistema: 1
+              })
+            });
+          } else {
+            await window.StadiumSupabase.request(`salas_batalla?id=eq.${room.id}`, {
+              method: 'PATCH',
+              body: JSON.stringify({
+                jugadores_actuales: room.jugadores.length
+              })
+            });
+          }
         } catch (e) {}
       }
     }
