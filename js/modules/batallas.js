@@ -98,6 +98,8 @@ class BatallaModule {
   // PANTALLA 1: MENÚ DE ACCESO / APODO / CREAR Y UNIRSE (IMAGEN 1)
   // ------------------------------------------------------------------
   static renderLandingScreen(container) {
+    const isLogged = window.AuthManager && window.AuthManager.isLoggedIn();
+
     container.innerHTML = `
       <div class="stadium-battle-wrapper battle-landing-wrapper">
         <!-- BARRA SUPERIOR DE ESTADO DEL SERVIDOR -->
@@ -129,23 +131,28 @@ class BatallaModule {
             <div class="apodo-field-group">
               <div class="apodo-label-row">
                 <span class="apodo-label">
-                  <span class="label-user-icon">👤</span> TU APODO
+                  <span class="label-user-icon">${isLogged ? '🔒' : '👤'}</span> TU APODO ${isLogged ? '<span class="apodo-locked-tag">(Cuenta Verificada)</span>' : ''}
                 </span>
                 <span class="apodo-counter" id="apodoCharCounter">${(this.userNickname || '').length}/15</span>
               </div>
-              <div class="apodo-input-wrapper">
+              <div class="apodo-input-wrapper ${isLogged ? 'is-locked' : ''}">
                 <input 
                   type="text" 
                   id="battleNicknameInput" 
-                  class="apodo-input" 
+                  class="apodo-input ${isLogged ? 'apodo-input-locked' : ''}" 
                   maxlength="15" 
                   value="${this.escapeHtml(this.userNickname)}"
                   placeholder="Tu apodo"
                   autocomplete="off"
+                  ${isLogged ? 'readonly title="Apodo fijado por tu sesión de entrenador"' : ''}
                 />
-                <button class="dice-btn" id="randomizeNickBtn" title="Generar apodo aleatorio">
-                  🎲
-                </button>
+                ${!isLogged ? `
+                  <button class="dice-btn" id="randomizeNickBtn" title="Generar apodo aleatorio">
+                    🎲
+                  </button>
+                ` : `
+                  <span class="lock-indicator" title="Sesión activa">🔒</span>
+                `}
               </div>
             </div>
 
@@ -407,9 +414,12 @@ class BatallaModule {
   // GESTIÓN DE EVENTOS: PANTALLA DE ACCESO
   // ------------------------------------------------------------------
   static setupLandingEvents() {
+    const isLogged = window.AuthManager && window.AuthManager.isLoggedIn();
     const nickInput = document.getElementById('battleNicknameInput');
     const counter = document.getElementById('apodoCharCounter');
-    if (nickInput && counter) {
+    
+    // Solo permitir edición de apodo si el usuario no tiene sesión iniciada
+    if (!isLogged && nickInput && counter) {
       nickInput.addEventListener('input', (e) => {
         const val = e.target.value || '';
         this.userNickname = val;
@@ -419,7 +429,7 @@ class BatallaModule {
     }
 
     const randomBtn = document.getElementById('randomizeNickBtn');
-    if (randomBtn) {
+    if (!isLogged && randomBtn) {
       randomBtn.addEventListener('click', () => {
         const sampleNicks = ['Ash', 'Red', 'Blue', 'Gary', 'Cynthia', 'Brock', 'Misty', 'Lance', 'Leon', 'Oak', 'Gold', 'Silver', 'Steven', 'N'];
         const random = sampleNicks[Math.floor(Math.random() * sampleNicks.length)];
