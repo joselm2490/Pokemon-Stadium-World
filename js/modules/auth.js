@@ -227,22 +227,26 @@ class AuthManager {
 
   static createAuthModalDOM() {
     const modalHtml = `
-      <div class="stadium-modal-backdrop modal-backdrop" id="authModal" style="position: fixed !important; top: 0 !important; left: 0 !important; width: 100vw !important; height: 100vh !important; background: rgba(3, 5, 9, 0.88) !important; backdrop-filter: blur(8px) !important; z-index: 999999 !important; display: none; align-items: center !important; justify-content: center !important; padding: 20px !important;">
+      <div class="stadium-modal-backdrop modal-backdrop" id="authModal" style="position: fixed !important; top: 0 !important; left: 0 !important; width: 100vw !important; height: 100vh !important; background: rgba(2, 6, 14, 0.85) !important; backdrop-filter: blur(12px) !important; z-index: 999999 !important; display: none; align-items: center !important; justify-content: center !important; padding: 20px !important;">
         <div class="auth-modal-window" style="margin: auto !important; position: relative !important;">
           <div class="auth-modal-header">
             <div class="auth-modal-title-wrap">
-              <span class="auth-stadium-icon">🏟️</span>
+              <div class="auth-icon-badge">🏟️</div>
               <div>
                 <h2 class="auth-modal-title">Control de Entrenadores Stadium</h2>
                 <div class="auth-modal-subtitle">Registro y Acceso al Sistema Oficial</div>
               </div>
             </div>
-            <button class="modal-close-btn" id="authModalCloseBtn" aria-label="Cerrar modal">✕</button>
+            <button class="auth-modal-close" id="authModalCloseBtn" aria-label="Cerrar modal">✕</button>
           </div>
 
           <div class="auth-tabs-bar">
-            <button class="auth-tab active" id="authTabLogin">Iniciar Sesión</button>
-            <button class="auth-tab" id="authTabRegister">Crear Cuenta</button>
+            <button class="auth-tab active" id="authTabLogin">
+              <span>⚡</span> Iniciar Sesión
+            </button>
+            <button class="auth-tab" id="authTabRegister">
+              <span>🛡️</span> Crear Cuenta
+            </button>
           </div>
 
           <div class="auth-modal-body">
@@ -251,18 +255,25 @@ class AuthManager {
             <!-- FORMULARIO DE LOGIN -->
             <form id="authFormLogin" class="auth-form" onsubmit="event.preventDefault();">
               <div class="auth-field">
-                <label for="loginIdentifier">Usuario o Correo:</label>
+                <label for="loginIdentifier">
+                  <span class="auth-field-icon">👤</span> Usuario o Correo Electrónico
+                </label>
                 <input type="text" id="loginIdentifier" placeholder="ej. entrenador_ash o ash@stadium.world" autocomplete="username">
               </div>
+
               <div class="auth-field">
-                <label for="loginPassword">Contraseña:</label>
-                <input type="password" id="loginPassword" placeholder="••••••••" autocomplete="current-password">
+                <label for="loginPassword">
+                  <span class="auth-field-icon">🔒</span> Contraseña de Acceso
+                </label>
+                <input type="password" id="loginPassword" placeholder="••••••••••••" autocomplete="current-password">
               </div>
+
               <button type="submit" class="auth-submit-btn" id="btnSubmitLogin">
-                ⚡ Entrar a Pokémon Stadium
+                <span>⚡</span> ENTRAR A POKÉMON STADIUM
               </button>
+
               <div class="auth-helper-text">
-                ¿No tienes cuenta? <a href="#" id="linkGoRegister">Regístrate aquí</a>
+                ¿Aún no tienes cuenta oficial? <a href="#" id="linkGoRegister">Regístrate gratis aquí</a>
               </div>
             </form>
 
@@ -270,31 +281,46 @@ class AuthManager {
             <form id="authFormRegister" class="auth-form" style="display: none;" onsubmit="event.preventDefault();">
               <div class="auth-row-2col">
                 <div class="auth-field">
-                  <label for="regNombre">Nombre:</label>
+                  <label for="regNombre">
+                    <span class="auth-field-icon">📛</span> Nombre
+                  </label>
                   <input type="text" id="regNombre" placeholder="ej. Ash" autocomplete="given-name">
                 </div>
                 <div class="auth-field">
-                  <label for="regApellido">Apellido:</label>
+                  <label for="regApellido">
+                    <span class="auth-field-icon">📛</span> Apellido
+                  </label>
                   <input type="text" id="regApellido" placeholder="ej. Ketchum" autocomplete="family-name">
                 </div>
               </div>
+
               <div class="auth-field">
-                <label for="regUsername">Nombre de Usuario (Username):</label>
+                <label for="regUsername">
+                  <span class="auth-field-icon">🎮</span> Nombre de Usuario (Username)
+                </label>
                 <input type="text" id="regUsername" placeholder="ej. red_champion" autocomplete="username">
               </div>
+
               <div class="auth-field">
-                <label for="regEmail">Correo Electrónico:</label>
+                <label for="regEmail">
+                  <span class="auth-field-icon">✉️</span> Correo Electrónico
+                </label>
                 <input type="email" id="regEmail" placeholder="ej. red@stadium.world" autocomplete="email">
               </div>
+
               <div class="auth-field">
-                <label for="regPassword">Contraseña:</label>
-                <input type="password" id="regPassword" placeholder="Mínimo 4 caracteres" autocomplete="new-password">
+                <label for="regPassword">
+                  <span class="auth-field-icon">🔒</span> Contraseña de Entrenador
+                </label>
+                <input type="password" id="regPassword" placeholder="Mínimo 4 caracteres seguros" autocomplete="new-password">
               </div>
+
               <button type="submit" class="auth-submit-btn" id="btnSubmitRegister">
-                🛡️ Registrar Entrenador
+                <span>🛡️</span> REGISTRAR ENTRENADOR
               </button>
+
               <div class="auth-helper-text">
-                ¿Ya tienes cuenta? <a href="#" id="linkGoLogin">Inicia sesión</a>
+                ¿Ya posees una cuenta activa? <a href="#" id="linkGoLogin">Inicia sesión</a>
               </div>
             </form>
           </div>
