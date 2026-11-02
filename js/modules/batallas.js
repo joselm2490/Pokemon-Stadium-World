@@ -409,57 +409,55 @@ class BatallaModule {
           </div>
         </header>
 
-        <!-- CUERPO PRINCIPAL DEL LOBBY (3 COLUMNAS) -->
-        <main class="lobby-main-grid">
-          <!-- COLUMNA 1: JUGADORES EN SALA (TABLA: sala_jugadores) -->
-          <section class="lobby-card-panel players-card-panel">
-            <div class="panel-header-row">
-              <div class="panel-title-wrap">
-                <span class="panel-icon">👥</span>
-                <span class="panel-title">JUGADORES EN SALA</span>
+        <!-- SUB-BARRA HORIZONTAL: JUGADORES EN SALA (EN UNA SOLA LÍNEA SUTIL ARRIBA) -->
+        <div class="lobby-players-horizontal-bar">
+          <div class="players-bar-label">
+            <span class="players-bar-icon">👥</span>
+            <span>JUGADORES:</span>
+          </div>
+          <div class="players-horizontal-list" id="lobbyPlayersList">
+            ${room.jugadores.map((p) => {
+              const isSelf = (p.apodo || '').toLowerCase() === myNick;
+              return `
+                <div class="player-hslot-chip ${isSelf ? 'is-self' : ''}">
+                  <span class="player-hslot-badge">${p.es_anfitrion ? '👑 Anfitrión' : '🎮 Invitado'}</span>
+                  <span class="player-hslot-name">${this.escapeHtml(p.apodo)} ${isSelf ? '<strong class="self-tag">(TÚ)</strong>' : ''}</span>
+                  <span class="player-hslot-star">★</span>
+                </div>
+              `;
+            }).join('')}
+            ${room.jugadores.length < (room.max_jugadores || 2) ? `
+              <div class="player-hslot-chip is-waiting">
+                <span class="waiting-dot-pulse"></span>
+                <span class="player-hslot-waiting">Esperando rival...</span>
               </div>
-              <span class="panel-counter-badge" id="playersCountBadge">${room.jugadores.length}/${room.max_jugadores}</span>
-            </div>
+            ` : ''}
+          </div>
+          <div class="players-bar-count">
+            <span class="panel-counter-badge" id="playersCountBadge">${room.jugadores.length}/${room.max_jugadores}</span>
+          </div>
+        </div>
 
-            <div class="players-list-scroll" id="lobbyPlayersList">
-              ${room.jugadores.map((p) => {
-                const isSelf = (p.apodo || '').toLowerCase() === myNick;
-                return `
-                  <div class="player-slot-item ${isSelf ? 'is-self' : ''}">
-                    <div class="player-info-meta">
-                      <div class="player-name-line">
-                        ${p.es_anfitrion ? '<span class="crown-icon">👑</span>' : ''}
-                        <span class="p-name">${this.escapeHtml(p.apodo)} ${isSelf ? '<span class="self-tag">(TÚ)</span>' : ''}</span>
-                      </div>
-                      <div class="player-role-sub">${p.es_anfitrion ? '👑 Anfitrión' : 'Participante'}</div>
-                    </div>
-                    <div class="player-star-indicator">
-                      <span class="star-icon">★</span>
-                    </div>
-                  </div>
-                `;
-              }).join('')}
-            </div>
-          </section>
-
-          <!-- COLUMNA 2: AJUSTES DE PARTIDA (TABLA: salas_batalla) -->
+        <!-- CUERPO PRINCIPAL DEL LOBBY (2 PARTES: IZQUIERDA FILTROS/AJUSTES - DERECHA CHAT) -->
+        <main class="lobby-main-grid lobby-two-columns">
+          <!-- PARTE IZQUIERDA: TODOS LOS FILTROS Y CONFIGURACIÓN DE LA PARTIDA -->
           <section class="lobby-card-panel settings-card-panel">
             <div class="panel-header-row">
               <div class="panel-title-wrap">
                 <span class="panel-icon">⚙️</span>
-                <span class="panel-title">AJUSTES DE PARTIDA</span>
+                <span class="panel-title">AJUSTES Y FILTROS DE PARTIDA</span>
               </div>
-              <span class="panel-subhint">Configura antes de iniciar</span>
+              <span class="panel-subhint">Configura las reglas antes de iniciar</span>
             </div>
 
             <div class="settings-content-wrap">
-              <!-- AJUSTES PRINCIPALES EN UNA FILA COMPACTA -->
+              <!-- AJUSTES BÁSICOS EN FILA COMPACTA -->
               <div class="settings-summary-grid">
-                <!-- AJUSTE 1: POKÉMONES -->
+                <!-- AJUSTE 1: POKÉMON -->
                 <div class="setting-row-item">
                   <div class="setting-label-col">
                     <span class="setting-item-icon">🎴</span>
-                    <span class="setting-item-name">Pokémon:</span>
+                    <span class="setting-item-name">Pokémon por Jugador:</span>
                   </div>
                   <div class="stepper-controls">
                     <button class="stepper-btn" ${isHost ? '' : 'disabled style="opacity: 0.4;"'} onclick="BatallaModule.adjustPokemonCount(-1)">-</button>
@@ -472,7 +470,7 @@ class BatallaModule {
                 <div class="setting-row-item">
                   <div class="setting-label-col">
                     <span class="setting-item-icon">👥</span>
-                    <span class="setting-item-name">Máx. Jugadores:</span>
+                    <span class="setting-item-name">Límite de Jugadores:</span>
                   </div>
                   <div class="stepper-controls">
                     <span class="stepper-value" id="settingMaxPlayersVal">2</span>
@@ -512,18 +510,18 @@ class BatallaModule {
 
               <!-- BARRA INFERIOR DE AJUSTES: POOL & INFO COMPACTA -->
               <div class="pool-status-preview">
-                <span>🎯 Pool disponible: <strong class="pool-count-badge" id="poolCountBadge">${this.getFilteredPokemonCount(room.ajustes)} Pokémon</strong></span>
-                <span class="room-mini-badge">ID: ${room.codigo}</span>
+                <span>🎯 Criaturas en pool disponibles: <strong class="pool-count-badge" id="poolCountBadge">${this.getFilteredPokemonCount(room.ajustes)} Pokémon</strong></span>
+                <span class="room-mini-badge">SALA ID: ${room.codigo}</span>
               </div>
             </div>
           </section>
 
-          <!-- COLUMNA 3: CHAT DEL LOBBY (TABLA: sala_mensajes) -->
+          <!-- PARTE DERECHA: CHAT DEL LOBBY -->
           <section class="lobby-card-panel chat-card-panel">
             <div class="panel-header-row">
               <div class="panel-title-wrap">
                 <span class="panel-icon">💬</span>
-                <span class="panel-title">CHAT DEL LOBBY</span>
+                <span class="panel-title">CHAT DE LA SALA</span>
               </div>
             </div>
 
@@ -543,10 +541,10 @@ class BatallaModule {
                 type="text" 
                 id="lobbyChatInput" 
                 class="chat-text-input" 
-                placeholder="Escribe un mensaje..." 
+                placeholder="Escribe un mensaje en la sala..." 
                 autocomplete="off"
               />
-              <button type="submit" class="chat-send-btn" title="Enviar">
+              <button type="submit" class="chat-send-btn" title="Enviar mensaje">
                 <span class="send-icon">➤</span>
               </button>
             </form>
