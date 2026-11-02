@@ -3918,6 +3918,26 @@ body {
 }
 
 /* Modal de Autenticación */
+.stadium-modal-backdrop {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  background: rgba(3, 5, 9, 0.85);
+  backdrop-filter: blur(8px);
+  z-index: 99999;
+  display: none;
+  align-items: center;
+  justify-content: center;
+  padding: 20px;
+}
+
+.stadium-modal-backdrop.open {
+  display: flex !important;
+  animation: modalFadeIn 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
 .auth-modal-window {
   background: rgba(8, 12, 22, 0.96);
   border: 1px solid rgba(0, 229, 255, 0.3);
