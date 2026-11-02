@@ -118,7 +118,7 @@ class BattleRoomStore {
         ajustes: (currentLocal && currentLocal.ajustes) || {
           generaciones: ['todas'],
           formas: ['todas'],
-          legendarios: 'no'
+          categorias: ['todas']
         },
         jugadores: remotePlayers.map(p => ({
           id: p.id,
@@ -262,7 +262,7 @@ class BattleRoomStore {
     const defaultAjustes = {
       generaciones: ['todas'],
       formas: ['todas'],
-      legendarios: 'no',
+      categorias: ['todas'],
       ...(ajustes || {})
     };
 
@@ -400,7 +400,7 @@ class BattleRoomStore {
             ajustes: (existingLocal && existingLocal.ajustes) || {
               generaciones: ['todas'],
               formas: ['todas'],
-              legendarios: 'no'
+              categorias: ['todas']
             },
             jugadores: players.map(p => ({
               id: p.id,

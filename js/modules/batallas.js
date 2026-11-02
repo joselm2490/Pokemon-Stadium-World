@@ -500,13 +500,13 @@ class BatallaModule {
                 </div>
               </div>
 
-              <!-- FILTRO 3: LEGENDARIO -->
+              <!-- FILTRO 3: CATEGORÍAS DE RAREZA -->
               <div class="filter-setting-block">
                 <div class="filter-setting-header">
-                  <span>👑</span> Legendarios:
+                  <span>🏆</span> Categorías:
                 </div>
                 <div class="filter-pills-row">
-                  ${this.renderLegendaryFilterPills(room.ajustes, isHost)}
+                  ${this.renderCategoryFilterPills(room.ajustes, isHost)}
                 </div>
               </div>
 
@@ -1170,31 +1170,65 @@ class BatallaModule {
     }).join('');
   }
 
-  static renderLegendaryFilterPills(ajustes = {}, isHost = true) {
-    const val = ajustes.legendarios || 'no';
+  static renderCategoryFilterPills(ajustes = {}, isHost = true) {
+    const cats = ajustes.categorias || ['todas'];
+    const allSelected = cats.includes('todas');
 
-    return `
-      <button 
-        class="filter-pill-btn ${val === 'si' ? 'active' : ''}" 
-        ${isHost ? '' : 'disabled'}
-        onclick="BatallaModule.setLegendaryFilter('si')"
-      >
-        ✅ Permitidos
-      </button>
-      <button 
-        class="filter-pill-btn ${val === 'no' ? 'active' : ''}" 
-        ${isHost ? '' : 'disabled'}
-        onclick="BatallaModule.setLegendaryFilter('no')"
-      >
-        🚫 Prohibidos
-      </button>
-    `;
+    const catItems = [
+      { id: 'todas', label: 'Todas' },
+      { id: 'estandar', label: 'Estándar' },
+      { id: 'legendario', label: '👑 Legendarios' },
+      { id: 'pseudolegendario', label: '🐉 Pseudolegendarios' }
+    ];
+
+    return catItems.map(item => {
+      const active = allSelected ? item.id === 'todas' : cats.includes(item.id);
+      return `
+        <button 
+          class="filter-pill-btn ${active ? 'active' : ''}" 
+          ${isHost ? '' : 'disabled'}
+          onclick="BatallaModule.toggleCategoryFilter('${item.id}')"
+        >
+          ${item.label}
+        </button>
+      `;
+    }).join('');
+  }
+
+  static toggleCategoryFilter(catId) {
+    if (!this.currentRoom) return;
+    if (!this.currentRoom.ajustes) {
+      this.currentRoom.ajustes = { generaciones: ['todas'], formas: ['todas'], categorias: ['todas'] };
+    }
+
+    let cats = [...(this.currentRoom.ajustes.categorias || ['todas'])];
+
+    if (catId === 'todas') {
+      cats = ['todas'];
+    } else {
+      cats = cats.filter(c => c !== 'todas');
+      if (cats.includes(catId)) {
+        cats = cats.filter(c => c !== catId);
+      } else {
+        cats.push(catId);
+      }
+      if (cats.length === 0) {
+        cats = ['todas'];
+      }
+    }
+
+    this.currentRoom.ajustes.categorias = cats;
+    if (window.BattleRoomStore) {
+      window.BattleRoomStore.updateRoom(this.currentRoom);
+    }
+    this.renderCurrentView();
+    if (window.SFX) window.SFX.playCardClick();
   }
 
   static toggleGenFilter(genId) {
     if (!this.currentRoom) return;
     if (!this.currentRoom.ajustes) {
-      this.currentRoom.ajustes = { generaciones: ['todas'], formas: ['todas'], legendarios: 'no' };
+      this.currentRoom.ajustes = { generaciones: ['todas'], formas: ['todas'], categorias: ['todas'] };
     }
 
     let gens = [...(this.currentRoom.ajustes.generaciones || ['todas'])];
@@ -1224,7 +1258,7 @@ class BatallaModule {
   static toggleFormFilter(formId) {
     if (!this.currentRoom) return;
     if (!this.currentRoom.ajustes) {
-      this.currentRoom.ajustes = { generaciones: ['todas'], formas: ['todas'], legendarios: 'no' };
+      this.currentRoom.ajustes = { generaciones: ['todas'], formas: ['todas'], categorias: ['todas'] };
     }
 
     let formas = [...(this.currentRoom.ajustes.formas || ['todas'])];
@@ -1251,30 +1285,19 @@ class BatallaModule {
     if (window.SFX) window.SFX.playCardClick();
   }
 
-  static setLegendaryFilter(val) {
-    if (!this.currentRoom) return;
-    if (!this.currentRoom.ajustes) {
-      this.currentRoom.ajustes = { generaciones: ['todas'], formas: ['todas'], legendarios: 'no' };
-    }
-
-    this.currentRoom.ajustes.legendarios = val;
-    if (window.BattleRoomStore) {
-      window.BattleRoomStore.updateRoom(this.currentRoom);
-    }
-    this.renderCurrentView();
-    if (window.SFX) window.SFX.playCardClick();
-  }
-
   static getFilteredPokemonPool(ajustes = {}) {
     const all = window.POKEMON_DATA || [];
     const gens = ajustes.generaciones || ['todas'];
     const formas = ajustes.formas || ['todas'];
-    const allowLegendaries = (ajustes.legendarios || 'no') === 'si';
+    const categorias = ajustes.categorias || (ajustes.legendarios === 'si' ? ['todas'] : (ajustes.legendarios === 'no' ? ['estandar', 'pseudolegendario'] : ['todas']));
 
     return all.filter(p => {
-      // 1. Filtro de Leyendas
-      if (!allowLegendaries && this.isLegendaryPokemon(p)) {
-        return false;
+      // 1. Filtro de Categorías de Rareza ('estandar', 'legendario', 'pseudolegendario')
+      if (!categorias.includes('todas')) {
+        const cat = this.getPokemonRarityCategory(p);
+        if (!categorias.includes(cat)) {
+          return false;
+        }
       }
 
       // 2. Filtro de Formas
@@ -1289,8 +1312,6 @@ class BatallaModule {
 
       // 3. Filtro de Generaciones
       if (!gens.includes('todas')) {
-        // En Pokémon Stadium World, las formas regionales tienen número de dex original o gen específico
-        // Verificamos si su gen de origen o num de dex coincide
         const pGen = String(p.gen);
         const matchesGen = gens.includes(pGen);
         if (!matchesGen) return false;
