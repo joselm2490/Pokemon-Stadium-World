@@ -95,6 +95,12 @@ class AuthManager {
     localStorage.setItem(this.SESSION_KEY, JSON.stringify(newUser));
 
     this.renderUserWidget();
+    if (window.BatallaModule && typeof window.BatallaModule.syncUserNickname === 'function') {
+      window.BatallaModule.syncUserNickname();
+      if (window.BatallaModule.currentScreen === 'landing') {
+        window.BatallaModule.renderCurrentView();
+      }
+    }
     if (window.SFX) window.SFX.playSuccess();
     return { ok: true, user: newUser };
   }
@@ -122,6 +128,12 @@ class AuthManager {
     localStorage.setItem(this.SESSION_KEY, JSON.stringify(user));
 
     this.renderUserWidget();
+    if (window.BatallaModule && typeof window.BatallaModule.syncUserNickname === 'function') {
+      window.BatallaModule.syncUserNickname();
+      if (window.BatallaModule.currentScreen === 'landing') {
+        window.BatallaModule.renderCurrentView();
+      }
+    }
     if (window.SFX) window.SFX.playSuccess();
     return { ok: true, user };
   }
@@ -129,6 +141,12 @@ class AuthManager {
   static logout() {
     localStorage.removeItem(this.SESSION_KEY);
     this.renderUserWidget();
+    if (window.BatallaModule && typeof window.BatallaModule.syncUserNickname === 'function') {
+      window.BatallaModule.syncUserNickname();
+      if (window.BatallaModule.currentScreen === 'landing') {
+        window.BatallaModule.renderCurrentView();
+      }
+    }
     if (window.SFX) window.SFX.playNav();
   }
 

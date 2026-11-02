@@ -15,6 +15,23 @@ class BatallaModule {
   static currentRoom = null;
   static unsubscribeStore = null;
 
+  static getUserNickname() {
+    if (window.AuthManager && window.AuthManager.isLoggedIn()) {
+      const user = window.AuthManager.getCurrentUser();
+      if (user) {
+        if (user.username) return user.username;
+        if (user.nombre) return user.nombre.split(' ')[0];
+      }
+    }
+    const savedNick = localStorage.getItem('stadium_battle_nickname');
+    if (savedNick) return savedNick;
+    return 'Entrenador';
+  }
+
+  static syncUserNickname() {
+    this.userNickname = this.getUserNickname();
+  }
+
   static init(pokemonList = [], movesByIdMap = new Map()) {
     this.pokemonList = pokemonList;
     this.movesById = movesByIdMap;
@@ -31,17 +48,7 @@ class BatallaModule {
     }
 
     // Obtener apodo guardado o de la sesión de usuario
-    if (window.AuthManager && window.AuthManager.isLoggedIn()) {
-      const user = window.AuthManager.getCurrentUser();
-      if (user && user.nombre) {
-        this.userNickname = user.nombre.split(' ')[0];
-      }
-    } else {
-      const savedNick = localStorage.getItem('stadium_battle_nickname');
-      if (savedNick) {
-        this.userNickname = savedNick;
-      }
-    }
+    this.syncUserNickname();
 
     // Revisar si había una sala activa guardada en sesión
     const savedRoomCode = sessionStorage.getItem('stadium_active_room_code');
@@ -78,7 +85,9 @@ class BatallaModule {
     const container = document.getElementById('view-batalla');
     if (!container) return;
 
+    // Sincronizar el apodo antes de renderizar la vista de aterrizaje
     if (this.currentScreen === 'landing') {
+      this.syncUserNickname();
       this.renderLandingScreen(container);
     } else if (this.currentScreen === 'lobby') {
       this.renderLobbyScreen(container);
