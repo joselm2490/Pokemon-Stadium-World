@@ -6,7 +6,8 @@
   "scripts": {
     "start": "python3 -m http.server 8080",
     "dev": "python3 -m http.server 8080",
-    "serve": "npx serve ."
+    "serve": "npx serve .",
+    "build": "cd battle/pokemon-showdown && npm install && npm run build"
   },
   "keywords": [
     "pokemon",
