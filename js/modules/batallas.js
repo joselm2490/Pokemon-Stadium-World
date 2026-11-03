@@ -240,15 +240,6 @@ class BatallaModule {
           </div>
           <div class="battle-modal-body">
             <div class="create-room-form-group">
-              <label class="create-room-label">Pokémon por entrenador</label>
-              <select id="createRoomPokemonCount" class="create-room-select">
-                <option value="1">1 Pokémon (Duelo Rápido)</option>
-                <option value="3" selected>3 Pokémon (Formato Estándar)</option>
-                <option value="6">6 Pokémon (Combate Completo)</option>
-              </select>
-            </div>
-
-            <div class="create-room-form-group" style="margin-top: 14px;">
               <label class="password-toggle-row">
                 <input type="checkbox" id="createRoomHasPassword" onchange="BatallaModule.toggleCreatePasswordInput()" />
                 <span class="password-toggle-text">🔒 Proteger sala con contraseña</span>
@@ -668,8 +659,7 @@ class BatallaModule {
     const nick = (this.userNickname || 'Jose').trim() || 'Entrenador';
     localStorage.setItem('stadium_battle_nickname', nick);
 
-    const selectPokemon = document.getElementById('createRoomPokemonCount');
-    const pokemonCount = selectPokemon ? parseInt(selectPokemon.value, 10) : 3;
+    const pokemonCount = 3; // Valor inicial por defecto (se configura y ajusta libremente adentro de la sala)
 
     const hasPassword = document.getElementById('createRoomHasPassword')?.checked;
     const passInput = document.getElementById('createRoomPasswordInput');
