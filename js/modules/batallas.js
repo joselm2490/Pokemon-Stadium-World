@@ -1872,6 +1872,42 @@ class BatallaModule {
     modal.style.display = 'flex';
   }
 
+  /**
+   * Empaqueta el equipo Pokémon asignado al formato estándar de Showdown
+   * para enviarlo al cliente embebido en gen9customgame.
+   */
+  static packTeamForShowdown(pokemonList) {
+    if (!pokemonList || !Array.isArray(pokemonList) || pokemonList.length === 0) return '';
+    
+    return pokemonList.map(poke => {
+      const name = (poke.name || poke.id || 'Pokemon').replace(/[^A-Za-z0-9\-]/g, '');
+      const species = (poke.nombre_ingles || poke.name || name).replace(/[^A-Za-z0-9\-]/g, '');
+      const item = '';
+      const ability = (poke.abilities && poke.abilities.length > 0) ? poke.abilities[0] : '';
+      
+      // Obtener nombres en inglés de los movimientos predeterminados
+      const moveNames = [];
+      if (poke.movimientos && poke.movimientos.length > 0) {
+        poke.movimientos.forEach(m => {
+          const moveEn = m.nombre_ingles || m.nombre;
+          if (moveEn) moveNames.push(moveEn.replace(/[^A-Za-z0-9]+/g, ''));
+        });
+      }
+      
+      const movesStr = moveNames.join(',');
+      const nature = 'Hardy';
+      const evs = '85,85,85,85,85,85'; // Valores de esfuerzo balanceados
+      const gender = '';
+      const ivs = ''; // 31 IVs por defecto
+      const shiny = '';
+      const level = '50';
+      
+      // Formato Showdown Set: Name|Species|Item|Ability|Moves|Nature|EVs|Gender|IVs|Shiny|Level
+      const speciesId = (name.toLowerCase() === species.toLowerCase()) ? '' : species;
+      return `${name}|${speciesId}|${item}|${ability}|${movesStr}|${nature}|${evs}|${gender}|${ivs}|${shiny}|${level}`;
+    }).join(']');
+  }
+
   // ------------------------------------------------------------------
   // PANTALLA 3: ARENA DE COMBATE OFICIAL POKÉMON SHOWDOWN EN VIVO
   // ------------------------------------------------------------------
@@ -1884,8 +1920,23 @@ class BatallaModule {
 
     const room = this.currentRoom;
     const myNick = (this.userNickname || 'Entrenador').trim();
-    // URL de tu propio cliente de Showdown conectado a tu servidor Render
-    const showdownClientUrl = `showdown/index.html`;
+    const myPlayer = (room.jugadores || []).find(p => (p.apodo || '').toLowerCase() === myNick.toLowerCase());
+    const rivalPlayer = (room.jugadores || []).find(p => (p.apodo || '').toLowerCase() !== myNick.toLowerCase());
+    const isHost = myPlayer ? !!myPlayer.es_anfitrion : (room.anfitrion_nombre === myNick);
+
+    // Empaquetar el equipo del jugador actual
+    const packedTeam = this.packTeamForShowdown(myPlayer ? myPlayer.equipo_pokemon : []);
+
+    // Parámetros para el bridge de Showdown
+    const queryParams = new URLSearchParams({
+      user: myNick,
+      rival: rivalPlayer ? rivalPlayer.apodo : '',
+      room: room.codigo || '',
+      host: isHost ? '1' : '0',
+      team: packedTeam
+    });
+
+    const showdownClientUrl = `showdown/index.html?${queryParams.toString()}`;
 
     container.innerHTML = `
       <div class="stadium-battle-wrapper battle-combat-wrapper" style="height: 100vh; display: flex; flex-direction: column; overflow: hidden; background: #07090e;">
