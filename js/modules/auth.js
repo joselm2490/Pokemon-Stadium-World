@@ -62,10 +62,26 @@ class AuthManager {
   static getCurrentUser() {
     try {
       const raw = localStorage.getItem(this.SESSION_KEY);
-      return raw ? JSON.parse(raw) : null;
+      if (raw) return JSON.parse(raw);
+      // Fallback a sessionStorage por si el navegador bloquea o limpia localStorage
+      const sRaw = sessionStorage.getItem(this.SESSION_KEY);
+      return sRaw ? JSON.parse(sRaw) : null;
     } catch (e) {
       return null;
     }
+  }
+
+  static setCurrentUser(user) {
+    try {
+      if (user) {
+        const str = JSON.stringify(user);
+        localStorage.setItem(this.SESSION_KEY, str);
+        sessionStorage.setItem(this.SESSION_KEY, str);
+      } else {
+        localStorage.removeItem(this.SESSION_KEY);
+        sessionStorage.removeItem(this.SESSION_KEY);
+      }
+    } catch (e) {}
   }
 
   static isLoggedIn() {
@@ -90,28 +106,29 @@ class AuthManager {
       return { ok: false, error: 'La contraseña debe tener al menos 4 caracteres.' };
     }
 
-    // 1. Verificar duplicados en Supabase primero si está disponible
+    // 1. Verificar primero en caché local rápida
+    const localUsers = this.getUsers();
+    if (localUsers.some(u => u.username.toLowerCase() === cleanUsername)) {
+      return { ok: false, error: `El nombre de usuario "${cleanUsername}" ya está registrado.` };
+    }
+    if (localUsers.some(u => u.email.toLowerCase() === cleanEmail)) {
+      return { ok: false, error: `El correo "${cleanEmail}" ya está registrado.` };
+    }
+
+    // 2. Verificar en Supabase si está disponible
     if (window.StadiumSupabase) {
       try {
-        const checkU = await window.StadiumSupabase.request(`usuarios?username=ilike.${encodeURIComponent(cleanUsername)}&select=id`);
+        const checkU = await window.StadiumSupabase.request(`usuarios?username=eq.${encodeURIComponent(cleanUsername)}&select=id`);
         if (checkU.ok && checkU.data && checkU.data.length > 0) {
           return { ok: false, error: `El nombre de usuario "${cleanUsername}" ya está registrado.` };
         }
-        const checkE = await window.StadiumSupabase.request(`usuarios?email=ilike.${encodeURIComponent(cleanEmail)}&select=id`);
+        const checkE = await window.StadiumSupabase.request(`usuarios?email=eq.${encodeURIComponent(cleanEmail)}&select=id`);
         if (checkE.ok && checkE.data && checkE.data.length > 0) {
           return { ok: false, error: `El correo "${cleanEmail}" ya está registrado.` };
         }
       } catch (e) {
         console.warn('Error verificando usuario en Supabase:', e);
       }
-    }
-
-    const users = this.getUsers();
-    if (users.some(u => u.username.toLowerCase() === cleanUsername)) {
-      return { ok: false, error: `El nombre de usuario "${cleanUsername}" ya está registrado.` };
-    }
-    if (users.some(u => u.email.toLowerCase() === cleanEmail)) {
-      return { ok: false, error: `El correo "${cleanEmail}" ya está registrado.` };
     }
 
     let newUser = {
@@ -125,7 +142,7 @@ class AuthManager {
       ultimo_login: new Date().toISOString()
     };
 
-    // Guardar en Supabase para que sea visible en modo incógnito y otros navegadores
+    // Guardar en Supabase para que esté disponible globalmente
     if (window.StadiumSupabase) {
       try {
         const supaRes = await window.StadiumSupabase.request('usuarios', {
@@ -147,9 +164,9 @@ class AuthManager {
       }
     }
 
-    users.push(newUser);
-    this.saveUsers(users);
-    localStorage.setItem(this.SESSION_KEY, JSON.stringify(newUser));
+    localUsers.push(newUser);
+    this.saveUsers(localUsers);
+    this.setCurrentUser(newUser);
 
     this.renderUserWidget();
     if (window.BatallaModule && typeof window.BatallaModule.syncUserNickname === 'function') {
@@ -171,12 +188,19 @@ class AuthManager {
 
     let user = null;
 
-    // 1. Intentar validar en Supabase (permite login entre ventana normal e incógnito)
-    if (window.StadiumSupabase) {
+    // 1. Verificación instantánea en caché local
+    const users = this.getUsers();
+    user = users.find(u => 
+      (u.username.toLowerCase() === cleanId || u.email.toLowerCase() === cleanId) &&
+      u.contrasena === cleanPass
+    );
+
+    // 2. Si no está en caché local, buscar en Supabase (con filtro rápido eq)
+    if (!user && window.StadiumSupabase) {
       try {
         const queryField = cleanId.includes('@') ? 'email' : 'username';
         const res = await window.StadiumSupabase.request(
-          `usuarios?${queryField}=ilike.${encodeURIComponent(cleanId)}&contrasena=eq.${encodeURIComponent(cleanPass)}&select=*`
+          `usuarios?${queryField}=eq.${encodeURIComponent(cleanId)}&contrasena=eq.${encodeURIComponent(cleanPass)}&select=*`
         );
         if (res.ok && Array.isArray(res.data) && res.data.length > 0) {
           user = res.data[0];
@@ -186,22 +210,12 @@ class AuthManager {
       }
     }
 
-    // 2. Fallback a base local si no se encontró en Supabase
-    if (!user) {
-      const users = this.getUsers();
-      user = users.find(u => 
-        (u.username.toLowerCase() === cleanId || u.email.toLowerCase() === cleanId) &&
-        u.contrasena === cleanPass
-      );
-    }
-
     if (!user) {
       if (window.SFX) window.SFX.playError();
       return { ok: false, error: 'Credenciales inválidas. Verifica tu usuario/correo y contraseña.' };
     }
 
     user.ultimo_login = new Date().toISOString();
-    const users = this.getUsers();
     const uIdx = users.findIndex(u => u.username.toLowerCase() === user.username.toLowerCase());
     if (uIdx !== -1) {
       users[uIdx] = user;
@@ -209,7 +223,7 @@ class AuthManager {
       users.push(user);
     }
     this.saveUsers(users);
-    localStorage.setItem(this.SESSION_KEY, JSON.stringify(user));
+    this.setCurrentUser(user);
 
     this.renderUserWidget();
     if (window.BatallaModule && typeof window.BatallaModule.syncUserNickname === 'function') {
@@ -223,7 +237,7 @@ class AuthManager {
   }
 
   static logout() {
-    localStorage.removeItem(this.SESSION_KEY);
+    this.setCurrentUser(null);
     this.renderUserWidget();
     if (window.BatallaModule && typeof window.BatallaModule.syncUserNickname === 'function') {
       window.BatallaModule.syncUserNickname();
@@ -463,13 +477,27 @@ class AuthManager {
 
     // Envío de Login
     const formLogin = document.getElementById('authFormLogin');
-    formLogin?.addEventListener('submit', async () => {
+    formLogin?.addEventListener('submit', async (e) => {
+      if (e) e.preventDefault();
+      const btnSubmit = document.getElementById('btnSubmitLogin');
+      const originalText = btnSubmit ? btnSubmit.innerHTML : '';
+      if (btnSubmit) {
+        btnSubmit.disabled = true;
+        btnSubmit.innerHTML = `<span>⏳</span> VALIDANDO...`;
+      }
+
       const iden = document.getElementById('loginIdentifier')?.value;
       const pass = document.getElementById('loginPassword')?.value;
       const res = await AuthManager.login({ identifier: iden, contrasena: pass });
+      
+      if (btnSubmit) {
+        btnSubmit.disabled = false;
+        btnSubmit.innerHTML = originalText;
+      }
+
       if (res.ok) {
         AuthManager.showMessage(`¡Bienvenido de vuelta, Entrenador ${res.user.nombre}!`, true);
-        setTimeout(() => AuthManager.closeModal(), 1200);
+        setTimeout(() => AuthManager.closeModal(), 700);
       } else {
         AuthManager.showMessage(res.error, false);
       }
@@ -477,7 +505,15 @@ class AuthManager {
 
     // Envío de Registro
     const formReg = document.getElementById('authFormRegister');
-    formReg?.addEventListener('submit', async () => {
+    formReg?.addEventListener('submit', async (e) => {
+      if (e) e.preventDefault();
+      const btnSubmit = document.getElementById('btnSubmitRegister');
+      const originalText = btnSubmit ? btnSubmit.innerHTML : '';
+      if (btnSubmit) {
+        btnSubmit.disabled = true;
+        btnSubmit.innerHTML = `<span>⏳</span> REGISTRANDO...`;
+      }
+
       const nombre = document.getElementById('regNombre')?.value;
       const apellido = document.getElementById('regApellido')?.value;
       const username = document.getElementById('regUsername')?.value;
@@ -485,9 +521,15 @@ class AuthManager {
       const pass = document.getElementById('regPassword')?.value;
 
       const res = await AuthManager.register({ nombre, apellido, username, email, contrasena: pass });
+
+      if (btnSubmit) {
+        btnSubmit.disabled = false;
+        btnSubmit.innerHTML = originalText;
+      }
+
       if (res.ok) {
         AuthManager.showMessage(`¡Registro exitoso! Bienvenido a Pokémon Stadium, ${res.user.nombre}.`, true);
-        setTimeout(() => AuthManager.closeModal(), 1200);
+        setTimeout(() => AuthManager.closeModal(), 700);
       } else {
         AuthManager.showMessage(res.error, false);
       }
