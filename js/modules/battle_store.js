@@ -366,6 +366,36 @@ class BattleRoomStore {
     return newRoom;
   }
 
+  static async getRoomDetails(code) {
+    const cleanCode = (code || '').trim().toUpperCase();
+    if (!cleanCode) return null;
+
+    if (window.StadiumSupabase) {
+      try {
+        const res = await window.StadiumSupabase.request(`salas_batalla?codigo=eq.${encodeURIComponent(cleanCode)}&select=*`);
+        if (res.ok && res.data && res.data.length > 0) {
+          const dbRoom = res.data[0];
+          const local = this.getRoomByCode(cleanCode);
+          const pass = dbRoom.contrasena || (local && local.contrasena) || null;
+          return {
+            ...dbRoom,
+            contrasena: pass,
+            tiene_contrasena: !!pass
+          };
+        }
+      } catch (e) {}
+    }
+
+    const local = this.getRoomByCode(cleanCode);
+    if (local) {
+      return {
+        ...local,
+        tiene_contrasena: !!local.contrasena
+      };
+    }
+    return null;
+  }
+
   // Unirse a una sala (con validación de contraseña y límite de jugadores)
   static async joinRoom({ code, userNickname, password = '' }) {
     const cleanCode = (code || '').trim().toUpperCase();
@@ -455,7 +485,7 @@ class BattleRoomStore {
       if (!inputPass) {
         return { ok: false, requiresPassword: true, error: 'Esta sala es privada y requiere contraseña.' };
       }
-      if (inputPass !== room.contrasena) {
+      if (inputPass !== String(room.contrasena).trim()) {
         return { ok: false, requiresPassword: true, error: 'Contraseña de sala incorrecta. Intenta nuevamente.' };
       }
     }

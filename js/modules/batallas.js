@@ -305,6 +305,7 @@ class BatallaModule {
               maxlength="6"
               style="text-transform: uppercase;"
               autocomplete="off"
+              oninput="BatallaModule.handleJoinCodeInput(this.value)"
             />
 
             <!-- Campo de contraseña opcional si la sala la requiere -->
@@ -911,6 +912,33 @@ class BatallaModule {
     if (window.SFX) window.SFX.playSuccess();
     this.currentScreen = 'lobby';
     this.renderCurrentView();
+  }
+
+  static async handleJoinCodeInput(code) {
+    const cleanCode = (code || '').trim().toUpperCase();
+    const passGroup = document.getElementById('joinPasswordGroup');
+    const passInput = document.getElementById('joinRoomPasswordInput');
+    const errorDiv = document.getElementById('joinModalErrorMsg');
+
+    if (errorDiv) errorDiv.style.display = 'none';
+
+    if (cleanCode.length === 6 && window.BattleRoomStore) {
+      try {
+        const room = await window.BattleRoomStore.getRoomDetails(cleanCode);
+        if (room && (room.contrasena || room.tiene_contrasena)) {
+          if (passGroup) passGroup.style.display = 'block';
+          if (passInput) passInput.focus();
+        } else {
+          if (passGroup) passGroup.style.display = 'none';
+        }
+      } catch (e) {
+        console.warn('Error verificando contraseña de sala:', e);
+      }
+    } else {
+      if (cleanCode.length < 6 && passGroup) {
+        passGroup.style.display = 'none';
+      }
+    }
   }
 
   static async submitJoinRoom() {
