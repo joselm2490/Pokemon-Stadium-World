@@ -752,6 +752,66 @@ class BattleRoomStore {
     return { ok: true, room };
   }
 
+  // Cambiar el estado 'listo' de un jugador (Invitado)
+  static async togglePlayerReady(code, userNickname) {
+    const room = this.getRoomByCode(code);
+    if (!room) return null;
+
+    const player = (room.jugadores || []).find(
+      (j) => (j.apodo || '').toLowerCase() === (userNickname || '').toLowerCase()
+    );
+    if (!player) return null;
+
+    player.listo = !player.listo;
+
+    const now = new Date().toISOString();
+    if (!room.mensajes) room.mensajes = [];
+    room.mensajes.push({
+      id: room.mensajes.length + 1,
+      emisor: 'SISTEMA',
+      mensaje: player.listo 
+        ? `✅ ${userNickname} está ¡LISTO PARA EL COMBATE!`
+        : `⏳ ${userNickname} ha cancelado su estado de listo.`,
+      es_sistema: true,
+      enviado_en: now
+    });
+
+    this.updateRoom(room);
+
+    // Replicar en Supabase
+    if (window.StadiumSupabase && room.id) {
+      try {
+        await window.StadiumSupabase.request(`sala_jugadores?sala_id=eq.${room.id}&apodo=eq.${encodeURIComponent(userNickname)}`, {
+          method: 'PATCH',
+          body: JSON.stringify({ listo: player.listo ? 1 : 0 })
+        });
+
+        await window.StadiumSupabase.request(`salas_batalla?id=eq.${room.id}`, {
+          method: 'PATCH',
+          body: JSON.stringify({
+            jugadores: JSON.stringify(room.jugadores)
+          })
+        });
+
+        await window.StadiumSupabase.request('sala_mensajes', {
+          method: 'POST',
+          body: JSON.stringify({
+            sala_id: room.id,
+            emisor: 'SISTEMA',
+            mensaje: player.listo 
+              ? `✅ ${userNickname} está ¡LISTO PARA EL COMBATE!`
+              : `⏳ ${userNickname} ha cancelado su estado de listo.`,
+            es_sistema: 1
+          })
+        });
+      } catch (e) {
+        console.warn('Error actualizando estado listo en Supabase:', e);
+      }
+    }
+
+    return room;
+  }
+
   // Actualizar configuración o datos de una sala
   static updateRoom(updatedRoom) {
     const rooms = this.getAllRooms();

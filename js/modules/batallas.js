@@ -489,7 +489,18 @@ class BatallaModule {
     const room = this.currentRoom;
     const myNick = (this.userNickname || '').toLowerCase();
     const isHost = (room.anfitrion_nombre || '').toLowerCase() === myNick;
-    const canStart = room.jugadores && room.jugadores.length >= 2;
+    const hasEnoughPlayers = room.jugadores && room.jugadores.length >= 2;
+
+    // Buscar estado del invitado
+    const guestPlayer = (room.jugadores || []).find(p => !p.es_anfitrion);
+    const guestIsReady = guestPlayer ? (guestPlayer.listo === true || guestPlayer.listo === 1) : false;
+
+    // Buscar si yo mismo (en caso de ser invitado) estoy listo
+    const myPlayer = (room.jugadores || []).find(p => (p.apodo || '').toLowerCase() === myNick);
+    const amIReady = myPlayer ? (myPlayer.listo === true || myPlayer.listo === 1) : false;
+
+    // El anfitrión solo puede iniciar si hay al menos 2 jugadores y el invitado está listo
+    const canStartHost = isHost && hasEnoughPlayers && guestIsReady;
 
     container.innerHTML = `
       <div class="stadium-battle-wrapper battle-lobby-wrapper">
@@ -530,11 +541,12 @@ class BatallaModule {
           <div class="players-horizontal-list" id="lobbyPlayersList">
             ${room.jugadores.map((p) => {
               const isSelf = (p.apodo || '').toLowerCase() === myNick;
+              const isReady = p.es_anfitrion ? true : (p.listo === true || p.listo === 1);
               return `
-                <div class="player-hslot-chip ${isSelf ? 'is-self' : ''}">
+                <div class="player-hslot-chip ${isSelf ? 'is-self' : ''}" style="${isReady ? 'border-color: rgba(34, 197, 94, 0.5); background: rgba(34, 197, 94, 0.12);' : ''}">
                   <span class="player-hslot-badge">${p.es_anfitrion ? '👑 Anfitrión' : '🎮 Invitado'}</span>
                   <span class="player-hslot-name">${this.escapeHtml(p.apodo)} ${isSelf ? '<strong class="self-tag">(TÚ)</strong>' : ''}</span>
-                  <span class="player-hslot-star">★</span>
+                  ${p.es_anfitrion ? '<span class="player-hslot-star">★</span>' : (isReady ? '<span style="color: #4ade80; font-size: 0.82rem; font-weight: 800;">✔ LISTO</span>' : '<span style="color: #94a3b8; font-size: 0.78rem;">⏳ Esperando...</span>')}
                 </div>
               `;
             }).join('')}
@@ -670,19 +682,40 @@ class BatallaModule {
         <footer class="lobby-footer-bar">
           <div class="lobby-start-action-center" style="width: 100%;">
             <div class="lobby-waiting-hint" id="lobbyWaitingStatusText">
-              ${canStart 
-                ? '✅ ¡Todos los entrenadores listos! Puedes iniciar la partida.'
-                : `⏳ Esperando a que se una al menos 1 amigo para comenzar (${room.jugadores.length}/${room.max_jugadores} jugadores)`
+              ${isHost 
+                ? (canStartHost 
+                    ? '✅ ¡Tu rival está listo! Puedes iniciar el combate.' 
+                    : (hasEnoughPlayers 
+                        ? '⏳ Esperando a que el invitado presione ¡LISTO!' 
+                        : `⏳ Esperando a que se una tu rival (${room.jugadores.length}/${room.max_jugadores} jugadores)`))
+                : (amIReady 
+                    ? '✅ ¡Estás listo! Esperando a que el anfitrión inicie la partida...' 
+                    : '👉 Presiona "¡LISTO!" para confirmar que estás preparado para el combate.')
               }
             </div>
-            <button 
-              class="btn-iniciar-partida ${canStart ? 'ready' : 'disabled'}" 
-              id="btnIniciarPartida"
-              ${canStart ? '' : 'disabled'}
-              onclick="BatallaModule.startMatch()"
-            >
-              INICIAR PARTIDA
-            </button>
+
+            ${isHost ? `
+              <button 
+                class="btn-iniciar-partida ${canStartHost ? 'ready' : 'disabled'}" 
+                id="btnIniciarPartida"
+                ${canStartHost ? '' : 'disabled'}
+                onclick="BatallaModule.startMatch()"
+                style="${canStartHost ? 'background: #22c55e; box-shadow: 0 4px 18px rgba(34, 197, 94, 0.4);' : ''}"
+              >
+                INICIAR PARTIDA
+              </button>
+            ` : `
+              <button 
+                class="btn-iniciar-partida ${amIReady ? 'ready' : 'ready'}" 
+                id="btnInvitadoListo"
+                onclick="BatallaModule.toggleGuestReady()"
+                style="${amIReady 
+                  ? 'background: #22c55e; color: #fff; box-shadow: 0 4px 18px rgba(34, 197, 94, 0.45);' 
+                  : 'background: #0284c7; color: #fff; box-shadow: 0 4px 18px rgba(2, 132, 199, 0.4);'}"
+              >
+                ${amIReady ? '✔ ¡ESTOY LISTO!' : '⚡ ¡LISTO!'}
+              </button>
+            `}
           </div>
         </footer>
       </div>
@@ -1601,6 +1634,21 @@ class BatallaModule {
     return this.getFilteredPokemonPool(ajustes).length;
   }
 
+  static async toggleGuestReady() {
+    if (!this.currentRoom) return;
+    const nick = (this.userNickname || '').trim();
+    if (!nick) return;
+
+    if (window.BattleRoomStore) {
+      const updated = await window.BattleRoomStore.togglePlayerReady(this.currentRoom.codigo, nick);
+      if (updated) {
+        this.currentRoom = updated;
+        if (window.SFX) window.SFX.playSuccess();
+        this.renderCurrentView();
+      }
+    }
+  }
+
   static startMatch() {
     if (!this.currentRoom) return;
     const room = this.currentRoom;
@@ -1608,6 +1656,13 @@ class BatallaModule {
 
     if (!canStart) {
       alert('Se necesita al menos 2 jugadores para iniciar la partida.');
+      return;
+    }
+
+    // El anfitrión solo puede iniciar si el rival (invitado) ha marcado ¡LISTO!
+    const guestPlayer = (room.jugadores || []).find(p => !p.es_anfitrion);
+    if (guestPlayer && !(guestPlayer.listo === true || guestPlayer.listo === 1)) {
+      alert('⚠️ Tu rival aún no está listo. Debe presionar el botón "¡LISTO!" antes de poder iniciar el combate.');
       return;
     }
 
