@@ -69,9 +69,51 @@ class BattleRoomStore {
     if (this.pollingTimer) clearInterval(this.pollingTimer);
 
     // Polling regular cada 2.5 segundos para sincronizar chat, filtros y jugadores activos
+    // Además revisa y expira automáticamente salas que hayan superado los 5 minutos en espera
     this.pollingTimer = setInterval(() => {
       this.syncActiveRoomFromSupabase();
+      this.autoExpireWaitingRooms();
     }, 2500);
+  }
+
+  // REGLA: Límite de tiempo de 5 minutos en estado 'esperando'.
+  // Al pasar 5 minutos sin iniciar combate, la sala pasa a 'finalizada' automáticamente.
+  static async autoExpireWaitingRooms() {
+    const FIVE_MINUTES_MS = 5 * 60 * 1000;
+    const nowMs = Date.now();
+    const rooms = this.getAllRooms();
+    let hasLocalChanges = false;
+
+    for (const r of rooms) {
+      if (r.estado === 'esperando' && r.creada_en) {
+        const createdMs = new Date(r.creada_en).getTime();
+        if (createdMs && (nowMs - createdMs) > FIVE_MINUTES_MS) {
+          r.estado = 'finalizada';
+          r.finalizada_en = new Date().toISOString();
+          hasLocalChanges = true;
+
+          if (window.StadiumSupabase && r.id) {
+            try {
+              window.StadiumSupabase.request(`salas_batalla?id=eq.${r.id}`, {
+                method: 'PATCH',
+                body: JSON.stringify({
+                  estado: 'finalizada',
+                  finalizada_en: r.finalizada_en
+                })
+              });
+            } catch (e) {}
+          }
+
+          if (this.activeRoomCode && this.activeRoomCode.toUpperCase() === r.codigo.toUpperCase()) {
+            this.notifyListeners('room_expired', r);
+          }
+        }
+      }
+    }
+
+    if (hasLocalChanges) {
+      this.saveAllRooms(rooms);
+    }
   }
 
   static setActiveRoomCode(code) {
@@ -268,21 +310,37 @@ class BattleRoomStore {
   static async checkUserActiveInOtherRoom(userNickname, currentRoomCode = null) {
     if (!userNickname) return null;
     const nickClean = userNickname.trim().toLowerCase();
+    const nowMs = Date.now();
+    const FIVE_MINUTES_MS = 5 * 60 * 1000;
 
     // 1. Verificar en Supabase
     if (window.StadiumSupabase) {
       try {
         const res = await window.StadiumSupabase.request(
-          `salas_batalla?estado=in.(esperando,en_combate)&select=id,codigo,estado,anfitrion_nombre,jugadores_actuales`
+          `salas_batalla?estado=in.(esperando,en_combate)&select=id,codigo,estado,anfitrion_nombre,jugadores_actuales,creada_en`
         );
         if (res.ok && Array.isArray(res.data)) {
           for (const r of res.data) {
             if (currentRoomCode && r.codigo.toUpperCase() === currentRoomCode.toUpperCase()) {
               continue;
             }
+
+            // Si la sala está en esperando pero pasaron más de 5 minutos, expira y no bloquea
+            if (r.estado === 'esperando' && r.creada_en) {
+              const cMs = new Date(r.creada_en).getTime();
+              if (cMs && (nowMs - cMs) > FIVE_MINUTES_MS) {
+                // Marcar como finalizada en segundo plano
+                window.StadiumSupabase.request(`salas_batalla?id=eq.${r.id}`, {
+                  method: 'PATCH',
+                  body: JSON.stringify({ estado: 'finalizada', finalizada_en: new Date().toISOString() })
+                }).catch(() => {});
+                continue;
+              }
+            }
+
             // Consultar si el apodo está en sala_jugadores de esta sala
             const pRes = await window.StadiumSupabase.request(
-              `sala_jugadores?sala_id=eq.${r.id}&apodo=ilike.${encodeURIComponent(userNickname.trim())}&select=id,apodo`
+              `sala_jugadores?sala_id=eq.${r.id}&apodo=eq.${encodeURIComponent(userNickname.trim())}&select=id,apodo`
             );
             if (pRes.ok && pRes.data && pRes.data.length > 0) {
               return r; // Ya está activo en esta sala
@@ -299,6 +357,14 @@ class BattleRoomStore {
     for (const r of localRooms) {
       if (currentRoomCode && r.codigo.toUpperCase() === currentRoomCode.toUpperCase()) continue;
       if (r.estado === 'esperando' || r.estado === 'en_combate') {
+        if (r.estado === 'esperando' && r.creada_en) {
+          const cMs = new Date(r.creada_en).getTime();
+          if (cMs && (nowMs - cMs) > FIVE_MINUTES_MS) {
+            r.estado = 'finalizada';
+            r.finalizada_en = new Date().toISOString();
+            continue;
+          }
+        }
         const inRoom = (r.jugadores || []).some(j => (j.apodo || '').toLowerCase() === nickClean);
         if (inRoom) return r;
       }
@@ -309,10 +375,11 @@ class BattleRoomStore {
 
   // Crear una nueva sala
   static async createRoom({ hostNickname, pokemonCount = 3, maxPlayers = 2, password = null, ajustes = null }) {
-    // Regla: Un usuario solo puede estar en una sala activa a la vez
+    // Regla: Si el usuario ya tenía otra sala activa anterior, abandonarla/cerrarla automáticamente para crear la nueva
     const activeInOther = await this.checkUserActiveInOtherRoom(hostNickname);
     if (activeInOther) {
-      throw new Error(`Ya tienes una sala activa (${activeInOther.codigo}). Debes salir o finalizarla antes de crear otra.`);
+      console.log(`[BattleRoomStore] El anfitrión ${hostNickname} tenía la sala ${activeInOther.codigo}. Cerrando automáticamente para crear una nueva sala...`);
+      await this.leaveRoom(activeInOther.codigo, hostNickname);
     }
 
     const code = this.generateUniqueRoomCode();
@@ -589,14 +656,13 @@ class BattleRoomStore {
       (j) => j.apodo.toLowerCase() === userNickname.toLowerCase()
     );
 
-    // Regla: Un usuario solo puede estar en una sala por vez
+    // Regla: Si el usuario ya está en otra sala activa, cambiarlo/moverlo automáticamente
+    // abandonando la anterior para permitirle entrar o unirse a la nueva sin bloqueos
     if (!existingPlayer) {
       const activeInOther = await this.checkUserActiveInOtherRoom(userNickname, cleanCode);
       if (activeInOther) {
-        return { 
-          ok: false, 
-          error: `Actualmente ya estás participando en la sala activa "${activeInOther.codigo}". Debes salir de ella para poder unirte a otra.` 
-        };
+        console.log(`[BattleRoomStore] El usuario ${userNickname} estaba en la sala ${activeInOther.codigo}. Abandonando automáticamente para unirse a ${cleanCode}...`);
+        await this.leaveRoom(activeInOther.codigo, userNickname);
       }
     }
 

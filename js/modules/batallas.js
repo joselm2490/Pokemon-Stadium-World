@@ -109,14 +109,36 @@ class BatallaModule {
 
     // Si la sala activa fue actualizada en otra pestaña o mediante Supabase/Storage
     if (window.BattleRoomStore) {
+      if (eventType === 'room_expired' && data && data.codigo === this.currentRoom.codigo) {
+        sessionStorage.removeItem('stadium_active_room_code');
+        if (window.StadiumRouter) window.StadiumRouter.updateBattleRoomUrl(null);
+        this.currentRoom = null;
+        this.currentScreen = 'landing';
+        alert('⌛ El tiempo de espera (5 minutos) ha expirado. La sala se ha cerrado automáticamente.');
+        this.renderCurrentView();
+        return;
+      }
+
       const updated = window.BattleRoomStore.getRoomByCode(this.currentRoom.codigo);
       if (updated) {
         // Si el anfitrión cerró la sala mientras otro estaba adentro o se canceló
         if (updated.estado === 'cancelada') {
           sessionStorage.removeItem('stadium_active_room_code');
+          if (window.StadiumRouter) window.StadiumRouter.updateBattleRoomUrl(null);
           this.currentRoom = null;
           this.currentScreen = 'landing';
           alert('⚠️ El anfitrión ha salido y la sala fue cerrada.');
+          this.renderCurrentView();
+          return;
+        }
+
+        // Si la sala pasó a finalizada mientras estábamos en el lobby
+        if (updated.estado === 'finalizada' && this.currentScreen === 'lobby') {
+          sessionStorage.removeItem('stadium_active_room_code');
+          if (window.StadiumRouter) window.StadiumRouter.updateBattleRoomUrl(null);
+          this.currentRoom = null;
+          this.currentScreen = 'landing';
+          alert('⌛ La sala ha finalizado o expiró su tiempo de espera.');
           this.renderCurrentView();
           return;
         }
