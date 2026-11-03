@@ -101,6 +101,27 @@ class BattleRoomStore {
       const remoteMsgs = msgsRes.ok && msgsRes.data ? msgsRes.data : [];
 
       const currentLocal = this.getRoomByCode(code);
+
+      // Si hay jugadores en la tabla sala_jugadores, usarlos; si no, fallback a remoteRoom.jugadores
+      let finalPlayers = [];
+      if (remotePlayers.length > 0) {
+        finalPlayers = remotePlayers.map(p => ({
+          id: p.id,
+          apodo: p.apodo,
+          es_anfitrion: p.es_anfitrion === 1 || p.es_anfitrion === true,
+          listo: p.listo === 1 || p.listo === true,
+          conectado: p.conectado === 1 || p.conectado === true,
+          unido_en: p.unido_en,
+          equipo_pokemon: p.equipo_pokemon 
+            ? (typeof p.equipo_pokemon === 'string' ? JSON.parse(p.equipo_pokemon) : p.equipo_pokemon) 
+            : ((currentLocal && currentLocal.jugadores && currentLocal.jugadores.find(cj => cj.apodo.toLowerCase() === p.apodo.toLowerCase())?.equipo_pokemon) || [])
+        }));
+      } else if (remoteRoom.jugadores) {
+        finalPlayers = typeof remoteRoom.jugadores === 'string' ? JSON.parse(remoteRoom.jugadores) : remoteRoom.jugadores;
+      } else if (currentLocal && currentLocal.jugadores) {
+        finalPlayers = currentLocal.jugadores;
+      }
+
       const unifiedRoom = {
         id: remoteRoom.id,
         codigo: remoteRoom.codigo,
@@ -111,7 +132,7 @@ class BattleRoomStore {
         estado: remoteRoom.estado,
         pokemon_por_jugador: remoteRoom.pokemon_por_jugador || 3,
         max_jugadores: remoteRoom.max_jugadores || 2,
-        jugadores_actuales: remotePlayers.length || remoteRoom.jugadores_actuales || 1,
+        jugadores_actuales: finalPlayers.length || remoteRoom.jugadores_actuales || 1,
         creada_en: remoteRoom.creada_en,
         finalizada_en: remoteRoom.finalizada_en,
         // Ajustes de partida con filtros de Pokémon
@@ -120,17 +141,7 @@ class BattleRoomStore {
           formas: ['todas'],
           categorias: ['todas']
         },
-        jugadores: remotePlayers.map(p => ({
-          id: p.id,
-          apodo: p.apodo,
-          es_anfitrion: p.es_anfitrion === 1 || p.es_anfitrion === true,
-          listo: p.listo === 1 || p.listo === true,
-          conectado: p.conectado === 1 || p.conectado === true,
-          unido_en: p.unido_en,
-          equipo_pokemon: p.equipo_pokemon 
-            ? (typeof p.equipo_pokemon === 'string' ? JSON.parse(p.equipo_pokemon) : p.equipo_pokemon) 
-            : ((currentLocal && currentLocal.jugadores && currentLocal.jugadores.find(cj => cj.apodo.toLowerCase() === p.apodo.toLowerCase())?.equipo_pokemon) || [])
-        })),
+        jugadores: finalPlayers,
         mensajes: remoteMsgs.map(m => ({
           id: m.id,
           emisor: m.emisor,
@@ -423,15 +434,71 @@ class BattleRoomStore {
         const res = await window.StadiumSupabase.request(`salas_batalla?codigo=eq.${encodeURIComponent(cleanCode)}&select=*`);
         if (res.ok && res.data && res.data.length > 0) {
           const dbRoom = res.data[0];
+          
+          // Traer jugadores actuales de la sala desde Supabase
+          const playersRes = await window.StadiumSupabase.request(`sala_jugadores?sala_id=eq.${dbRoom.id}&select=*&order=id.asc`);
+          const remotePlayers = playersRes.ok && playersRes.data ? playersRes.data : [];
+
+          // Traer mensajes
+          const msgsRes = await window.StadiumSupabase.request(`sala_mensajes?sala_id=eq.${dbRoom.id}&select=*&order=id.asc`);
+          const remoteMsgs = msgsRes.ok && msgsRes.data ? msgsRes.data : [];
+
           const local = this.getRoomByCode(cleanCode);
           const pass = dbRoom.contrasena || (local && local.contrasena) || null;
-          return {
-            ...dbRoom,
+
+          // Si hay jugadores en la tabla relacional, usarlos; de lo contrario fallback a columna JSON o anfitrión
+          let parsedJugadores = [];
+          if (remotePlayers.length > 0) {
+            parsedJugadores = remotePlayers.map(p => ({
+              id: p.id,
+              apodo: p.apodo,
+              es_anfitrion: p.es_anfitrion === 1 || p.es_anfitrion === true,
+              listo: p.listo === 1 || p.listo === true,
+              conectado: p.conectado === 1 || p.conectado === true,
+              unido_en: p.unido_en,
+              equipo_pokemon: []
+            }));
+          } else if (dbRoom.jugadores) {
+            parsedJugadores = typeof dbRoom.jugadores === 'string' ? JSON.parse(dbRoom.jugadores) : dbRoom.jugadores;
+          } else {
+            parsedJugadores = [{ id: 'host', apodo: dbRoom.anfitrion_nombre, es_anfitrion: true, listo: true, conectado: true, equipo_pokemon: [] }];
+          }
+
+          const fullRoom = {
+            id: dbRoom.id,
+            codigo: dbRoom.codigo,
             contrasena: pass,
-            tiene_contrasena: !!pass
+            tiene_contrasena: !!pass,
+            anfitrion_nombre: dbRoom.anfitrion_nombre,
+            anfitrion_id: dbRoom.anfitrion_id,
+            estado: dbRoom.estado,
+            pokemon_por_jugador: dbRoom.pokemon_por_jugador || 3,
+            max_jugadores: dbRoom.max_jugadores || 2,
+            jugadores_actuales: parsedJugadores.length,
+            creada_en: dbRoom.creada_en,
+            finalizada_en: dbRoom.finalizada_en,
+            ajustes: (local && local.ajustes) || (dbRoom.ajustes ? (typeof dbRoom.ajustes === 'string' ? JSON.parse(dbRoom.ajustes) : dbRoom.ajustes) : {
+              generaciones: ['todas'],
+              formas: ['todas'],
+              categorias: ['todas']
+            }),
+            jugadores: parsedJugadores,
+            mensajes: remoteMsgs.map(m => ({
+              id: m.id,
+              emisor: m.emisor,
+              mensaje: m.mensaje,
+              es_sistema: m.es_sistema === 1 || m.es_sistema === true,
+              enviado_en: m.enviado_en
+            }))
           };
+
+          // Actualizar caché local
+          this.updateRoom(fullRoom);
+          return fullRoom;
         }
-      } catch (e) {}
+      } catch (e) {
+        console.warn('Error en getRoomDetails Supabase:', e);
+      }
     }
 
     const local = this.getRoomByCode(cleanCode);
@@ -593,7 +660,10 @@ class BattleRoomStore {
 
           await window.StadiumSupabase.request(`salas_batalla?id=eq.${room.id}`, {
             method: 'PATCH',
-            body: JSON.stringify({ jugadores_actuales: currentPlayers.length })
+            body: JSON.stringify({ 
+              jugadores_actuales: currentPlayers.length,
+              jugadores: JSON.stringify(currentPlayers)
+            })
           });
 
           await window.StadiumSupabase.request('sala_mensajes', {
