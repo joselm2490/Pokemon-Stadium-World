@@ -4,3 +4,5 @@ battle/pokemon-showdown/node_modules/
 battle/pokemon-showdown-client-master/node_modules/
 .cache/
 .DS_Store
+# Excluir codigo fuente de compilacion del cliente pero mantener build en showdown/
+battle/pokemon-showdown-client-master/
