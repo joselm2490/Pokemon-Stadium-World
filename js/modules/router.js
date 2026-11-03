@@ -27,9 +27,17 @@ class StadiumRouter {
     const rawHash = window.location.hash || '#/pokemon';
     const clean = rawHash.replace(/^#\/?/, '');
     const [pathPart, queryPart] = clean.split('?');
-    const path = pathPart.toLowerCase() || 'pokemon';
+    
+    // Soportar rutas anidadas como batalla/7SHTXZ o batallas/7SHTXZ
+    const segments = pathPart.split('/').filter(Boolean);
+    const mainRoute = (segments[0] || 'pokemon').toLowerCase();
+    const subParam = segments.length > 1 ? segments[1].toUpperCase() : null;
 
     const params = {};
+    if (subParam) {
+      params.roomCode = subParam;
+    }
+
     if (queryPart) {
       const searchParams = new URLSearchParams(queryPart);
       for (const [k, v] of searchParams.entries()) {
@@ -37,7 +45,20 @@ class StadiumRouter {
       }
     }
 
-    return { path, params };
+    return { path: mainRoute, params };
+  }
+
+  static updateBattleRoomUrl(code) {
+    if (code) {
+      const newHash = `#/batalla/${code.toUpperCase()}`;
+      if (window.location.hash !== newHash) {
+        history.replaceState(null, '', newHash);
+      }
+    } else {
+      if (window.location.hash.startsWith('#/batalla')) {
+        history.replaceState(null, '', '#/batalla');
+      }
+    }
   }
 
   static handleHashChange() {
@@ -55,7 +76,7 @@ class StadiumRouter {
 
     // Ruta estándar: pokemon, movimientos, batallas
     const targetRoute = this.routes[path] ? path : 'pokemon';
-    this.activateView(targetRoute);
+    this.activateView(targetRoute, params);
 
     // Deep linking: apertura automática de modales por parámetro (?open=...)
     const openTarget = params.open || params.id;
@@ -73,7 +94,7 @@ class StadiumRouter {
     }
   }
 
-  static activateView(routeName) {
+  static activateView(routeName, params = {}) {
     const routeConfig = this.routes[routeName] || this.routes['pokemon'];
     this.currentRoute = routeName;
 
@@ -88,7 +109,12 @@ class StadiumRouter {
 
     // Si entramos a la sección de batalla, asegurar renderizado del estado actual
     if ((routeName === 'batalla' || routeName === 'batallas') && window.BatallaModule) {
-      window.BatallaModule.renderCurrentView();
+      const roomCode = params.roomCode || null;
+      if (typeof window.BatallaModule.handleRouteRoomCode === 'function') {
+        window.BatallaModule.handleRouteRoomCode(roomCode);
+      } else {
+        window.BatallaModule.renderCurrentView();
+      }
     }
 
     // Hide or show the top menu hub based on the route

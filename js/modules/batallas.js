@@ -48,19 +48,59 @@ class BatallaModule {
     // Obtener apodo guardado o de la sesión de usuario
     this.syncUserNickname();
 
-    // Revisar si había una sala activa guardada en sesión
-    const savedRoomCode = sessionStorage.getItem('stadium_active_room_code');
+    // Revisar si la URL o la sesión traen una sala activa
+    const urlHash = window.location.hash || '';
+    let urlCode = null;
+    const match = urlHash.match(/#\/batallas?\/([A-Za-z0-9]+)/i);
+    if (match && match[1]) {
+      urlCode = match[1].toUpperCase();
+    }
+
+    const savedRoomCode = urlCode || sessionStorage.getItem('stadium_active_room_code');
     if (savedRoomCode && window.BattleRoomStore) {
-      const room = window.BattleRoomStore.getRoomByCode(savedRoomCode);
-      if (room && room.estado === 'esperando') {
+      this.handleRouteRoomCode(savedRoomCode);
+    } else {
+      this.currentScreen = 'landing';
+      this.renderCurrentView();
+    }
+  }
+
+  static async handleRouteRoomCode(roomCode) {
+    if (!roomCode) {
+      if (this.currentRoom && this.currentScreen === 'lobby') {
+        this.renderCurrentView();
+        return;
+      }
+      this.currentScreen = 'landing';
+      this.renderCurrentView();
+      return;
+    }
+
+    const code = roomCode.trim().toUpperCase();
+    this.syncUserNickname();
+
+    if (window.BattleRoomStore) {
+      let room = await window.BattleRoomStore.getRoomDetails(code);
+      if (room && (room.estado === 'esperando' || room.estado === 'en_combate')) {
         this.currentRoom = room;
         this.currentScreen = 'lobby';
-      } else {
-        sessionStorage.removeItem('stadium_active_room_code');
-        this.currentScreen = 'landing';
+        sessionStorage.setItem('stadium_active_room_code', code);
+        window.BattleRoomStore.setActiveRoomCode(code);
+        if (window.StadiumRouter) {
+          window.StadiumRouter.updateBattleRoomUrl(code);
+        }
+        this.renderCurrentView();
+        return;
       }
     }
 
+    // Si la sala no existe o está finalizada, volver a landing
+    sessionStorage.removeItem('stadium_active_room_code');
+    if (window.StadiumRouter) {
+      window.StadiumRouter.updateBattleRoomUrl(null);
+    }
+    this.currentRoom = null;
+    this.currentScreen = 'landing';
     this.renderCurrentView();
   }
 
@@ -696,12 +736,23 @@ class BatallaModule {
 
     let room = null;
     if (window.BattleRoomStore) {
-      room = await window.BattleRoomStore.createRoom({
-        hostNickname: nick,
-        pokemonCount: pokemonCount,
-        maxPlayers: 2,
-        password: password
-      });
+      try {
+        room = await window.BattleRoomStore.createRoom({
+          hostNickname: nick,
+          pokemonCount: pokemonCount,
+          maxPlayers: 2,
+          password: password
+        });
+      } catch (err) {
+        const errDiv = document.getElementById('createModalErrorMsg');
+        if (errDiv) {
+          errDiv.textContent = err.message || 'Error creando sala.';
+          errDiv.style.display = 'block';
+        } else {
+          alert(err.message);
+        }
+        return;
+      }
     } else {
       const code = 'PXXE' + Math.floor(10 + Math.random() * 90);
       room = {
@@ -718,6 +769,9 @@ class BatallaModule {
 
     this.currentRoom = room;
     sessionStorage.setItem('stadium_active_room_code', room.codigo);
+    if (window.StadiumRouter) {
+      window.StadiumRouter.updateBattleRoomUrl(room.codigo);
+    }
 
     this.closeCreateModal();
     if (window.SFX) window.SFX.playSuccess();
@@ -909,9 +963,6 @@ class BatallaModule {
       enteredPassword = pass.trim();
     }
 
-    const nick = (this.userNickname || 'Invitado').trim() || 'Entrenador';
-    localStorage.setItem('stadium_battle_nickname', nick);
-
     if (window.BattleRoomStore) {
       const res = await window.BattleRoomStore.joinRoom({
         code: code,
@@ -938,6 +989,9 @@ class BatallaModule {
     }
 
     sessionStorage.setItem('stadium_active_room_code', code);
+    if (window.StadiumRouter) {
+      window.StadiumRouter.updateBattleRoomUrl(code);
+    }
     this.closeJoinModal();
     if (window.SFX) window.SFX.playSuccess();
     this.currentScreen = 'lobby';
@@ -1024,6 +1078,9 @@ class BatallaModule {
     }
 
     sessionStorage.setItem('stadium_active_room_code', code);
+    if (window.StadiumRouter) {
+      window.StadiumRouter.updateBattleRoomUrl(code);
+    }
     this.closeJoinModal();
     if (window.SFX) window.SFX.playSuccess();
     this.currentScreen = 'lobby';
@@ -1050,6 +1107,9 @@ class BatallaModule {
         window.BattleRoomStore.leaveRoom(this.currentRoom.codigo, this.userNickname);
       }
       sessionStorage.removeItem('stadium_active_room_code');
+      if (window.StadiumRouter) {
+        window.StadiumRouter.updateBattleRoomUrl(null);
+      }
       this.currentRoom = null;
       this.currentScreen = 'landing';
       this.renderCurrentView();

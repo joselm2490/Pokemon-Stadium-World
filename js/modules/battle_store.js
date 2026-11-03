@@ -254,8 +254,56 @@ class BattleRoomStore {
     });
   }
 
+  static async checkUserActiveInOtherRoom(userNickname, currentRoomCode = null) {
+    if (!userNickname) return null;
+    const nickClean = userNickname.trim().toLowerCase();
+
+    // 1. Verificar en Supabase
+    if (window.StadiumSupabase) {
+      try {
+        const res = await window.StadiumSupabase.request(
+          `salas_batalla?estado=in.(esperando,en_combate)&select=id,codigo,estado,anfitrion_nombre,jugadores_actuales`
+        );
+        if (res.ok && Array.isArray(res.data)) {
+          for (const r of res.data) {
+            if (currentRoomCode && r.codigo.toUpperCase() === currentRoomCode.toUpperCase()) {
+              continue;
+            }
+            // Consultar si el apodo está en sala_jugadores de esta sala
+            const pRes = await window.StadiumSupabase.request(
+              `sala_jugadores?sala_id=eq.${r.id}&apodo=ilike.${encodeURIComponent(userNickname.trim())}&select=id,apodo`
+            );
+            if (pRes.ok && pRes.data && pRes.data.length > 0) {
+              return r; // Ya está activo en esta sala
+            }
+          }
+        }
+      } catch (e) {
+        console.warn('Error verificando actividad en otras salas:', e);
+      }
+    }
+
+    // 2. Verificar en LocalStorage
+    const localRooms = this.getAllRooms();
+    for (const r of localRooms) {
+      if (currentRoomCode && r.codigo.toUpperCase() === currentRoomCode.toUpperCase()) continue;
+      if (r.estado === 'esperando' || r.estado === 'en_combate') {
+        const inRoom = (r.jugadores || []).some(j => (j.apodo || '').toLowerCase() === nickClean);
+        if (inRoom) return r;
+      }
+    }
+
+    return null;
+  }
+
   // Crear una nueva sala
   static async createRoom({ hostNickname, pokemonCount = 3, maxPlayers = 2, password = null, ajustes = null }) {
+    // Regla: Un usuario solo puede estar en una sala activa a la vez
+    const activeInOther = await this.checkUserActiveInOtherRoom(hostNickname);
+    if (activeInOther) {
+      throw new Error(`Ya tienes una sala activa (${activeInOther.codigo}). Debes salir o finalizarla antes de crear otra.`);
+    }
+
     const code = this.generateUniqueRoomCode();
     const now = new Date().toISOString();
     const cleanPassword = (password || '').trim() || null;
@@ -473,6 +521,17 @@ class BattleRoomStore {
     const existingPlayer = currentPlayers.find(
       (j) => j.apodo.toLowerCase() === userNickname.toLowerCase()
     );
+
+    // Regla: Un usuario solo puede estar en una sala por vez
+    if (!existingPlayer) {
+      const activeInOther = await this.checkUserActiveInOtherRoom(userNickname, cleanCode);
+      if (activeInOther) {
+        return { 
+          ok: false, 
+          error: `Actualmente ya estás participando en la sala activa "${activeInOther.codigo}". Debes salir de ella para poder unirte a otra.` 
+        };
+      }
+    }
 
     // Regla 2: Solo unirse si solo tiene 1 jugador (o si es el mismo reingresando)
     if (!existingPlayer && currentPlayers.length >= 2) {
