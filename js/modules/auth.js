@@ -59,13 +59,17 @@ class AuthManager {
     } catch (e) {}
   }
 
+  // GESTIÓN DE SESIÓN AISLADA (ESTILO DJANGO / SESSION-BASED AUTH):
+  // Usamos estrictamente `sessionStorage` para almacenar la sesión activa del usuario.
+  // De este modo:
+  // - Cada ventana o contexto (modo normal vs modo incógnito) mantiene SU PROPIA sesión totalmente independiente.
+  // - Al dar F5 o recargar la pestaña, sessionStorage persiste la sesión de esa ventana.
+  // - La sesión de la ventana normal NUNCA se filtra ni contamina la ventana en modo incógnito.
   static getCurrentUser() {
     try {
-      const raw = localStorage.getItem(this.SESSION_KEY);
-      if (raw) return JSON.parse(raw);
-      // Fallback a sessionStorage por si el navegador bloquea o limpia localStorage
       const sRaw = sessionStorage.getItem(this.SESSION_KEY);
-      return sRaw ? JSON.parse(sRaw) : null;
+      if (sRaw) return JSON.parse(sRaw);
+      return null;
     } catch (e) {
       return null;
     }
@@ -75,12 +79,12 @@ class AuthManager {
     try {
       if (user) {
         const str = JSON.stringify(user);
-        localStorage.setItem(this.SESSION_KEY, str);
         sessionStorage.setItem(this.SESSION_KEY, str);
       } else {
-        localStorage.removeItem(this.SESSION_KEY);
         sessionStorage.removeItem(this.SESSION_KEY);
       }
+      // Limpiar residuo en localStorage por si existía de versiones previas
+      localStorage.removeItem(this.SESSION_KEY);
     } catch (e) {}
   }
 
