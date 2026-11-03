@@ -871,8 +871,63 @@ class BattleRoomStore {
 
     this.setActiveRoomCode(null);
     const isHost = (room.anfitrion_nombre || '').toLowerCase() === (userNickname || '').toLowerCase();
+    const inCombat = room.estado === 'en_combate';
 
-    // Caso 1: El anfitrión sale y no hay más jugadores (está solo en la sala)
+    // Caso A: Si la sala ya estaba en combate y un jugador se retira,
+    // se declara derrota por abandono, victoria al rival y se finaliza la sala de inmediato.
+    if (inCombat) {
+      const rival = (room.jugadores || []).find(
+        (j) => j.apodo.toLowerCase() !== (userNickname || '').toLowerCase()
+      );
+      const rivalNick = rival ? rival.apodo : 'Rival';
+
+      room.estado = 'finalizada';
+      room.ganador = rivalNick;
+      room.perdedor = userNickname;
+      room.motivo_fin = 'abandono';
+      room.finalizada_en = new Date().toISOString();
+      room.jugadores = [];
+      room.jugadores_actuales = 0;
+
+      room.mensajes.push({
+        id: (room.mensajes ? room.mensajes.length : 0) + 1,
+        emisor: 'SISTEMA',
+        mensaje: `🏳️ ${userNickname} se ha rendido y abandonó el combate. ¡Victoria otorgada a ${rivalNick}! La batalla y la sala han finalizado.`,
+        es_sistema: true,
+        enviado_en: new Date().toISOString()
+      });
+
+      this.updateRoom(room);
+
+      if (window.StadiumSupabase && room.id) {
+        try {
+          await window.StadiumSupabase.request(`sala_jugadores?sala_id=eq.${room.id}`, {
+            method: 'DELETE'
+          });
+          await window.StadiumSupabase.request(`salas_batalla?id=eq.${room.id}`, {
+            method: 'PATCH',
+            body: JSON.stringify({
+              estado: 'finalizada',
+              ganador: rivalNick,
+              jugadores_actuales: 0,
+              finalizada_en: new Date().toISOString()
+            })
+          });
+          await window.StadiumSupabase.request('sala_mensajes', {
+            method: 'POST',
+            body: JSON.stringify({
+              sala_id: room.id,
+              emisor: 'SISTEMA',
+              mensaje: `🏳️ ${userNickname} abandonó el combate. ¡Victoria para ${rivalNick}!`,
+              es_sistema: 1
+            })
+          });
+        } catch (e) {}
+      }
+      return;
+    }
+
+    // Caso 1: El anfitrión sale y no hay más jugadores (está solo en la sala de espera)
     if (isHost && (!room.jugadores || room.jugadores.length <= 1)) {
       room.estado = 'cancelada';
       room.finalizada_en = new Date().toISOString();

@@ -166,5 +166,25 @@
         return origAddRoom.apply(this, arguments);
       };
     }
+
+    // Escuchar mensajes desde la ventana padre (para rendición o desconexión limpia)
+    window.addEventListener('message', function(ev) {
+      if (!ev.data) return;
+      if (ev.data.type === 'stadium-forfeit-and-close') {
+        console.log('[Stadium-Showdown Bridge] Recibida orden de rendición y cierre.');
+        try {
+          if (PS.room && PS.room.id && PS.room.id.startsWith('battle-')) {
+            PS.room.send('/forfeit');
+            PS.room.send('/leave');
+          }
+          if (PS.connection) {
+            PS.connection.disconnect();
+          }
+        } catch (e) {
+          console.warn('[Stadium-Showdown Bridge] Error forzando desconexión:', e);
+        }
+      }
+    });
   }
 })();
+

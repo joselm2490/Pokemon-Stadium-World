@@ -132,13 +132,30 @@ class BatallaModule {
           return;
         }
 
-        // Si la sala pasó a finalizada mientras estábamos en el lobby
-        if (updated.estado === 'finalizada' && this.currentScreen === 'lobby') {
+        // Si la sala pasó a finalizada (por ejemplo el rival se rindió y abandonó)
+        if (updated.estado === 'finalizada') {
           sessionStorage.removeItem('stadium_active_room_code');
           if (window.StadiumRouter) window.StadiumRouter.updateBattleRoomUrl(null);
+          
+          // Desconectar proceso de Showdown
+          try {
+            const iframe = document.getElementById('showdownBattleFrame');
+            if (iframe && iframe.contentWindow) {
+              iframe.contentWindow.postMessage({ type: 'stadium-forfeit-and-close' }, '*');
+            }
+          } catch (e) {}
+
+          const ganador = updated.ganador;
+          const myNick = (this.userNickname || '').toLowerCase();
+          const iWon = (ganador || '').toLowerCase() === myNick;
+
+          const msg = iWon 
+            ? `🏆 ¡TU RIVAL SE RINDIÓ! Has ganado el combate. La sala y el duelo han finalizado.`
+            : `⌛ La sala y el combate han finalizado.`;
+
+          alert(msg);
           this.currentRoom = null;
           this.currentScreen = 'landing';
-          alert('⌛ La sala ha finalizado o expiró su tiempo de espera.');
           this.renderCurrentView();
           return;
         }
@@ -1307,18 +1324,145 @@ class BatallaModule {
   }
 
   static leaveRoom() {
-    if (confirm('¿Deseas salir de la sala de espera?')) {
-      if (this.currentRoom && window.BattleRoomStore) {
-        window.BattleRoomStore.leaveRoom(this.currentRoom.codigo, this.userNickname);
-      }
-      sessionStorage.removeItem('stadium_active_room_code');
-      if (window.StadiumRouter) {
-        window.StadiumRouter.updateBattleRoomUrl(null);
-      }
-      this.currentRoom = null;
-      this.currentScreen = 'landing';
-      this.renderCurrentView();
+    const inCombat = this.currentRoom && this.currentRoom.estado === 'en_combate';
+
+    if (inCombat) {
+      this.showCombatSurrenderModal();
+    } else {
+      this.showLobbyLeaveModal();
     }
+  }
+
+  /**
+   * Modal de confirmación al salir de la SALA DE ESPERA (antes de iniciar la partida)
+   */
+  static showLobbyLeaveModal() {
+    let modal = document.getElementById('lobbyLeaveConfirmModal');
+    if (!modal) {
+      modal = document.createElement('div');
+      modal.id = 'lobbyLeaveConfirmModal';
+      modal.className = 'battle-modal-overlay';
+      document.body.appendChild(modal);
+    }
+
+    const isHost = this.currentRoom && ((this.currentRoom.anfitrion_nombre || '').toLowerCase() === (this.userNickname || '').toLowerCase());
+    const warningText = isHost
+      ? 'Eres el anfitrión de la sala. Si sales y no hay más jugadores, la sala se cancelará. Si hay otro jugador, se le asignará el mando de la sala.'
+      : 'Saldrás de la sala de espera y volverás al menú principal de duelos.';
+
+    modal.innerHTML = `
+      <div class="battle-modal-card" style="max-width: 460px; text-align: center;">
+        <div class="battle-modal-header" style="justify-content: center;">
+          <h3 style="color: #facc15; font-size: 1.15rem;">🚪 Salir de la Sala de Espera</h3>
+        </div>
+        <div class="battle-modal-body" style="padding: 20px 16px;">
+          <p style="color: #e2e8f0; font-size: 0.95rem; margin-bottom: 12px; line-height: 1.5;">
+            ¿Estás seguro de que deseas salir de la sala?
+          </p>
+          <p style="color: #94a3b8; font-size: 0.82rem; margin-bottom: 24px; line-height: 1.4;">
+            ${warningText}
+          </p>
+          <div style="display: flex; gap: 12px; justify-content: center;">
+            <button class="battle-secondary-btn" onclick="document.getElementById('lobbyLeaveConfirmModal').style.display='none'" style="flex: 1; padding: 10px;">
+              Cancelar
+            </button>
+            <button class="battle-primary-action-btn" onclick="BatallaModule.confirmLobbyLeave()" style="flex: 1; padding: 10px; background: #ef4444; border-color: #f87171;">
+              Sí, Salir
+            </button>
+          </div>
+        </div>
+      </div>
+    `;
+
+    modal.style.display = 'flex';
+  }
+
+  static async confirmLobbyLeave() {
+    const modal = document.getElementById('lobbyLeaveConfirmModal');
+    if (modal) modal.style.display = 'none';
+
+    if (this.currentRoom && window.BattleRoomStore) {
+      await window.BattleRoomStore.leaveRoom(this.currentRoom.codigo, this.userNickname);
+    }
+    sessionStorage.removeItem('stadium_active_room_code');
+    if (window.StadiumRouter) {
+      window.StadiumRouter.updateBattleRoomUrl(null);
+    }
+    this.currentRoom = null;
+    this.currentScreen = 'landing';
+    this.renderCurrentView();
+  }
+
+  /**
+   * Modal de advertencia estricta en COMBATE:
+   * Si sale, se toma como derrota inmediata por abandono y victoria al rival.
+   */
+  static showCombatSurrenderModal() {
+    let modal = document.getElementById('combatSurrenderConfirmModal');
+    if (!modal) {
+      modal = document.createElement('div');
+      modal.id = 'combatSurrenderConfirmModal';
+      modal.className = 'battle-modal-overlay';
+      document.body.appendChild(modal);
+    }
+
+    modal.innerHTML = `
+      <div class="battle-modal-card" style="max-width: 480px; text-align: center; border: 2px solid rgba(239, 68, 68, 0.6); box-shadow: 0 0 35px rgba(239, 68, 68, 0.45);">
+        <div class="battle-modal-header" style="justify-content: center; background: rgba(239, 68, 68, 0.15);">
+          <h3 style="color: #ef4444; font-size: 1.2rem; display: flex; align-items: center; gap: 8px;">
+            ⚠️ ¡ADVERTENCIA DE RENDICIÓN!
+          </h3>
+        </div>
+        <div class="battle-modal-body" style="padding: 24px 18px;">
+          <p style="color: #f87171; font-weight: 800; font-size: 1.05rem; margin-bottom: 10px;">
+            ¡El combate está en curso!
+          </p>
+          <p style="color: #e2e8f0; font-size: 0.92rem; margin-bottom: 16px; line-height: 1.5;">
+            Si decides salir ahora, se te considerará como <strong>DERROTA INMEDIATA</strong> y se le otorgará la <strong>VICTORIA OFICIAL AL RIVAL</strong> por abandono.
+          </p>
+          <div style="background: rgba(15, 23, 42, 0.8); border: 1px dashed rgba(239, 68, 68, 0.4); border-radius: 8px; padding: 12px; margin-bottom: 24px; text-align: left; font-size: 0.8rem; color: #94a3b8;">
+            <p style="margin: 0 0 4px 0;">⚡ El combate y la sala se darán por finalizados.</p>
+            <p style="margin: 0;">🛑 Se detendrán y cerrarán todos los procesos de Showdown y la conexión en segundo plano.</p>
+          </div>
+          <div style="display: flex; gap: 12px; justify-content: center;">
+            <button class="battle-secondary-btn" onclick="document.getElementById('combatSurrenderConfirmModal').style.display='none'" style="flex: 1; padding: 12px; font-weight: 700;">
+              Seguir Luchando
+            </button>
+            <button class="battle-primary-action-btn" onclick="BatallaModule.confirmCombatSurrender()" style="flex: 1; padding: 12px; background: #dc2626; border-color: #ef4444; box-shadow: 0 4px 15px rgba(220, 38, 38, 0.5);">
+              🏳️ Rendirme y Salir
+            </button>
+          </div>
+        </div>
+      </div>
+    `;
+
+    modal.style.display = 'flex';
+  }
+
+  static async confirmCombatSurrender() {
+    const modal = document.getElementById('combatSurrenderConfirmModal');
+    if (modal) modal.style.display = 'none';
+
+    // 1. Notificar al iframe de Showdown que envíe /forfeit y desconecte el socket para limpiar el proceso
+    try {
+      const iframe = document.getElementById('showdownBattleFrame');
+      if (iframe && iframe.contentWindow) {
+        iframe.contentWindow.postMessage({ type: 'stadium-forfeit-and-close' }, '*');
+      }
+    } catch (e) {}
+
+    // 2. Dar por finalizada la batalla en el store y declarar victoria al rival
+    if (this.currentRoom && window.BattleRoomStore) {
+      await window.BattleRoomStore.leaveRoom(this.currentRoom.codigo, this.userNickname);
+    }
+
+    sessionStorage.removeItem('stadium_active_room_code');
+    if (window.StadiumRouter) {
+      window.StadiumRouter.updateBattleRoomUrl(null);
+    }
+    this.currentRoom = null;
+    this.currentScreen = 'landing';
+    this.renderCurrentView();
   }
 
   static exitBattleModule() {
