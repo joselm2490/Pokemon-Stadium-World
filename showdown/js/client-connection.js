@@ -86,7 +86,7 @@ return true;
 }
 
 try{
-var worker=new Worker('/js/client-connection-worker.js');
+var worker=new Worker('js/client-connection-worker.js');
 this.worker=worker;
 
 worker.postMessage({type:'connect',server:PS.server});
