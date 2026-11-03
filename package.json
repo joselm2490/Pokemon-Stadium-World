@@ -4,7 +4,7 @@
   "description": "Videojuego web Pokémon Stadium World con base de datos, sprites y sistema de combate",
   "main": "index.html",
   "scripts": {
-    "start": "cd battle/pokemon-showdown && node --max-old-space-size=400 pokemon-showdown start --port ${PORT:-8000}",
+    "start": "cd battle/pokemon-showdown && node pokemon-showdown start --skip-build",
     "dev": "python3 -m http.server 8080",
     "serve": "npx serve .",
     "build": "cd battle/pokemon-showdown && npm install && npm run build"
