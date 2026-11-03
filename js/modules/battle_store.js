@@ -104,8 +104,8 @@ class BattleRoomStore {
       const unifiedRoom = {
         id: remoteRoom.id,
         codigo: remoteRoom.codigo,
-        contrasena: (currentLocal && currentLocal.contrasena) || null,
-        tiene_contrasena: (currentLocal && !!currentLocal.contrasena) || false,
+        contrasena: remoteRoom.contrasena || (currentLocal && currentLocal.contrasena) || null,
+        tiene_contrasena: !!remoteRoom.contrasena || (currentLocal && !!currentLocal.contrasena) || false,
         anfitrion_nombre: remoteRoom.anfitrion_nombre,
         anfitrion_id: remoteRoom.anfitrion_id,
         estado: remoteRoom.estado,
@@ -213,15 +213,16 @@ class BattleRoomStore {
     if (window.StadiumSupabase) {
       try {
         const res = await window.StadiumSupabase.request(
-          'salas_batalla?select=id,codigo,anfitrion_nombre,estado,pokemon_por_jugador,max_jugadores,jugadores_actuales,creada_en,finalizada_en&order=creada_en.desc&limit=30'
+          'salas_batalla?select=id,codigo,contrasena,anfitrion_nombre,estado,pokemon_por_jugador,max_jugadores,jugadores_actuales,creada_en,finalizada_en&order=creada_en.desc&limit=30'
         );
         if (res.ok && Array.isArray(res.data)) {
           allCandidates = res.data.map(remote => {
             const loc = localMap.get(remote.codigo);
+            const pass = remote.contrasena || (loc ? loc.contrasena : null);
             return {
               ...remote,
-              contrasena: loc ? loc.contrasena : null,
-              tiene_contrasena: loc ? !!loc.contrasena : false
+              contrasena: pass,
+              tiene_contrasena: !!pass
             };
           });
         }
@@ -314,11 +315,14 @@ class BattleRoomStore {
       try {
         const payload = {
           codigo: code,
+          contrasena: cleanPassword,
           anfitrion_nombre: hostNickname,
           estado: 'esperando',
           pokemon_por_jugador: pokemonCount,
           max_jugadores: maxPlayers,
-          jugadores_actuales: 1
+          jugadores_actuales: 1,
+          ajustes: JSON.stringify(defaultAjustes),
+          jugadores: JSON.stringify(newRoom.jugadores)
         };
 
         const res = await window.StadiumSupabase.request('salas_batalla', {
@@ -383,12 +387,13 @@ class BattleRoomStore {
           const msgs = msgsRes.ok && msgsRes.data ? msgsRes.data : [];
 
           const existingLocal = this.getRoomByCode(cleanCode);
+          const roomPass = dbRoom.contrasena || (existingLocal && existingLocal.contrasena) || null;
 
           room = {
             id: dbRoom.id,
             codigo: dbRoom.codigo,
-            contrasena: (existingLocal && existingLocal.contrasena) || null,
-            tiene_contrasena: (existingLocal && !!existingLocal.contrasena) || false,
+            contrasena: roomPass,
+            tiene_contrasena: !!roomPass,
             anfitrion_nombre: dbRoom.anfitrion_nombre,
             anfitrion_id: dbRoom.anfitrion_id,
             estado: dbRoom.estado,
@@ -397,11 +402,11 @@ class BattleRoomStore {
             jugadores_actuales: players.length || dbRoom.jugadores_actuales || 1,
             creada_en: dbRoom.creada_en,
             finalizada_en: dbRoom.finalizada_en,
-            ajustes: (existingLocal && existingLocal.ajustes) || {
+            ajustes: (existingLocal && existingLocal.ajustes) || (dbRoom.ajustes ? (typeof dbRoom.ajustes === 'string' ? JSON.parse(dbRoom.ajustes) : dbRoom.ajustes) : {
               generaciones: ['todas'],
               formas: ['todas'],
               categorias: ['todas']
-            },
+            }),
             jugadores: players.map(p => ({
               id: p.id,
               apodo: p.apodo,

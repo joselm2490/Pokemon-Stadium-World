@@ -716,6 +716,10 @@ class BatallaModule {
       this.switchJoinTab('code');
       const errorDiv = document.getElementById('joinModalErrorMsg');
       if (errorDiv) errorDiv.style.display = 'none';
+      const passGroup = document.getElementById('joinPasswordGroup');
+      if (passGroup) passGroup.style.display = 'none';
+      const passInput = document.getElementById('joinRoomPasswordInput');
+      if (passInput) passInput.value = '';
       const input = document.getElementById('joinRoomCodeInput');
       if (input) {
         input.value = '';
@@ -727,6 +731,12 @@ class BatallaModule {
   static closeJoinModal() {
     const modal = document.getElementById('joinRoomModal');
     if (modal) modal.style.display = 'none';
+    const passGroup = document.getElementById('joinPasswordGroup');
+    if (passGroup) passGroup.style.display = 'none';
+    const passInput = document.getElementById('joinRoomPasswordInput');
+    if (passInput) passInput.value = '';
+    const errorDiv = document.getElementById('joinModalErrorMsg');
+    if (errorDiv) errorDiv.style.display = 'none';
   }
 
   static switchJoinTab(tabName) {
