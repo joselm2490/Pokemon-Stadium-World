@@ -23,9 +23,7 @@ class BatallaModule {
         if (user.nombre) return user.nombre.split(' ')[0];
       }
     }
-    const savedNick = localStorage.getItem('stadium_battle_nickname');
-    if (savedNick) return savedNick;
-    return 'Entrenador';
+    return '';
   }
 
   static syncUserNickname() {
@@ -176,45 +174,61 @@ class BatallaModule {
 
           <!-- TARJETA FLOTANTE DE ACCESO -->
           <div class="battle-card-box">
-            <!-- CAMPO DE APODO -->
-            <div class="apodo-field-group">
-              <div class="apodo-label-row">
-                <span class="apodo-label">
-                  <span class="label-user-icon">${isLogged ? '🔒' : '👤'}</span> TU APODO ${isLogged ? '<span class="apodo-locked-tag">(Cuenta Verificada)</span>' : ''}
-                </span>
-                <span class="apodo-counter" id="apodoCharCounter">${(this.userNickname || '').length}/15</span>
+            <!-- BLOQUE DE SESIÓN / APODO (REQUERIDO LOGIN PARA BATALLAS) -->
+            ${isLogged ? `
+              <div class="apodo-field-group">
+                <div class="apodo-label-row">
+                  <span class="apodo-label">
+                    <span class="label-user-icon">👤</span> ENTRENADOR CONECTADO <span class="apodo-locked-tag">(Verificado)</span>
+                  </span>
+                </div>
+                <div class="apodo-input-wrapper is-locked" style="background: rgba(14, 116, 144, 0.15); border: 1px solid rgba(56, 189, 248, 0.35); border-radius: 10px; padding: 12px 16px; display: flex; align-items: center; justify-content: space-between;">
+                  <span style="font-weight: 800; color: #fff; font-size: 1.05rem; letter-spacing: 0.5px;">
+                    ${this.escapeHtml(this.userNickname)}
+                  </span>
+                  <span style="font-size: 0.85rem; color: #38bdf8; font-weight: 700;">🟢 Listo para combatir</span>
+                </div>
               </div>
-              <div class="apodo-input-wrapper ${isLogged ? 'is-locked' : ''}">
-                <input 
-                  type="text" 
-                  id="battleNicknameInput" 
-                  class="apodo-input ${isLogged ? 'apodo-input-locked' : ''}" 
-                  maxlength="15" 
-                  value="${this.escapeHtml(this.userNickname)}"
-                  placeholder="Tu apodo"
-                  autocomplete="off"
-                  ${isLogged ? 'readonly title="Apodo fijado por tu sesión de entrenador"' : ''}
-                />
-                ${!isLogged ? `
-                  <button class="dice-btn" id="randomizeNickBtn" title="Generar apodo aleatorio">
-                    🎲
+
+              <!-- BOTONES DE ACCIÓN PARA USUARIO LOGUEADO -->
+              <button class="battle-primary-action-btn btn-crear-sala" id="btnCrearSala">
+                <span class="btn-action-icon">🚀</span>
+                <span class="btn-action-text">CREAR SALA</span>
+              </button>
+
+              <button class="battle-primary-action-btn btn-unirse-sala" id="btnUnirseSala">
+                <span class="btn-action-icon">🔑</span>
+                <span class="btn-action-text">UNIRSE A SALA</span>
+              </button>
+            ` : `
+              <div class="battle-auth-required-box" style="padding: 16px 14px; background: rgba(15, 23, 42, 0.7); border: 1px solid rgba(255, 255, 255, 0.08); border-radius: 12px; margin-bottom: 16px; text-align: center;">
+                <div style="font-size: 1.6rem; margin-bottom: 6px;">🔐</div>
+                <div style="font-size: 0.92rem; font-weight: 800; color: #38bdf8; margin-bottom: 4px;">ACCESO REQUERIDO</div>
+                <p style="font-size: 0.78rem; color: #94a3b8; margin: 0 0 14px 0; line-height: 1.4;">
+                  Para crear o unirte a salas multijugador debes iniciar sesión o registrarte con tu cuenta de entrenador.
+                </p>
+                
+                <div style="display: flex; gap: 8px;">
+                  <button class="battle-primary-action-btn" id="btnLandingLogin" style="flex: 1; padding: 10px; font-size: 0.85rem;">
+                    Ingresar
                   </button>
-                ` : `
-                  <span class="lock-indicator" title="Sesión activa">🔒</span>
-                `}
+                  <button class="battle-secondary-action-btn" id="btnLandingRegister" style="flex: 1; padding: 10px; font-size: 0.85rem; width: auto;">
+                    Registrarse
+                  </button>
+                </div>
               </div>
-            </div>
 
-            <!-- BOTONES DE ACCIÓN -->
-            <button class="battle-primary-action-btn btn-crear-sala" id="btnCrearSala">
-              <span class="btn-action-icon">🚀</span>
-              <span class="btn-action-text">CREAR SALA</span>
-            </button>
+              <!-- BOTONES DE SALA DESHABILITADOS QUE PIDEN INICIAR SESIÓN -->
+              <button class="battle-primary-action-btn btn-crear-sala" id="btnCrearSala" style="opacity: 0.6;">
+                <span class="btn-action-icon">🚀</span>
+                <span class="btn-action-text">CREAR SALA (Requiere Login)</span>
+              </button>
 
-            <button class="battle-primary-action-btn btn-unirse-sala" id="btnUnirseSala">
-              <span class="btn-action-icon">🔑</span>
-              <span class="btn-action-text">UNIRSE A SALA</span>
-            </button>
+              <button class="battle-primary-action-btn btn-unirse-sala" id="btnUnirseSala" style="opacity: 0.6;">
+                <span class="btn-action-icon">🔑</span>
+                <span class="btn-action-text">UNIRSE A SALA (Requiere Login)</span>
+              </button>
+            `}
 
             <button class="battle-secondary-action-btn btn-como-jugar" id="btnComoJugar">
               <span class="btn-help-icon">❓</span>
@@ -573,35 +587,28 @@ class BatallaModule {
   // ------------------------------------------------------------------
   static setupLandingEvents() {
     const isLogged = window.AuthManager && window.AuthManager.isLoggedIn();
-    const nickInput = document.getElementById('battleNicknameInput');
-    const counter = document.getElementById('apodoCharCounter');
-    
-    // Solo permitir edición de apodo si el usuario no tiene sesión iniciada
-    if (!isLogged && nickInput && counter) {
-      nickInput.addEventListener('input', (e) => {
-        const val = e.target.value || '';
-        this.userNickname = val;
-        counter.textContent = `${val.length}/15`;
-        localStorage.setItem('stadium_battle_nickname', val);
+
+    const btnLogin = document.getElementById('btnLandingLogin');
+    if (btnLogin) {
+      btnLogin.addEventListener('click', () => {
+        if (window.AuthManager) window.AuthManager.openModal('login');
       });
     }
 
-    const randomBtn = document.getElementById('randomizeNickBtn');
-    if (!isLogged && randomBtn) {
-      randomBtn.addEventListener('click', () => {
-        const sampleNicks = ['Ash', 'Red', 'Blue', 'Gary', 'Cynthia', 'Brock', 'Misty', 'Lance', 'Leon', 'Oak', 'Gold', 'Silver', 'Steven', 'N'];
-        const random = sampleNicks[Math.floor(Math.random() * sampleNicks.length)];
-        this.userNickname = random;
-        if (nickInput) nickInput.value = random;
-        if (counter) counter.textContent = `${random.length}/15`;
-        localStorage.setItem('stadium_battle_nickname', random);
-        if (window.SFX) window.SFX.playCardClick();
+    const btnRegister = document.getElementById('btnLandingRegister');
+    if (btnRegister) {
+      btnRegister.addEventListener('click', () => {
+        if (window.AuthManager) window.AuthManager.openModal('register');
       });
     }
 
     const btnCrear = document.getElementById('btnCrearSala');
     if (btnCrear) {
       btnCrear.addEventListener('click', () => {
+        if (!isLogged) {
+          if (window.AuthManager) window.AuthManager.openModal('login');
+          return;
+        }
         this.openCreateModal();
       });
     }
@@ -609,6 +616,10 @@ class BatallaModule {
     const btnUnirse = document.getElementById('btnUnirseSala');
     if (btnUnirse) {
       btnUnirse.addEventListener('click', () => {
+        if (!isLogged) {
+          if (window.AuthManager) window.AuthManager.openModal('login');
+          return;
+        }
         this.openJoinModal();
       });
     }
@@ -657,8 +668,16 @@ class BatallaModule {
   }
 
   static async submitCreateRoom() {
-    const nick = (this.userNickname || 'Jose').trim() || 'Entrenador';
-    localStorage.setItem('stadium_battle_nickname', nick);
+    if (!window.AuthManager || !window.AuthManager.isLoggedIn()) {
+      if (window.AuthManager) window.AuthManager.openModal('login');
+      return;
+    }
+    const nick = (this.userNickname || '').trim();
+    if (!nick) {
+      alert('Debes iniciar sesión para crear una sala.');
+      if (window.AuthManager) window.AuthManager.openModal('login');
+      return;
+    }
 
     const pokemonCount = 3; // Valor inicial por defecto (se configura y ajusta libremente adentro de la sala)
 
@@ -869,6 +888,17 @@ class BatallaModule {
   }
 
   static async joinRoomDirectly(code, requiresPassword = false) {
+    if (!window.AuthManager || !window.AuthManager.isLoggedIn()) {
+      if (window.AuthManager) window.AuthManager.openModal('login');
+      return;
+    }
+    const nick = (this.userNickname || '').trim();
+    if (!nick) {
+      alert('Debes iniciar sesión para unirte a una sala.');
+      if (window.AuthManager) window.AuthManager.openModal('login');
+      return;
+    }
+
     const errorDiv = document.getElementById('joinRoomsListErrorMsg');
     if (errorDiv) errorDiv.style.display = 'none';
 
@@ -942,6 +972,17 @@ class BatallaModule {
   }
 
   static async submitJoinRoom() {
+    if (!window.AuthManager || !window.AuthManager.isLoggedIn()) {
+      if (window.AuthManager) window.AuthManager.openModal('login');
+      return;
+    }
+    const nick = (this.userNickname || '').trim();
+    if (!nick) {
+      alert('Debes iniciar sesión para unirte a una sala.');
+      if (window.AuthManager) window.AuthManager.openModal('login');
+      return;
+    }
+
     const input = document.getElementById('joinRoomCodeInput');
     const code = (input ? input.value : '').trim().toUpperCase();
     const errorDiv = document.getElementById('joinModalErrorMsg');
@@ -956,9 +997,6 @@ class BatallaModule {
       }
       return;
     }
-
-    const nick = (this.userNickname || 'Invitado').trim() || 'Entrenador';
-    localStorage.setItem('stadium_battle_nickname', nick);
 
     if (window.BattleRoomStore) {
       const res = await window.BattleRoomStore.joinRoom({
