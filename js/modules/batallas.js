@@ -83,7 +83,7 @@ class BatallaModule {
       let room = await window.BattleRoomStore.getRoomDetails(code);
       if (room && (room.estado === 'esperando' || room.estado === 'en_combate')) {
         this.currentRoom = room;
-        this.currentScreen = 'lobby';
+        this.currentScreen = room.estado === 'en_combate' ? 'battle' : 'lobby';
         sessionStorage.setItem('stadium_active_room_code', code);
         window.BattleRoomStore.setActiveRoomCode(code);
         if (window.StadiumRouter) {
@@ -152,8 +152,18 @@ class BatallaModule {
         
         this.currentRoom = updated;
 
+        if (this.currentRoom.estado === 'en_combate' || this.currentScreen === 'battle') {
+          this.currentScreen = 'battle';
+          this.renderCurrentView();
+          if (enteredCombat) {
+            this.showAssignedTeamModal();
+          }
+          return;
+        }
+
         if (this.currentScreen === 'lobby') {
           if (enteredCombat) {
+            this.currentScreen = 'battle';
             this.renderCurrentView();
             this.showAssignedTeamModal();
           } else if (hadDifferentPlayers || hadDifferentSettings || hadDifferentHost || hadDifferentFilters) {
@@ -176,6 +186,8 @@ class BatallaModule {
       this.renderLandingScreen(container);
     } else if (this.currentScreen === 'lobby') {
       this.renderLobbyScreen(container);
+    } else if (this.currentScreen === 'battle') {
+      this.renderBattleScreen(container);
     }
   }
 
@@ -1719,6 +1731,11 @@ class BatallaModule {
     room.estado = 'en_combate';
     room.iniciada_en = new Date().toISOString();
 
+    // Inicializar estado de combate interactivo por turnos
+    if (window.StadiumBattleEngine) {
+      room.battle_state = window.StadiumBattleEngine.initBattleState(room);
+    }
+
     room.mensajes.push({
       id: (room.mensajes ? room.mensajes.length : 0) + 1,
       emisor: 'SISTEMA',
@@ -1732,6 +1749,7 @@ class BatallaModule {
     }
 
     if (window.SFX) window.SFX.playSuccess();
+    this.currentScreen = 'battle';
     this.renderCurrentView();
     this.showAssignedTeamModal();
   }
@@ -1786,7 +1804,7 @@ class BatallaModule {
           </div>
 
           <div class="battle-modal-actions" style="margin-top: 18px; display: flex; justify-content: flex-end;">
-            <button class="battle-primary-action-btn btn-crear-sala" style="width: auto; padding: 10px 24px;" onclick="document.getElementById('assignedTeamModal').style.display='none'">
+            <button class="battle-primary-action-btn btn-crear-sala" style="width: auto; padding: 10px 24px;" onclick="document.getElementById('assignedTeamModal').style.display='none'; BatallaModule.currentScreen='battle'; BatallaModule.renderCurrentView();">
               ¡Entendido, al combate!
             </button>
           </div>
@@ -1795,6 +1813,254 @@ class BatallaModule {
     `;
 
     modal.style.display = 'flex';
+  }
+
+  // ------------------------------------------------------------------
+  // PANTALLA 3: ARENA DE COMBATE EN VIVO (ESTILO STADIUM POR TURNOS)
+  // ------------------------------------------------------------------
+  static renderBattleScreen(container) {
+    if (!this.currentRoom) {
+      this.currentScreen = 'landing';
+      this.renderLandingScreen(container);
+      return;
+    }
+
+    const room = this.currentRoom;
+    // Si la sala no tiene aún inicializado battle_state, crearlo con StadiumBattleEngine
+    if (!room.battle_state && window.StadiumBattleEngine) {
+      room.battle_state = window.StadiumBattleEngine.initBattleState(room);
+      if (window.BattleRoomStore) window.BattleRoomStore.updateRoom(room);
+    }
+
+    const bs = room.battle_state;
+    if (!bs) {
+      container.innerHTML = `
+        <div style="text-align: center; color: #94a3b8; padding: 40px;">
+          <h3>⏳ Inicializando combate en la arena...</h3>
+        </div>
+      `;
+      return;
+    }
+
+    const myNick = (this.userNickname || '').toLowerCase();
+    const isP1 = (bs.p1.apodo || '').toLowerCase() === myNick;
+    const isP2 = (bs.p2.apodo || '').toLowerCase() === myNick;
+
+    const myCombatant = isP1 ? bs.p1 : (isP2 ? bs.p2 : bs.p1);
+    const oppCombatant = isP1 ? bs.p2 : bs.p1;
+
+    const myActive = myCombatant.team[myCombatant.activeIndex] || myCombatant.team[0];
+    const oppActive = oppCombatant.team[oppCombatant.activeIndex] || oppCombatant.team[0];
+
+    const myHpPercent = Math.max(0, Math.min(100, Math.round((myActive.currentHp / myActive.maxHp) * 100)));
+    const oppHpPercent = Math.max(0, Math.min(100, Math.round((oppActive.currentHp / oppActive.maxHp) * 100)));
+
+    const mySprite = window.PokemonModule 
+      ? window.PokemonModule.getPokemonSpriteUrl(myActive) 
+      : `https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/${myActive.num}.png`;
+    const oppSprite = window.PokemonModule 
+      ? window.PokemonModule.getPokemonSpriteUrl(oppActive) 
+      : `https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/${oppActive.num}.png`;
+
+    const isFinished = bs.phase === 'finished';
+    const hasChosen = !!myCombatant.pendingAction;
+
+    container.innerHTML = `
+      <div class="stadium-battle-wrapper battle-combat-wrapper" style="min-height: 100vh; display: flex; flex-direction: column; justify-content: space-between; padding-bottom: 24px;">
+        <!-- BARRA SUPERIOR DE COMBATE -->
+        <header class="lobby-header-bar">
+          <div class="lobby-header-left">
+            <div class="lobby-pokeball-brand"></div>
+            <h2 class="lobby-brand-title">Arena Stadium</h2>
+            <div class="lobby-status-pill" style="background: rgba(239, 68, 68, 0.2); border-color: rgba(239, 68, 68, 0.4); color: #f87171;">
+              ⚔️ TURNO ${bs.turn}
+            </div>
+          </div>
+
+          <div class="lobby-header-right">
+            <div class="room-code-tag">
+              <span class="room-label">SALA:</span>
+              <span class="room-code-val">${room.codigo}</span>
+            </div>
+            <button class="battle-exit-btn" onclick="BatallaModule.leaveRoom()">
+              <span class="exit-icon">✕</span>
+              <span>Salir</span>
+            </button>
+          </div>
+        </header>
+
+        <!-- CAMPO DE BATALLA / ARENA STADIUM -->
+        <main class="combat-field-container" style="max-width: 1200px; width: 100%; margin: 16px auto; padding: 0 16px;">
+          <div class="stadium-combat-field" style="background: radial-gradient(circle at center, rgba(15, 23, 42, 0.85) 0%, rgba(3, 7, 18, 0.98) 100%); border: 1px solid rgba(56, 189, 248, 0.2); border-radius: 18px; padding: 24px; position: relative;">
+            
+            <!-- COMBATIENTE OPONENTE (RIVAL - ARRIBA / DERECHA) -->
+            <div class="combatant-hud" style="border-left: 4px solid #ef4444;">
+              <div class="combatant-name-row">
+                <span class="combatant-name" style="color: #f1f5f9; display: flex; align-items: center; gap: 8px;">
+                  <span>${this.escapeHtml(oppActive.name)}</span>
+                  <span style="font-size: 0.72rem; color: #94a3b8; font-weight: 500;">(${oppCombatant.apodo})</span>
+                </span>
+                <span class="combatant-level">Nv. 50</span>
+              </div>
+              <div class="combatant-types-row">
+                ${(oppActive.types || []).map(t => `<span class="badge-type type-${t}" style="font-size: 0.68rem; padding: 2px 7px;">${t}</span>`).join('')}
+              </div>
+              <div class="combatant-hp-bar-track">
+                <div class="combatant-hp-fill" style="width: ${oppHpPercent}%; background: ${oppHpPercent > 50 ? '#22c55e' : (oppHpPercent > 20 ? '#eab308' : '#ef4444')};"></div>
+              </div>
+              <div class="combatant-hp-text">
+                ${oppActive.currentHp} / ${oppActive.maxHp} PS (${oppHpPercent}%)
+              </div>
+
+              <!-- SPRITE OPONENTE -->
+              <div style="text-align: center; margin-top: 14px;">
+                <img src="${oppSprite}" alt="${oppActive.name}" style="height: 120px; object-fit: contain; filter: drop-shadow(0 6px 12px rgba(0,0,0,0.6));" onerror="this.src='https://play.pokemonshowdown.com/sprites/gen5/${oppActive.name.toLowerCase()}.png'" />
+              </div>
+            </div>
+
+            <!-- COMBATIENTE PROPIO (TÚ - ABAJO / IZQUIERDA) -->
+            <div class="combatant-hud" style="border-left: 4px solid #38bdf8;">
+              <div class="combatant-name-row">
+                <span class="combatant-name" style="color: #f1f5f9; display: flex; align-items: center; gap: 8px;">
+                  <span>${this.escapeHtml(myActive.name)}</span>
+                  <span style="font-size: 0.72rem; color: #38bdf8; font-weight: 700;">(TÚ: ${myCombatant.apodo})</span>
+                </span>
+                <span class="combatant-level">Nv. 50</span>
+              </div>
+              <div class="combatant-types-row">
+                ${(myActive.types || []).map(t => `<span class="badge-type type-${t}" style="font-size: 0.68rem; padding: 2px 7px;">${t}</span>`).join('')}
+              </div>
+              <div class="combatant-hp-bar-track">
+                <div class="combatant-hp-fill" style="width: ${myHpPercent}%; background: ${myHpPercent > 50 ? '#22c55e' : (myHpPercent > 20 ? '#eab308' : '#ef4444')};"></div>
+              </div>
+              <div class="combatant-hp-text">
+                ${myActive.currentHp} / ${myActive.maxHp} PS (${myHpPercent}%)
+              </div>
+
+              <!-- SPRITE PROPIO -->
+              <div style="text-align: center; margin-top: 14px;">
+                <img src="${mySprite}" alt="${myActive.name}" style="height: 120px; object-fit: contain; filter: drop-shadow(0 6px 12px rgba(0,0,0,0.6));" onerror="this.src='https://play.pokemonshowdown.com/sprites/gen5/${myActive.name.toLowerCase()}.png'" />
+              </div>
+            </div>
+
+          </div>
+
+          <!-- PANEL DE ACCIONES Y REGISTRO DE COMBATE -->
+          <div class="battle-action-dock" style="margin-top: 18px;">
+            <!-- GRILLA DE MOVIMIENTOS -->
+            <div class="battle-moves-card" style="background: rgba(14, 21, 38, 0.95); border: 1px solid rgba(255, 255, 255, 0.1); border-radius: 14px; padding: 18px;">
+              <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 14px;">
+                <h4 style="margin: 0; color: #38bdf8; font-size: 1rem; font-weight: 800;">🎯 SELECCIONA TU ATAQUE</h4>
+                <span style="font-size: 0.8rem; color: ${hasChosen ? '#4ade80' : '#facc15'}; font-weight: 700;">
+                  ${isFinished 
+                    ? '⏹️ Combate Finalizado' 
+                    : (hasChosen ? '✔ Acción seleccionada (Esperando al rival...)' : '⚡ Tu turno para elegir')}
+                </span>
+              </div>
+
+              <div class="battle-moves-grid">
+                ${myActive.movimientos.map((m, idx) => {
+                  const typeBadge = window.AttackSpriteManager ? window.AttackSpriteManager.getTypeBadgeUrl(m.tipo) : null;
+                  return `
+                    <button 
+                      class="battle-move-btn"
+                      ${(isFinished || hasChosen || myActive.fainted) ? 'disabled style="opacity: 0.5; cursor: not-allowed;"' : ''}
+                      onclick="BatallaModule.selectCombatMove(${idx})"
+                    >
+                      <div class="b-move-header">
+                        <span class="b-move-name">${this.escapeHtml(m.nombre)}</span>
+                        <span class="b-move-pp">PP ${m.pp}/${m.maxPp}</span>
+                      </div>
+                      <div class="b-move-meta">
+                        <span class="badge-type type-${m.tipo}" style="font-size: 0.65rem; padding: 2px 6px;">${m.tipo}</span>
+                        <span class="b-move-pot">Pot: ${m.potencia || '--'}</span>
+                        <span class="b-move-cls">${m.categoria}</span>
+                      </div>
+                    </button>
+                  `;
+                }).join('')}
+              </div>
+
+              <!-- EQUIPO POKÉMON EN BANCO (CAMBIO DE POKÉMON) -->
+              <div style="margin-top: 16px; border-top: 1px solid rgba(255,255,255,0.08); padding-top: 12px;">
+                <div style="font-size: 0.78rem; color: #94a3b8; margin-bottom: 8px; font-weight: 700;">CAMBIAR POKÉMON:</div>
+                <div style="display: flex; gap: 8px; flex-wrap: wrap;">
+                  ${myCombatant.team.map((poke, pIdx) => {
+                    const isActive = pIdx === myCombatant.activeIndex;
+                    return `
+                      <button 
+                        class="filter-pill-btn ${isActive ? 'active' : ''}"
+                        ${(isActive || poke.fainted || hasChosen || isFinished) ? 'disabled style="opacity: 0.6;"' : ''}
+                        onclick="BatallaModule.selectCombatSwitch(${pIdx})"
+                        style="padding: 6px 12px; font-size: 0.8rem;"
+                      >
+                        ${poke.name} ${poke.fainted ? '💀 Debilitado' : `(${poke.currentHp}/${poke.maxHp})`}
+                      </button>
+                    `;
+                  }).join('')}
+                </div>
+              </div>
+            </div>
+
+            <!-- REGISTRO / LOG EN VIVO DE SUCESOS -->
+            <div class="battle-log-card" style="height: 100%; min-height: 250px;">
+              <div class="battle-log-header">📜 Crónica del Combate</div>
+              <div class="battle-log-body" id="combatLogList" style="flex: 1; max-height: 260px; overflow-y: auto;">
+                ${(bs.logs || []).map(log => `
+                  <div class="log-entry ${log.includes('GANA') || log.includes('EMPATE') ? 'log-victory' : (log.includes('💥') || log.includes('Turno') ? 'log-attack' : 'log-system')}">
+                    ${this.escapeHtml(log)}
+                  </div>
+                `).join('')}
+              </div>
+              ${isFinished ? `
+                <div style="margin-top: 12px; text-align: center;">
+                  <button class="battle-primary-action-btn btn-crear-sala" onclick="BatallaModule.leaveRoom()" style="padding: 10px 20px;">
+                    Volver al Menú Principal
+                  </button>
+                </div>
+              ` : ''}
+            </div>
+
+          </div>
+        </main>
+      </div>
+    `;
+
+    // Auto-scroll al final del log
+    setTimeout(() => {
+      const logBody = document.getElementById('combatLogList');
+      if (logBody) logBody.scrollTop = logBody.scrollHeight;
+    }, 40);
+  }
+
+  static async selectCombatMove(moveIndex) {
+    if (!this.currentRoom) return;
+    const nick = (this.userNickname || '').trim();
+    if (!nick) return;
+
+    if (window.BattleRoomStore) {
+      await window.BattleRoomStore.submitBattleAction(this.currentRoom.codigo, nick, {
+        type: 'move',
+        moveIndex: moveIndex
+      });
+      if (window.SFX) window.SFX.playCardClick();
+      this.renderCurrentView();
+    }
+  }
+
+  static async selectCombatSwitch(targetIndex) {
+    if (!this.currentRoom) return;
+    const nick = (this.userNickname || '').trim();
+    if (!nick) return;
+
+    if (window.BattleRoomStore) {
+      await window.BattleRoomStore.submitBattleAction(this.currentRoom.codigo, nick, {
+        type: 'switch',
+        targetIndex: targetIndex
+      });
+      if (window.SFX) window.SFX.playCardClick();
+      this.renderCurrentView();
+    }
   }
 
   static escapeHtml(str) {

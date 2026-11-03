@@ -970,6 +970,57 @@ class BattleRoomStore {
       }
     }
   }
+
+  // ------------------------------------------------------------------
+  // GESTIÓN DEL ESTADO DE COMBATE (BATALLA EN VIVO)
+  // ------------------------------------------------------------------
+  static async submitBattleAction(code, userNickname, action) {
+    const room = this.getRoomByCode(code);
+    if (!room || !room.battle_state) return null;
+
+    const bs = room.battle_state;
+    const isP1 = (bs.p1.apodo || '').toLowerCase() === (userNickname || '').toLowerCase();
+    const isP2 = (bs.p2.apodo || '').toLowerCase() === (userNickname || '').toLowerCase();
+
+    if (!isP1 && !isP2) return null;
+
+    if (isP1) bs.p1.pendingAction = action;
+    if (isP2) bs.p2.pendingAction = action;
+
+    // Si ambos jugadores han enviado su acción, resolver turno
+    if (bs.p1.pendingAction && bs.p2.pendingAction && window.StadiumBattleEngine) {
+      window.StadiumBattleEngine.resolveTurn(bs);
+      if (bs.phase === 'finished') {
+        room.estado = 'finalizada';
+        room.ganador_nombre = bs.winner;
+        room.finalizada_en = new Date().toISOString();
+      }
+    }
+
+    this.updateRoom(room);
+
+    // Replicar en Supabase si está disponible
+    if (window.StadiumSupabase && room.id) {
+      try {
+        const updatePayload = {
+          jugadores: JSON.stringify(room.jugadores)
+        };
+        if (bs.phase === 'finished') {
+          updatePayload.estado = 'finalizada';
+          updatePayload.ganador_nombre = bs.winner;
+          updatePayload.finalizada_en = room.finalizada_en;
+        }
+        await window.StadiumSupabase.request(`salas_batalla?id=eq.${room.id}`, {
+          method: 'PATCH',
+          body: JSON.stringify(updatePayload)
+        });
+      } catch (e) {
+        console.warn('Error sincronizando acción de combate en Supabase:', e);
+      }
+    }
+
+    return room;
+  }
 }
 
 if (typeof window !== 'undefined') {
