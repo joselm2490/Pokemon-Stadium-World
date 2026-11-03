@@ -1,0 +1,6 @@
+# Dependencias node_modules y caches
+node_modules/
+battle/pokemon-showdown/node_modules/
+battle/pokemon-showdown-client-master/node_modules/
+.cache/
+.DS_Store
