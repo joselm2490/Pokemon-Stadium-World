@@ -412,6 +412,43 @@ class BatallaModule {
 
         </div>
       </div>
+
+      <!-- MODAL ESTILO STADIUM PARA INGRESAR CONTRASEÑA DE SALA PRIVADA -->
+      <div class="battle-modal-overlay" id="roomPasswordPromptModal" style="display: none;">
+        <div class="battle-modal-card" style="max-width: 420px; animation: modalPop 0.2s cubic-bezier(0.16, 1, 0.3, 1);">
+          <div class="battle-modal-header">
+            <div style="display: flex; align-items: center; gap: 8px;">
+              <span style="font-size: 1.3rem;">🔒</span>
+              <h3 style="margin: 0; font-size: 1.15rem; font-weight: 700; color: #f1f5f9;">Sala Privada</h3>
+            </div>
+            <button class="battle-modal-close" onclick="BatallaModule.closePasswordPromptModal()">✕</button>
+          </div>
+          <div class="battle-modal-body" style="padding-top: 8px;">
+            <p style="color: #94a3b8; font-size: 0.88rem; margin-bottom: 14px; line-height: 1.4;">
+              Esta sala está protegida con contraseña. Ingrésala para poder unirte a la partida:
+            </p>
+            <div class="create-room-form-group">
+              <input 
+                type="password" 
+                id="promptRoomPasswordInput" 
+                class="create-room-input" 
+                placeholder="Escribe la contraseña de la sala..." 
+                maxlength="25" 
+                autocomplete="off" 
+              />
+            </div>
+            <div id="promptPasswordErrorMsg" style="color: #ef4444; font-size: 0.82rem; margin-top: 10px; display: none;"></div>
+            <div class="battle-modal-actions" style="margin-top: 20px; display: flex; gap: 10px;">
+              <button class="battle-primary-action-btn" id="btnSubmitPasswordPrompt" style="flex: 1; padding: 11px;">
+                Confirmar y Entrar
+              </button>
+              <button class="battle-secondary-action-btn" onclick="BatallaModule.closePasswordPromptModal()" style="width: auto; padding: 11px 18px;">
+                Cancelar
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
     `;
 
     this.setupLandingEvents();
@@ -443,6 +480,13 @@ class BatallaModule {
           </div>
 
           <div class="lobby-header-right">
+            ${room.contrasena ? `
+              <div class="room-code-tag room-password-tag" style="background: rgba(234, 179, 8, 0.18); border-color: #eab308; color: #facc15;" title="Contraseña de la sala para compartir con tu rival">
+                <span class="room-label" style="color: #fef08a;">CLAVE:</span>
+                <span class="room-code-val" style="color: #fff;">${this.escapeHtml(room.contrasena)}</span>
+                <span style="font-size: 0.85rem;">🔒</span>
+              </div>
+            ` : ''}
             <div class="room-code-tag" id="roomCodeBadge" onclick="BatallaModule.copyRoomCode()" title="Clic para copiar código">
               <span class="room-label">SALA:</span>
               <span class="room-code-val">${room.codigo}</span>
@@ -557,7 +601,10 @@ class BatallaModule {
               <!-- BARRA INFERIOR DE AJUSTES: POOL & INFO COMPACTA -->
               <div class="pool-status-preview">
                 <span>🎯 Criaturas en pool disponibles: <strong class="pool-count-badge" id="poolCountBadge">${this.getFilteredPokemonCount(room.ajustes)} Pokémon</strong></span>
-                <span class="room-mini-badge">SALA ID: ${room.codigo}</span>
+                <div style="display: flex; align-items: center; gap: 6px;">
+                  <span class="room-mini-badge">SALA: ${room.codigo}</span>
+                  ${room.contrasena ? `<span class="room-mini-badge" style="color: #facc15; border-color: rgba(234, 179, 8, 0.4); background: rgba(234, 179, 8, 0.15);">🔒 CLAVE: ${this.escapeHtml(room.contrasena)}</span>` : ''}
+                </div>
               </div>
             </div>
           </section>
@@ -941,6 +988,91 @@ class BatallaModule {
     }
   }
 
+  static openPasswordPromptModal(code) {
+    const modal = document.getElementById('roomPasswordPromptModal');
+    if (!modal) return;
+    const input = document.getElementById('promptRoomPasswordInput');
+    const errDiv = document.getElementById('promptPasswordErrorMsg');
+    const btnSubmit = document.getElementById('btnSubmitPasswordPrompt');
+
+    if (errDiv) errDiv.style.display = 'none';
+    if (input) {
+      input.value = '';
+      input.onkeydown = (e) => {
+        if (e.key === 'Enter') {
+          e.preventDefault();
+          BatallaModule.submitPasswordPrompt(code);
+        }
+      };
+    }
+
+    if (btnSubmit) {
+      btnSubmit.onclick = () => BatallaModule.submitPasswordPrompt(code);
+    }
+
+    modal.style.display = 'flex';
+    setTimeout(() => {
+      if (input) input.focus();
+    }, 50);
+  }
+
+  static closePasswordPromptModal() {
+    const modal = document.getElementById('roomPasswordPromptModal');
+    if (modal) modal.style.display = 'none';
+    const input = document.getElementById('promptRoomPasswordInput');
+    if (input) input.value = '';
+    const errDiv = document.getElementById('promptPasswordErrorMsg');
+    if (errDiv) errDiv.style.display = 'none';
+  }
+
+  static async submitPasswordPrompt(code) {
+    const input = document.getElementById('promptRoomPasswordInput');
+    const errDiv = document.getElementById('promptPasswordErrorMsg');
+    const pass = (input ? input.value : '').trim();
+
+    if (!pass) {
+      if (errDiv) {
+        errDiv.textContent = 'Por favor ingresa la contraseña.';
+        errDiv.style.display = 'block';
+      }
+      return;
+    }
+
+    const nick = (this.userNickname || '').trim();
+    if (!nick) {
+      if (window.AuthManager) window.AuthManager.openModal('login');
+      return;
+    }
+
+    if (window.BattleRoomStore) {
+      const res = await window.BattleRoomStore.joinRoom({
+        code: code,
+        userNickname: nick,
+        password: pass
+      });
+
+      if (!res.ok) {
+        if (errDiv) {
+          errDiv.textContent = res.error || 'Contraseña incorrecta o error al entrar.';
+          errDiv.style.display = 'block';
+        }
+        return;
+      }
+
+      this.currentRoom = res.room;
+    }
+
+    this.closePasswordPromptModal();
+    sessionStorage.setItem('stadium_active_room_code', code);
+    if (window.StadiumRouter) {
+      window.StadiumRouter.updateBattleRoomUrl(code);
+    }
+    this.closeJoinModal();
+    if (window.SFX) window.SFX.playSuccess();
+    this.currentScreen = 'lobby';
+    this.renderCurrentView();
+  }
+
   static async joinRoomDirectly(code, requiresPassword = false) {
     if (!window.AuthManager || !window.AuthManager.isLoggedIn()) {
       if (window.AuthManager) window.AuthManager.openModal('login');
@@ -956,24 +1088,22 @@ class BatallaModule {
     const errorDiv = document.getElementById('joinRoomsListErrorMsg');
     if (errorDiv) errorDiv.style.display = 'none';
 
-    let enteredPassword = '';
     if (requiresPassword) {
-      const pass = prompt('🔒 Esta sala es privada. Ingresa la contraseña de la sala:');
-      if (pass === null) return; // Cancelado por el usuario
-      enteredPassword = pass.trim();
+      this.openPasswordPromptModal(code);
+      return;
     }
 
     if (window.BattleRoomStore) {
       const res = await window.BattleRoomStore.joinRoom({
         code: code,
         userNickname: nick,
-        password: enteredPassword
+        password: ''
       });
 
       if (!res.ok) {
-        if (res.requiresPassword && !requiresPassword) {
-          // Si no sabíamos que tenía clave, volver a solicitar
-          return this.joinRoomDirectly(code, true);
+        if (res.requiresPassword) {
+          // Si requería clave y no lo sabíamos, abrir el modal de contraseña
+          return this.openPasswordPromptModal(code);
         }
 
         if (errorDiv) {
