@@ -153,11 +153,19 @@ class BatallaModule {
         this.currentRoom = updated;
 
         if (this.currentRoom.estado === 'en_combate' || this.currentScreen === 'battle') {
+          if (enteredCombat) {
+            // Mostrar modal de carga breve para el invitado mientras se adapta la interfaz
+            this.showBattleLoadingModal('¡El anfitrión inició la partida! Cargando arena y configurando combate...');
+            setTimeout(() => {
+              this.hideBattleLoadingModal();
+              this.currentScreen = 'battle';
+              this.renderCurrentView();
+              this.showAssignedTeamModal();
+            }, 700);
+            return;
+          }
           this.currentScreen = 'battle';
           this.renderCurrentView();
-          if (enteredCombat) {
-            this.showAssignedTeamModal();
-          }
           return;
         }
 
@@ -1661,7 +1669,45 @@ class BatallaModule {
     }
   }
 
-  static startMatch() {
+  static showBattleLoadingModal(message = 'Creando batalla, por favor espere...') {
+    let modal = document.getElementById('battleLoadingOverlayModal');
+    if (!modal) {
+      modal = document.createElement('div');
+      modal.id = 'battleLoadingOverlayModal';
+      modal.className = 'battle-modal-overlay';
+      modal.style.zIndex = '9999';
+      modal.style.background = 'rgba(4, 7, 14, 0.92)';
+      modal.style.backdropFilter = 'blur(10px)';
+      document.body.appendChild(modal);
+    }
+
+    modal.innerHTML = `
+      <div class="battle-modal-card" style="max-width: 440px; text-align: center; padding: 36px 24px; border: 1px solid rgba(56, 189, 248, 0.35); box-shadow: 0 10px 40px rgba(0, 0, 0, 0.8), 0 0 25px rgba(56, 189, 248, 0.2);">
+        <div class="pokeball-loading-spinner" style="margin: 0 auto 20px; width: 64px; height: 64px; border-radius: 50%; background: linear-gradient(180deg, #ff1744 48%, #0f172a 48%, #0f172a 52%, #f8fafc 52%); border: 4px solid #0f172a; box-shadow: 0 0 20px rgba(255, 23, 68, 0.6); position: relative; animation: stadiumSpin 1s cubic-bezier(0.68, -0.55, 0.27, 1.55) infinite;">
+          <div style="position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); width: 20px; height: 20px; background: #fff; border: 4px solid #0f172a; border-radius: 50%; box-shadow: 0 0 10px #00e5ff;"></div>
+        </div>
+        <h3 style="color: #38bdf8; font-size: 1.25rem; font-weight: 900; margin-bottom: 8px; letter-spacing: 0.5px;">
+          ⚔️ CREANDO BATALLA
+        </h3>
+        <p id="battleLoadingStatusText" style="color: #cbd5e1; font-size: 0.92rem; line-height: 1.5; margin: 0;">
+          ${this.escapeHtml(message)}
+        </p>
+        <div style="margin-top: 18px; display: flex; align-items: center; justify-content: center; gap: 8px; font-size: 0.75rem; color: #94a3b8; font-family: monospace;">
+          <span style="display: inline-block; width: 8px; height: 8px; border-radius: 50%; background: #22c55e; animation: pulseLight 1s infinite alternate;"></span>
+          <span>Configurando Pokémon, ataques y arena...</span>
+        </div>
+      </div>
+    `;
+
+    modal.style.display = 'flex';
+  }
+
+  static hideBattleLoadingModal() {
+    const modal = document.getElementById('battleLoadingOverlayModal');
+    if (modal) modal.style.display = 'none';
+  }
+
+  static async startMatch() {
     if (!this.currentRoom) return;
     const room = this.currentRoom;
     const canStart = room.jugadores && room.jugadores.length >= 2;
@@ -1677,6 +1723,12 @@ class BatallaModule {
       alert('⚠️ Tu rival aún no está listo. Debe presionar el botón "¡LISTO!" antes de poder iniciar el combate.');
       return;
     }
+
+    // Mostrar modal de carga inmediatamente para el anfitrión
+    this.showBattleLoadingModal('Generando equipos Pokémon y configurando arena de combate...');
+
+    // Permitir que el navegador dibuje el modal antes del cálculo
+    await new Promise(r => setTimeout(r, 60));
 
     const pool = this.getFilteredPokemonPool(room.ajustes);
     const countNeeded = room.pokemon_por_jugador || 3;
@@ -1747,6 +1799,11 @@ class BatallaModule {
     if (window.BattleRoomStore) {
       window.BattleRoomStore.updateRoom(room);
     }
+
+    // Ocultar modal de carga tras completar la preparación
+    setTimeout(() => {
+      this.hideBattleLoadingModal();
+    }, 400);
 
     if (window.SFX) window.SFX.playSuccess();
     this.currentScreen = 'battle';
