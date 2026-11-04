@@ -2243,24 +2243,34 @@ class BatallaModule {
 
       // El jugador pulsó un botón de movimiento o cambio de Pokémon
       if (data.type === 'pure-battle-action' && data.action) {
-        if (!this.currentRoom) return;
-        const myNick = (this.userNickname || 'Entrenador').trim();
+        console.log('📥 [BatallaModule] Mensaje pure-battle-action recibido:', data);
+        if (!this.currentRoom) {
+          console.warn('⚠️ [BatallaModule] No hay currentRoom activo.');
+          return;
+        }
+
+        // Obtener apodo del jugador (priorizando el que envió el frame o el de la sesión o el de p1)
+        const bs = this.currentRoom.battle_state;
+        const myNick = (data.userNick || bs?.p1?.apodo || this.userNickname || 'Entrenador').trim();
+        console.log('🎮 [BatallaModule] Ejecutando acción para apodo:', myNick, 'Acción:', data.action);
         
         // Si es tutorial contra la CPU, la CPU elige automáticamente un movimiento
-        if (this.currentRoom.es_tutorial) {
-          const bs = this.currentRoom.battle_state;
-          if (bs && bs.p2) {
-            const oppPoke = bs.p2.team[bs.p2.activeIndex];
-            const moveCount = (oppPoke && oppPoke.movimientos) ? oppPoke.movimientos.length : 1;
-            const randMoveIdx = Math.floor(Math.random() * moveCount);
-            bs.p2.pendingAction = { type: 'move', moveIndex: randMoveIdx };
-          }
+        if (this.currentRoom.es_tutorial && bs && bs.p2) {
+          const oppPoke = bs.p2.team[bs.p2.activeIndex];
+          const moveCount = (oppPoke && oppPoke.movimientos) ? oppPoke.movimientos.length : 1;
+          const randMoveIdx = Math.floor(Math.random() * moveCount);
+          bs.p2.pendingAction = { type: 'move', moveIndex: randMoveIdx };
+          console.log('🤖 [BatallaModule] CPU elige movimiento aleatorio:', randMoveIdx, oppPoke?.movimientos?.[randMoveIdx]?.nombre);
         }
 
         if (window.BattleRoomStore) {
+          console.log('⚡ [BatallaModule] Enviando acción a BattleRoomStore.submitBattleAction...');
           const updated = await window.BattleRoomStore.submitBattleAction(this.currentRoom.codigo, myNick, data.action);
           if (updated) {
             this.currentRoom = updated;
+            console.log('✅ [BatallaModule] Estado de sala actualizado. Turno:', updated.battle_state?.turn, 'Logs:', updated.battle_state?.logs?.slice(-2));
+          } else {
+            console.warn('⚠️ [BatallaModule] BattleRoomStore.submitBattleAction devolvió null.');
           }
           this.syncStateToBattleFrame();
         }

@@ -1085,25 +1085,55 @@ class BattleRoomStore {
   // ------------------------------------------------------------------
   static async submitBattleAction(code, userNickname, action) {
     const room = this.getRoomByCode(code);
-    if (!room || !room.battle_state) return null;
+    if (!room || !room.battle_state) {
+      console.warn('⚠️ [BattleRoomStore] No se encontró la sala o no tiene battle_state:', code);
+      return null;
+    }
 
     const bs = room.battle_state;
-    const isP1 = (bs.p1.apodo || '').toLowerCase() === (userNickname || '').toLowerCase();
-    const isP2 = (bs.p2.apodo || '').toLowerCase() === (userNickname || '').toLowerCase();
+    const nickLower = (userNickname || '').toLowerCase().trim();
+    const isP1 = (bs.p1.apodo || '').toLowerCase().trim() === nickLower || (!nickLower && true);
+    const isP2 = (bs.p2.apodo || '').toLowerCase().trim() === nickLower;
 
-    if (!isP1 && !isP2) return null;
+    console.log('🔍 [BattleRoomStore.submitBattleAction]', {
+      code,
+      userNickname,
+      p1Apodo: bs.p1.apodo,
+      p2Apodo: bs.p2.apodo,
+      isP1,
+      isP2,
+      action
+    });
 
-    if (isP1) bs.p1.pendingAction = action;
-    if (isP2) bs.p2.pendingAction = action;
+    if (!isP1 && !isP2) {
+      console.warn('⚠️ [BattleRoomStore] El apodo no coincide ni con P1 ni con P2:', userNickname);
+      // En modo tutorial o pruebas, forzar a P1 si no coincide
+      if (room.es_tutorial || code === 'TUTORIAL') {
+        console.log('ℹ️ [BattleRoomStore] Modo Tutorial: asignando acción a P1 por defecto');
+        bs.p1.pendingAction = action;
+      } else {
+        return null;
+      }
+    } else {
+      if (isP1) bs.p1.pendingAction = action;
+      if (isP2) bs.p2.pendingAction = action;
+    }
 
     // Si ambos jugadores han enviado su acción, resolver turno
     if (bs.p1.pendingAction && bs.p2.pendingAction && window.StadiumBattleEngine) {
+      console.log('⚔️ [BattleRoomStore] Resolviendo turno con StadiumBattleEngine.resolveTurn...');
       window.StadiumBattleEngine.resolveTurn(bs);
+      console.log('✅ [BattleRoomStore] Turno resuelto con éxito. Turno actual:', bs.turn);
       if (bs.phase === 'finished') {
         room.estado = 'finalizada';
         room.ganador_nombre = bs.winner;
         room.finalizada_en = new Date().toISOString();
       }
+    } else {
+      console.log('⏳ [BattleRoomStore] Esperando que ambos jugadores tengan pendingAction:', {
+        p1Action: bs.p1.pendingAction,
+        p2Action: bs.p2.pendingAction
+      });
     }
 
     this.updateRoom(room);

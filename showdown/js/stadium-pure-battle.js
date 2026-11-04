@@ -77,6 +77,7 @@
     const msg = ev.data;
 
     if (msg.type === 'update-battle-state') {
+      console.log('📥 [Pure Battle] Mensaje update-battle-state recibido del parent:', msg.room?.battle_state?.turn);
       onBattleStateUpdated(msg.room);
     } else if (msg.type === 'stadium-forfeit-and-close') {
       if (battleInstance) {
@@ -187,21 +188,31 @@
 
   // Interacción de usuario: seleccionar ataque
   window.selectMove = function(moveIndex) {
+    console.log('🔘 [Pure Battle] Click en movimiento:', moveIndex, 'Nombre:', activePokemon?.movimientos?.[moveIndex]?.nombre);
     if (window.parent && window.parent !== window) {
+      console.log('📤 [Pure Battle] Enviando postMessage pure-battle-action (move) a parent');
       window.parent.postMessage({
         type: 'pure-battle-action',
-        action: { type: 'move', moveIndex: moveIndex }
+        action: { type: 'move', moveIndex: moveIndex },
+        userNick: userNick
       }, '*');
+    } else {
+      console.warn('⚠️ [Pure Battle] No hay window.parent para enviar la acción');
     }
   };
 
   // Interacción de usuario: seleccionar cambio de Pokémon
   window.selectSwitch = function(targetIndex) {
+    console.log('🔘 [Pure Battle] Click en cambiar Pokémon a índice:', targetIndex);
     if (window.parent && window.parent !== window) {
+      console.log('📤 [Pure Battle] Enviando postMessage pure-battle-action (switch) a parent');
       window.parent.postMessage({
         type: 'pure-battle-action',
-        action: { type: 'switch', targetIndex: targetIndex }
+        action: { type: 'switch', targetIndex: targetIndex },
+        userNick: userNick
       }, '*');
+    } else {
+      console.warn('⚠️ [Pure Battle] No hay window.parent para enviar la acción');
     }
   };
 
