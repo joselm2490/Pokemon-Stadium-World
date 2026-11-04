@@ -169,7 +169,24 @@ class StadiumBattleEngine {
     const secondCombatant = p1First ? { player: p2, poke: currentP2, oppPlayer: p1, oppPoke: currentP1, action: p2.pendingAction, sideId: 'p2a', oppSideId: 'p1a' } 
                                    : { player: p1, poke: currentP1, oppPlayer: p2, oppPoke: currentP2, action: p1.pendingAction, sideId: 'p1a', oppSideId: 'p2a' };
 
+    // Listas de movimientos de relevo (pivot) y expulsión (phazing)
+    const PIVOT_MOVES = new Set([
+      'ida y vuelta', 'voltiocambio', 'viraje', 'última palabra', 'ultima palabra',
+      'relevo', 'fría acogida', 'fria acogida', 'autotomía', 'autotomia',
+      'u-turn', 'uturn', 'volt switch', 'voltswitch', 'flip turn', 'flipturn',
+      'parting shot', 'partingshot', 'baton pass', 'batonpass', 'chilly reception', 'chillyreception', 'shed tail', 'shedtail'
+    ]);
+
+    const PHAZING_MOVES = new Set([
+      'rugido', 'remolino', 'cola dragón', 'cola dragon', 'llave giro',
+      'roar', 'whirlwind', 'dragon tail', 'dragontail', 'circle throw', 'circlethrow'
+    ]);
+
     function executeMove(att, def) {
+      // Re-verificar que los combatientes activos no estén debilitados
+      att.poke = att.player.team[att.player.activeIndex];
+      def.poke = def.player.team[def.player.activeIndex];
+
       if (att.poke.fainted || def.poke.fainted) return;
       if (!att.action || att.action.type !== 'move') return;
 
@@ -195,32 +212,30 @@ class StadiumBattleEngine {
 
       if (res.isStatus) {
         logs.push(`✨ ¡${move.nombre} surte efecto en el campo de batalla!`);
-        return;
-      }
-
-      if (res.eff === 0) {
+      } else if (res.eff === 0) {
         logs.push(`🛡️ No afecta a ${def.poke.name}...`);
         showdownCommands.push(`|-immune|${def.sideId}: ${def.poke.name}`);
         return;
-      }
-
-      def.poke.currentHp = Math.max(0, def.poke.currentHp - res.damage);
-      showdownCommands.push(`|-damage|${def.sideId}: ${def.poke.name}|${def.poke.currentHp}/${def.poke.maxHp}`);
-
-      if (res.isCrit) {
-        logs.push(`🎯 ¡Un golpe crítico!`);
-        showdownCommands.push(`|-crit|${def.sideId}: ${def.poke.name}`);
-      }
-      if (res.eff > 1.0) {
-        logs.push(`🔥 ¡Es súper eficaz! (-${res.damage} PS)`);
-        showdownCommands.push(`|-supereffective|${def.sideId}: ${def.poke.name}`);
-      } else if (res.eff < 1.0) {
-        logs.push(`🍃 No es muy eficaz... (-${res.damage} PS)`);
-        showdownCommands.push(`|-resisted|${def.sideId}: ${def.poke.name}`);
       } else {
-        logs.push(`💥 Ha causado ${res.damage} puntos de daño a ${def.poke.name}.`);
+        def.poke.currentHp = Math.max(0, def.poke.currentHp - res.damage);
+        showdownCommands.push(`|-damage|${def.sideId}: ${def.poke.name}|${def.poke.currentHp}/${def.poke.maxHp}`);
+
+        if (res.isCrit) {
+          logs.push(`🎯 ¡Un golpe crítico!`);
+          showdownCommands.push(`|-crit|${def.sideId}: ${def.poke.name}`);
+        }
+        if (res.eff > 1.0) {
+          logs.push(`🔥 ¡Es súper eficaz! (-${res.damage} PS)`);
+          showdownCommands.push(`|-supereffective|${def.sideId}: ${def.poke.name}`);
+        } else if (res.eff < 1.0) {
+          logs.push(`🍃 No es muy eficaz... (-${res.damage} PS)`);
+          showdownCommands.push(`|-resisted|${def.sideId}: ${def.poke.name}`);
+        } else {
+          logs.push(`💥 Ha causado ${res.damage} puntos de daño a ${def.poke.name}.`);
+        }
       }
 
+      // Si el defensor cae debilitado
       if (def.poke.currentHp <= 0) {
         def.poke.fainted = true;
         logs.push(`💀 ¡${def.poke.name} de ${def.player.apodo} se ha debilitado!`);
@@ -233,6 +248,39 @@ class StadiumBattleEngine {
           const nextPoke = def.player.team[nextIdx];
           logs.push(`👉 ${def.player.apodo} envía a combatir a ${nextPoke.name}!`);
           showdownCommands.push(`|switch|${def.sideId}: ${nextPoke.name}|${nextPoke.name}|${nextPoke.currentHp}/${nextPoke.maxHp}`);
+        }
+        return;
+      }
+
+      // Detectar si el movimiento es de Relevo (Pivot): el atacante regresa a su Pokéball
+      const normMoveName = (move.nombre || '').toLowerCase().trim();
+      const normMoveEn = (move.nombre_ingles || '').toLowerCase().trim();
+      const isPivot = PIVOT_MOVES.has(normMoveName) || PIVOT_MOVES.has(normMoveEn);
+      const isPhazing = PHAZING_MOVES.has(normMoveName) || PHAZING_MOVES.has(normMoveEn);
+
+      if (isPivot && !att.poke.fainted) {
+        const availableIdx = att.player.team.findIndex((p, idx) => !p.fainted && idx !== att.player.activeIndex);
+        if (availableIdx !== -1) {
+          att.player.activeIndex = availableIdx;
+          const newAttacker = att.player.team[availableIdx];
+          logs.push(`🔄 ¡${att.poke.name} regresa a su Pokéball tras usar ${move.nombre}!`);
+          logs.push(`👉 ${att.player.apodo} envía a combatir a ${newAttacker.name}!`);
+          showdownCommands.push(`|switch|${att.sideId}: ${newAttacker.name}|${newAttacker.name}|${newAttacker.currentHp}/${newAttacker.maxHp}`);
+        }
+      } else if (isPhazing && !def.poke.fainted) {
+        // Detectar si el movimiento es de Expulsión (Phazing): el defensor es forzado a cambiar
+        const candidateIndices = [];
+        def.player.team.forEach((p, idx) => {
+          if (!p.fainted && idx !== def.player.activeIndex) candidateIndices.push(idx);
+        });
+
+        if (candidateIndices.length > 0) {
+          const randIdx = candidateIndices[Math.floor(Math.random() * candidateIndices.length)];
+          def.player.activeIndex = randIdx;
+          const forcedPoke = def.player.team[randIdx];
+          logs.push(`💨 ¡${def.poke.name} es forzado a salir del combate por ${move.nombre}!`);
+          logs.push(`👉 ${def.player.apodo} es obligado a enviar a ${forcedPoke.name}!`);
+          showdownCommands.push(`|drag|${def.sideId}: ${forcedPoke.name}|${forcedPoke.name}|${forcedPoke.currentHp}/${forcedPoke.maxHp}`);
         }
       }
     }

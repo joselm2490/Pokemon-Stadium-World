@@ -45,6 +45,31 @@ class BatallaModule {
       });
     }
 
+    // Interceptar recarga (F5) o cierre de ventana para advertir al usuario y liberar memoria / procesos de batalla
+    if (!this._beforeUnloadAttached) {
+      this._beforeUnloadAttached = true;
+      window.addEventListener('beforeunload', (e) => {
+        if (this.currentRoom && this.currentScreen === 'battle') {
+          // Limpiar instancia de Showdown en el iframe
+          try {
+            const iframe = document.getElementById('showdownBattleFrame');
+            if (iframe && iframe.contentWindow) {
+              iframe.contentWindow.postMessage({ type: 'stadium-forfeit-and-close' }, '*');
+            }
+          } catch (err) {}
+
+          // Abandonar sala en store si no es tutorial
+          if (!this.currentRoom.es_tutorial && window.BattleRoomStore) {
+            window.BattleRoomStore.leaveRoom(this.currentRoom.codigo, this.userNickname);
+          }
+
+          e.preventDefault();
+          e.returnValue = '¿Estás seguro de que deseas salir del combate? Tu progreso se perderá.';
+          return e.returnValue;
+        }
+      });
+    }
+
     // Obtener apodo guardado o de la sesión de usuario
     this.syncUserNickname();
 
