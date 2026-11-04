@@ -73,7 +73,7 @@ class BattleRoomStore {
     this.pollingTimer = setInterval(() => {
       this.syncActiveRoomFromSupabase();
       this.autoExpireWaitingRooms();
-    }, 2500);
+    }, 1200);
   }
 
   // REGLA: Límite de tiempo de 5 minutos en estado 'esperando'.
@@ -823,6 +823,46 @@ class BattleRoomStore {
     }
     this.saveAllRooms(rooms);
     this.broadcast('room_changed', updatedRoom);
+
+    // Sincronizar automáticamente en Supabase si la sala tiene ID
+    if (window.StadiumSupabase && updatedRoom.id) {
+      (async () => {
+        try {
+          const payload = {
+            estado: updatedRoom.estado,
+            jugadores: JSON.stringify(updatedRoom.jugadores || []),
+            pokemon_por_jugador: updatedRoom.pokemon_por_jugador,
+            max_jugadores: updatedRoom.max_jugadores,
+            jugadores_actuales: (updatedRoom.jugadores || []).length
+          };
+          if (updatedRoom.iniciada_en) payload.iniciada_en = updatedRoom.iniciada_en;
+          if (updatedRoom.finalizada_en) payload.finalizada_en = updatedRoom.finalizada_en;
+          if (updatedRoom.ganador_nombre) payload.ganador_nombre = updatedRoom.ganador_nombre;
+
+          await window.StadiumSupabase.request(`salas_batalla?id=eq.${updatedRoom.id}`, {
+            method: 'PATCH',
+            body: JSON.stringify(payload)
+          });
+
+          // Sincronizar equipos de cada jugador en sala_jugadores
+          if (Array.isArray(updatedRoom.jugadores)) {
+            for (const p of updatedRoom.jugadores) {
+              if (p.equipo_pokemon && p.equipo_pokemon.length > 0) {
+                await window.StadiumSupabase.request(`sala_jugadores?sala_id=eq.${updatedRoom.id}&apodo=eq.${encodeURIComponent(p.apodo)}`, {
+                  method: 'PATCH',
+                  body: JSON.stringify({
+                    listo: p.listo ? 1 : 0,
+                    equipo_pokemon: JSON.stringify(p.equipo_pokemon)
+                  })
+                });
+              }
+            }
+          }
+        } catch (err) {
+          console.warn('[BattleRoomStore] Error sincronizando updateRoom con Supabase:', err);
+        }
+      })();
+    }
   }
 
   // Enviar mensaje al chat de la sala
