@@ -1859,10 +1859,10 @@
       "Big Pecks"
     ],
     "movimientos_predeterminados": [
-      97,
-      98,
-      143,
-      38
+      413,
+      432,
+      257,
+      216
     ],
     "moves": [
       13,
@@ -6754,10 +6754,10 @@
       "Damp"
     ],
     "movimientos_predeterminados": [
-      34,
-      72,
-      147,
-      163
+      312,
+      282,
+      141,
+      402
     ],
     "moves": [
       10,
@@ -22384,10 +22384,10 @@
       "Weak Armor"
     ],
     "movimientos_predeterminados": [
-      59,
-      34,
-      163,
-      57
+      453,
+      282,
+      710,
+      444
     ],
     "moves": [
       10,
@@ -81837,10 +81837,10 @@
       "Clear Body"
     ],
     "movimientos_predeterminados": [
-      63,
-      192,
+      544,
       508,
-      199
+      164,
+      528
     ],
     "moves": [
       11,
@@ -90363,10 +90363,10 @@
       "Symbiosis"
     ],
     "movimientos_predeterminados": [
-      76,
-      80,
+      617,
       585,
-      581
+      94,
+      76
     ],
     "moves": [
       22,
@@ -117095,10 +117095,10 @@
       "Iron Fist"
     ],
     "movimientos_predeterminados": [
-      528,
-      97,
-      435,
-      494
+      370,
+      892,
+      282,
+      609
     ],
     "moves": [
       9,
