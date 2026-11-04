@@ -139,15 +139,20 @@ class StadiumBattleEngine {
     const p2Active = p2.team[p2.activeIndex];
 
     const logs = [`--- Turno ${battleState.turn} ---`];
+    const showdownCommands = [`|turn|${battleState.turn}`];
 
     // Manejo de cambios de Pokémon (prioridad máxima antes que movimientos)
     if (p1.pendingAction?.type === 'switch') {
       p1.activeIndex = p1.pendingAction.targetIndex;
-      logs.push(`🔄 ${p1.apodo} retira a su Pokémon y envía a ${p1.team[p1.activeIndex].name}!`);
+      const swPoke = p1.team[p1.activeIndex];
+      logs.push(`🔄 ${p1.apodo} retira a su Pokémon y envía a ${swPoke.name}!`);
+      showdownCommands.push(`|switch|p1a: ${swPoke.name}|${swPoke.name}|${swPoke.currentHp}/${swPoke.maxHp}`);
     }
     if (p2.pendingAction?.type === 'switch') {
       p2.activeIndex = p2.pendingAction.targetIndex;
-      logs.push(`🔄 ${p2.apodo} retira a su Pokémon y envía a ${p2.team[p2.activeIndex].name}!`);
+      const swPoke = p2.team[p2.activeIndex];
+      logs.push(`🔄 ${p2.apodo} retira a su Pokémon y envía a ${swPoke.name}!`);
+      showdownCommands.push(`|switch|p2a: ${swPoke.name}|${swPoke.name}|${swPoke.currentHp}/${swPoke.maxHp}`);
     }
 
     const currentP1 = p1.team[p1.activeIndex];
@@ -158,10 +163,10 @@ class StadiumBattleEngine {
     const p2Spe = currentP2.stats?.spe || 100;
     const p1First = p1Spe > p2Spe ? true : (p1Spe < p2Spe ? false : Math.random() < 0.5);
 
-    const firstCombatant = p1First ? { player: p1, poke: currentP1, oppPlayer: p2, oppPoke: currentP2, action: p1.pendingAction } 
-                                  : { player: p2, poke: currentP2, oppPlayer: p1, oppPoke: currentP1, action: p2.pendingAction };
-    const secondCombatant = p1First ? { player: p2, poke: currentP2, oppPlayer: p1, oppPoke: currentP1, action: p2.pendingAction } 
-                                   : { player: p1, poke: currentP1, oppPlayer: p2, oppPoke: currentP2, action: p1.pendingAction };
+    const firstCombatant = p1First ? { player: p1, poke: currentP1, oppPlayer: p2, oppPoke: currentP2, action: p1.pendingAction, sideId: 'p1a', oppSideId: 'p2a' } 
+                                  : { player: p2, poke: currentP2, oppPlayer: p1, oppPoke: currentP1, action: p2.pendingAction, sideId: 'p2a', oppSideId: 'p1a' };
+    const secondCombatant = p1First ? { player: p2, poke: currentP2, oppPlayer: p1, oppPoke: currentP1, action: p2.pendingAction, sideId: 'p2a', oppSideId: 'p1a' } 
+                                   : { player: p1, poke: currentP1, oppPlayer: p2, oppPoke: currentP2, action: p1.pendingAction, sideId: 'p1a', oppSideId: 'p2a' };
 
     function executeMove(att, def) {
       if (att.poke.fainted || def.poke.fainted) return;
@@ -170,12 +175,17 @@ class StadiumBattleEngine {
       const move = att.poke.movimientos[att.action.moveIndex];
       if (!move) return;
 
+      // Disminuir PP
+      if (move.pp > 0) move.pp--;
+
       logs.push(`💥 ¡${att.poke.name} de ${att.player.apodo} usa ${move.nombre}!`);
+      showdownCommands.push(`|move|${att.sideId}: ${att.poke.name}|${move.nombre}|${def.sideId}: ${def.poke.name}`);
 
       // Verificar precisión
       const acc = move.precision || 100;
       if (acc < 100 && Math.random() * 100 > acc) {
         logs.push(`💨 ¡El ataque de ${att.poke.name} ha fallado!`);
+        showdownCommands.push(`|-miss|${att.sideId}: ${att.poke.name}`);
         return;
       }
 
@@ -188,23 +198,39 @@ class StadiumBattleEngine {
 
       if (res.eff === 0) {
         logs.push(`🛡️ No afecta a ${def.poke.name}...`);
+        showdownCommands.push(`|-immune|${def.sideId}: ${def.poke.name}`);
         return;
       }
 
       def.poke.currentHp = Math.max(0, def.poke.currentHp - res.damage);
-      if (res.isCrit) logs.push(`🎯 ¡Un golpe crítico!`);
-      if (res.eff > 1.0) logs.push(`🔥 ¡Es súper eficaz! (-${res.damage} PS)`);
-      else if (res.eff < 1.0) logs.push(`🍃 No es muy eficaz... (-${res.damage} PS)`);
-      else logs.push(`💥 Ha causado ${res.damage} puntos de daño a ${def.poke.name}.`);
+      showdownCommands.push(`|-damage|${def.sideId}: ${def.poke.name}|${def.poke.currentHp}/${def.poke.maxHp}`);
+
+      if (res.isCrit) {
+        logs.push(`🎯 ¡Un golpe crítico!`);
+        showdownCommands.push(`|-crit|${def.sideId}: ${def.poke.name}`);
+      }
+      if (res.eff > 1.0) {
+        logs.push(`🔥 ¡Es súper eficaz! (-${res.damage} PS)`);
+        showdownCommands.push(`|-supereffective|${def.sideId}: ${def.poke.name}`);
+      } else if (res.eff < 1.0) {
+        logs.push(`🍃 No es muy eficaz... (-${res.damage} PS)`);
+        showdownCommands.push(`|-resisted|${def.sideId}: ${def.poke.name}`);
+      } else {
+        logs.push(`💥 Ha causado ${res.damage} puntos de daño a ${def.poke.name}.`);
+      }
 
       if (def.poke.currentHp <= 0) {
         def.poke.fainted = true;
         logs.push(`💀 ¡${def.poke.name} de ${def.oppPlayer.apodo} se ha debilitado!`);
+        showdownCommands.push(`|faint|${def.sideId}: ${def.poke.name}`);
+
         // Auto-cambiar al siguiente disponible si queda alguno
         const nextIdx = def.oppPlayer.team.findIndex(p => !p.fainted);
         if (nextIdx !== -1) {
           def.oppPlayer.activeIndex = nextIdx;
-          logs.push(`👉 ${def.oppPlayer.apodo} envía a combatir a ${def.oppPlayer.team[nextIdx].name}!`);
+          const nextPoke = def.oppPlayer.team[nextIdx];
+          logs.push(`👉 ${def.oppPlayer.apodo} envía a combatir a ${nextPoke.name}!`);
+          showdownCommands.push(`|switch|${def.sideId}: ${nextPoke.name}|${nextPoke.name}|${nextPoke.currentHp}/${nextPoke.maxHp}`);
         }
       }
     }
@@ -224,19 +250,23 @@ class StadiumBattleEngine {
       battleState.phase = 'finished';
       battleState.winner = 'Empate';
       logs.push(`🏆 ¡Ambos entrenadores han quedado sin Pokémon! ¡El combate termina en EMPATE!`);
+      showdownCommands.push(`|tie`);
     } else if (p2AllFainted) {
       battleState.phase = 'finished';
       battleState.winner = p1.apodo;
       logs.push(`🏆 ¡Todos los Pokémon de ${p2.apodo} se han debilitado! ¡${p1.apodo} GANA EL COMBATE!`);
+      showdownCommands.push(`|win|${p1.apodo}`);
     } else if (p1AllFainted) {
       battleState.phase = 'finished';
       battleState.winner = p2.apodo;
       logs.push(`🏆 ¡Todos los Pokémon de ${p1.apodo} se han debilitado! ¡${p2.apodo} GANA EL COMBATE!`);
+      showdownCommands.push(`|win|${p2.apodo}`);
     } else {
       battleState.turn++;
     }
 
     battleState.logs.push(...logs);
+    battleState.latestCommands = showdownCommands;
     return battleState;
   }
 }

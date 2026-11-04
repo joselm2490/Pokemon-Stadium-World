@@ -226,16 +226,20 @@
         logDiv.scrollTop = logDiv.scrollHeight;
       }
 
-      // Añadir eventos a la simulación visual si la instancia de Battle existe
-      if (battleInstance && bs.turn > 0) {
+      // Añadir comandos de animación oficiales a la instancia de Battle de Showdown
+      if (battleInstance) {
         try {
-          const p1PokeName = myPoke ? myPoke.name : 'Pikachu';
-          const p2PokeName = oppPoke ? oppPoke.name : 'Charizard';
-          battleInstance.addBatch([
-            `|switch|p1a: ${p1PokeName}|${p1PokeName}|${myPoke.currentHp}/${myPoke.maxHp}`,
-            `|switch|p2a: ${p2PokeName}|${p2PokeName}|${oppPoke.currentHp}/${oppPoke.maxHp}`,
-            `|turn|${bs.turn}`
-          ]);
+          if (bs.latestCommands && bs.latestCommands.length > 0) {
+            battleInstance.addBatch(bs.latestCommands);
+          } else if (bs.turn > 0) {
+            const p1PokeName = myPoke ? myPoke.name : 'Pikachu';
+            const p2PokeName = oppPoke ? oppPoke.name : 'Charizard';
+            battleInstance.addBatch([
+              `|switch|p1a: ${p1PokeName}|${p1PokeName}|${myPoke.currentHp}/${myPoke.maxHp}`,
+              `|switch|p2a: ${p2PokeName}|${p2PokeName}|${oppPoke.currentHp}/${oppPoke.maxHp}`,
+              `|turn|${bs.turn}`
+            ]);
+          }
         } catch (e) {
           console.warn('[Pure Battle] Log sync warning:', e);
         }

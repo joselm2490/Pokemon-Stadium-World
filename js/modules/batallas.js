@@ -2258,7 +2258,10 @@ class BatallaModule {
         }
 
         if (window.BattleRoomStore) {
-          await window.BattleRoomStore.submitBattleAction(this.currentRoom.codigo, myNick, data.action);
+          const updated = await window.BattleRoomStore.submitBattleAction(this.currentRoom.codigo, myNick, data.action);
+          if (updated) {
+            this.currentRoom = updated;
+          }
           this.syncStateToBattleFrame();
         }
       }
