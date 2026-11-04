@@ -15,7 +15,7 @@
     html, body {
       width: 100%;
       height: 100%;
-      background: #000;
+      background: #060911;
       color: #fff;
       overflow: hidden;
       font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
@@ -30,33 +30,49 @@
       flex: 1;
       height: 100%;
       position: relative;
-      background: #111;
+      background: #07090e;
       display: flex;
       flex-direction: column;
       align-items: center;
       justify-content: center;
+      padding: 12px;
+      overflow: hidden;
     }
     .battle-wrapper {
       position: relative;
       width: 640px;
       height: 360px;
-      box-shadow: 0 10px 40px rgba(0,0,0,0.8);
+      box-shadow: 0 10px 40px rgba(0,0,0,0.85);
       background: #000;
+      border-radius: 8px;
+      overflow: hidden;
+      border: 1px solid rgba(56, 189, 248, 0.35);
+    }
+    /* Sobrescribir forzado para la arena interna de Showdown */
+    .battle-wrapper .battle {
+      position: absolute !important;
+      top: 0 !important;
+      left: 0 !important;
+      width: 640px !important;
+      height: 360px !important;
+      border: none !important;
     }
     .arena-controls-bar {
       width: 640px;
       background: rgba(15, 23, 42, 0.95);
-      border: 1px solid rgba(56, 189, 248, 0.3);
-      border-radius: 8px;
-      margin-top: 10px;
-      padding: 10px 14px;
+      border: 1px solid rgba(56, 189, 248, 0.35);
+      border-radius: 10px;
+      margin-top: 12px;
+      padding: 12px 16px;
       display: flex;
       flex-direction: column;
-      gap: 8px;
+      gap: 10px;
+      box-shadow: 0 6px 20px rgba(0,0,0,0.6);
+      z-index: 10;
     }
     .controls-prompt {
-      font-size: 0.85rem;
-      font-weight: 700;
+      font-size: 0.88rem;
+      font-weight: 800;
       color: #38bdf8;
       display: flex;
       justify-content: space-between;
@@ -65,12 +81,12 @@
     .moves-grid {
       display: grid;
       grid-template-columns: 1fr 1fr;
-      gap: 8px;
+      gap: 10px;
     }
     .move-btn {
       height: 48px;
       border: none;
-      border-radius: 6px;
+      border-radius: 8px;
       font-weight: 800;
       font-size: 0.92rem;
       color: #fff;
@@ -78,14 +94,14 @@
       display: flex;
       justify-content: space-between;
       align-items: center;
-      padding: 0 14px;
-      text-shadow: 0 1px 2px rgba(0,0,0,0.6);
+      padding: 0 16px;
+      text-shadow: 0 1px 3px rgba(0,0,0,0.8);
       transition: all 0.15s ease;
-      box-shadow: 0 2px 6px rgba(0,0,0,0.4);
+      box-shadow: 0 3px 8px rgba(0,0,0,0.5);
     }
     .move-btn:hover:not(:disabled) {
-      filter: brightness(1.15);
-      transform: translateY(-1px);
+      filter: brightness(1.18);
+      transform: translateY(-2px);
     }
     .move-btn:active:not(:disabled) {
       transform: translateY(1px);
@@ -97,69 +113,105 @@
     }
     .move-btn .pp-tag {
       font-size: 0.75rem;
-      font-weight: 600;
+      font-weight: 700;
       opacity: 0.9;
+      background: rgba(0,0,0,0.3);
+      padding: 2px 6px;
+      border-radius: 4px;
     }
     .switches-bar {
       display: flex;
       gap: 8px;
-      padding-top: 6px;
+      padding-top: 8px;
       border-top: 1px solid rgba(255,255,255,0.1);
       align-items: center;
     }
-    .switch-label {
+    .switches-bar-label {
       font-size: 0.75rem;
       font-weight: 800;
       color: #94a3b8;
-      margin-right: 4px;
+      margin-right: 6px;
     }
     .switch-btn {
       flex: 1;
-      height: 36px;
-      background: rgba(30, 41, 59, 0.85);
-      border: 1px solid rgba(255, 255, 255, 0.15);
+      height: 38px;
+      background: rgba(30, 41, 59, 0.9);
+      border: 1px solid rgba(255, 255, 255, 0.18);
       border-radius: 6px;
       color: #fff;
       font-weight: 700;
-      font-size: 0.8rem;
+      font-size: 0.82rem;
       cursor: pointer;
       display: flex;
       align-items: center;
       justify-content: center;
-      gap: 6px;
+      gap: 8px;
       transition: all 0.15s;
     }
     .switch-btn:hover:not(:disabled) {
-      background: rgba(56, 189, 248, 0.2);
+      background: rgba(56, 189, 248, 0.25);
       border-color: #38bdf8;
+      transform: translateY(-1px);
     }
     .switch-btn:disabled {
       opacity: 0.35;
       cursor: not-allowed;
     }
-    .arena-side-log {
+    /* Panel lateral de logs aislado para evitar choques con battle.css */
+    .arena-sidebar-panel {
       width: 320px;
       height: 100%;
       background: #090d16;
-      border-left: 1px solid rgba(255, 255, 255, 0.08);
+      border-left: 1px solid rgba(255, 255, 255, 0.1);
       display: flex;
       flex-direction: column;
+      position: relative !important;
+      z-index: 5;
     }
     .log-header {
-      padding: 10px 14px;
-      font-size: 0.8rem;
+      padding: 12px 16px;
+      font-size: 0.82rem;
       font-weight: 800;
       color: #38bdf8;
-      border-bottom: 1px solid rgba(255, 255, 255, 0.08);
-      background: rgba(15, 23, 42, 0.8);
+      border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+      background: rgba(15, 23, 42, 0.9);
+      letter-spacing: 0.5px;
     }
-    .battle-log {
+    .stadium-custom-log {
       flex: 1;
       overflow-y: auto;
-      padding: 10px;
-      font-size: 0.82rem;
-      line-height: 1.4;
+      padding: 12px;
+      font-size: 0.85rem;
+      line-height: 1.5;
       color: #cbd5e1;
+      font-family: monospace, sans-serif;
+    }
+    /* Pantalla de carga mientras se preparan los recursos */
+    .arena-loader-overlay {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: #060911;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 14px;
+      z-index: 100;
+      transition: opacity 0.3s ease;
+    }
+    .arena-loader-spinner {
+      width: 44px;
+      height: 44px;
+      border: 4px solid rgba(56, 189, 248, 0.2);
+      border-top-color: #38bdf8;
+      border-radius: 50%;
+      animation: spin 0.8s linear infinite;
+    }
+    @keyframes spin {
+      to { transform: rotate(360deg); }
     }
   </style>
 </head>
@@ -167,22 +219,27 @@
   <div class="arena-battle-layout">
     <div class="arena-battle-stage">
       <div class="battle-wrapper">
-        <div class="battle" id="battleStage"></div>
+        <div id="battleStage"></div>
       </div>
-
       <div class="arena-controls-bar" id="battleControlsBar">
         <div class="controls-prompt">
           <span id="promptText">🎮 ¿Qué debería hacer tu Pokémon?</span>
-          <span id="turnIndicator" style="color: #94a3b8; font-size: 0.75rem;">Turno 1</span>
+          <span id="turnIndicator" style="color: #94a3b8; font-size: 0.78rem;">Turno 1</span>
         </div>
         <div class="moves-grid" id="movesGrid"></div>
         <div class="switches-bar" id="switchesBar"></div>
       </div>
     </div>
-
-    <div class="arena-side-log">
+    <div class="arena-sidebar-panel">
       <div class="log-header">📜 REGISTRO DE COMBATE</div>
-      <div class="battle-log" id="battleLog"></div>
+      <div class="stadium-custom-log" id="battleLog"></div>
+    </div>
+  </div>
+
+  <div class="arena-loader-overlay" id="arenaLoader">
+    <div class="arena-loader-spinner"></div>
+    <div style="font-size: 0.9rem; font-weight: 700; color: #38bdf8; letter-spacing: 0.5px;">
+      ⚡ Preparando arena de combate...
     </div>
   </div>
 
@@ -190,6 +247,18 @@
   <script src="config/config.js"></script>
   <script src="js/lib/ps-polyfill.js"></script>
   <script src="js/lib/html-css-sanitizer-minified.js"></script>
+  <script>
+    // Inicializar exports global para módulos CommonJS en navegador
+    var exports = window.exports = window;
+    window.BattleText = window.BattleText || {};
+  </script>
+  <script src="data/text/en.js"></script>
+  <script>
+    // Asegurar BattleText global
+    if (window.exports && window.exports.BattleText) {
+      window.BattleText = window.exports.BattleText;
+    }
+  </script>
   <script src="js/battle-sound.js"></script>
   <script src="js/battle-dex-data.js"></script>
   <script src="js/battle-dex.js"></script>

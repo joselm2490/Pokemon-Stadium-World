@@ -28,6 +28,12 @@
     'Acero': '#B8B8D0', 'Hada': '#EE99AC', 'Estelar': '#45C8B8'
   };
 
+  // Redirigir recursos de efectos a Showdown oficial CDN para evitar errores 404 locales
+  if (window.Dex) {
+    Dex.resourcePrefix = 'https://play.pokemonshowdown.com/';
+    Dex.fxPrefix = 'https://play.pokemonshowdown.com/fx/';
+  }
+
   // Inicializar instancia de batalla pura de Showdown vinculada al DOM
   function initBattle() {
     const $frame = $('#battleStage');
@@ -99,6 +105,13 @@
     // Renderizar botones de Ataques y Relevos
     renderControls(mySide, rivalSide, bs);
 
+    // Ocultar pantalla de carga una vez recibido el estado de la batalla
+    const loader = document.getElementById('arenaLoader');
+    if (loader) {
+      loader.style.opacity = '0';
+      setTimeout(() => { loader.style.display = 'none'; }, 300);
+    }
+
     // Alimentar líneas al motor visual de Showdown si hay logs nuevos
     feedLogsToShowdown(mySide, rivalSide, activePokemon, rivalPokemon, bs);
   }
@@ -165,7 +178,7 @@
             onclick="window.selectSwitch(${item.idx})"
           >
             <span>${p.name}</span>
-            <span style="font-size: 0.7rem; color: ${isFainted ? '#ef4444' : '#4ade80'};">${isFainted ? 'Debilitado' : hpPercent + '%'}</span>
+            <span style="font-size: 0.72rem; color: ${isFainted ? '#ef4444' : '#4ade80'}; font-weight: 800;">${isFainted ? 'Debilitado' : hpPercent + '%'}</span>
           </button>
         `;
       }).join('')}
@@ -195,8 +208,6 @@
   // Sincronizar logs en el visualizador y el panel lateral
   let lastLogCount = 0;
   function feedLogsToShowdown(mySide, rivalSide, myPoke, oppPoke, bs) {
-    if (!battleInstance) return;
-
     const logs = bs.logs || [];
     if (logs.length > lastLogCount) {
       const newLines = logs.slice(lastLogCount);
@@ -206,11 +217,28 @@
       if (logDiv) {
         newLines.forEach(l => {
           const p = document.createElement('div');
-          p.style.marginBottom = '4px';
+          p.style.marginBottom = '6px';
+          p.style.padding = '4px 6px';
+          p.style.borderLeft = '2px solid rgba(56, 189, 248, 0.4)';
           p.textContent = l;
           logDiv.appendChild(p);
         });
         logDiv.scrollTop = logDiv.scrollHeight;
+      }
+
+      // Añadir eventos a la simulación visual si la instancia de Battle existe
+      if (battleInstance && bs.turn > 0) {
+        try {
+          const p1PokeName = myPoke ? myPoke.name : 'Pikachu';
+          const p2PokeName = oppPoke ? oppPoke.name : 'Charizard';
+          battleInstance.addBatch([
+            `|switch|p1a: ${p1PokeName}|${p1PokeName}|${myPoke.currentHp}/${myPoke.maxHp}`,
+            `|switch|p2a: ${p2PokeName}|${p2PokeName}|${oppPoke.currentHp}/${oppPoke.maxHp}`,
+            `|turn|${bs.turn}`
+          ]);
+        } catch (e) {
+          console.warn('[Pure Battle] Log sync warning:', e);
+        }
       }
     }
   }
