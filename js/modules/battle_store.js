@@ -1119,6 +1119,15 @@ class BattleRoomStore {
       if (isP2) bs.p2.pendingAction = action;
     }
 
+    // Si es modo Tutorial contra la CPU, asegurar que la CPU responda inmediatamente
+    if ((room.es_tutorial || code === 'TUTORIAL') && bs.p2 && !bs.p2.pendingAction) {
+      const oppPoke = bs.p2.team[bs.p2.activeIndex];
+      const moveCount = (oppPoke && oppPoke.movimientos) ? oppPoke.movimientos.length : 1;
+      const randMoveIdx = Math.floor(Math.random() * moveCount);
+      bs.p2.pendingAction = { type: 'move', moveIndex: randMoveIdx };
+      console.log('🤖 [BattleRoomStore] CPU (P2) asignada automáticamente:', randMoveIdx, oppPoke?.movimientos?.[randMoveIdx]?.nombre);
+    }
+
     // Si ambos jugadores han enviado su acción, resolver turno
     if (bs.p1.pendingAction && bs.p2.pendingAction && window.StadiumBattleEngine) {
       console.log('⚔️ [BattleRoomStore] Resolviendo turno con StadiumBattleEngine.resolveTurn...');
