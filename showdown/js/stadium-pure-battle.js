@@ -117,76 +117,194 @@
     feedLogsToShowdown(mySide, rivalSide, activePokemon, rivalPokemon, bs);
   }
 
+  // Diccionario de traducción de tipos a nombres de clase oficiales de Showdown
+  const SHOWDOWN_TYPE_CLASS = {
+    'Normal': 'Normal', 'Fuego': 'Fire', 'Agua': 'Water', 'Planta': 'Grass',
+    'Eléctrico': 'Electric', 'Electrico': 'Electric', 'Hielo': 'Ice', 'Lucha': 'Fighting',
+    'Veneno': 'Poison', 'Tierra': 'Ground', 'Volador': 'Flying', 'Psíquico': 'Psychic',
+    'Psiquico': 'Psychic', 'Bicho': 'Bug', 'Roca': 'Rock', 'Fantasma': 'Ghost',
+    'Dragón': 'Dragon', 'Dragon': 'Dragon', 'Siniestro': 'Dark', 'Acero': 'Steel',
+    'Hada': 'Fairy', 'Estelar': 'Stellar'
+  };
+
+  // Tabla simplificada de efectividad de tipos para el tooltip
+  const TYPE_EFF_CHART = {
+    'Normal': { 'Roca': 0.5, 'Fantasma': 0, 'Acero': 0.5 },
+    'Fuego': { 'Fuego': 0.5, 'Agua': 0.5, 'Planta': 2, 'Hielo': 2, 'Bicho': 2, 'Roca': 0.5, 'Dragón': 0.5, 'Acero': 2 },
+    'Agua': { 'Fuego': 2, 'Agua': 0.5, 'Planta': 0.5, 'Tierra': 2, 'Roca': 2, 'Dragón': 0.5 },
+    'Planta': { 'Fuego': 0.5, 'Agua': 2, 'Planta': 0.5, 'Veneno': 0.5, 'Tierra': 2, 'Volador': 0.5, 'Bicho': 0.5, 'Roca': 2, 'Dragón': 0.5, 'Acero': 0.5 },
+    'Eléctrico': { 'Agua': 2, 'Planta': 0.5, 'Eléctrico': 0.5, 'Tierra': 0, 'Volador': 2, 'Dragón': 0.5 },
+    'Hielo': { 'Fuego': 0.5, 'Agua': 0.5, 'Planta': 2, 'Hielo': 0.5, 'Tierra': 2, 'Volador': 2, 'Dragón': 2, 'Acero': 0.5 },
+    'Lucha': { 'Normal': 2, 'Hielo': 2, 'Veneno': 0.5, 'Volador': 0.5, 'Psíquico': 0.5, 'Bicho': 0.5, 'Roca': 2, 'Fantasma': 0, 'Siniestro': 2, 'Acero': 2, 'Hada': 0.5 },
+    'Veneno': { 'Planta': 2, 'Veneno': 0.5, 'Tierra': 0.5, 'Roca': 0.5, 'Fantasma': 0.5, 'Acero': 0, 'Hada': 2 },
+    'Tierra': { 'Fuego': 2, 'Planta': 0.5, 'Eléctrico': 2, 'Veneno': 2, 'Volador': 0, 'Bicho': 0.5, 'Roca': 2, 'Acero': 2 },
+    'Volador': { 'Planta': 2, 'Eléctrico': 0.5, 'Lucha': 2, 'Bicho': 2, 'Roca': 0.5, 'Acero': 0.5 },
+    'Psíquico': { 'Lucha': 2, 'Veneno': 2, 'Psíquico': 0.5, 'Siniestro': 0, 'Acero': 0.5 },
+    'Bicho': { 'Fuego': 0.5, 'Planta': 2, 'Lucha': 0.5, 'Veneno': 0.5, 'Volador': 0.5, 'Fantasma': 0.5, 'Psíquico': 2, 'Siniestro': 2, 'Acero': 0.5, 'Hada': 0.5 },
+    'Roca': { 'Fuego': 2, 'Hielo': 2, 'Lucha': 0.5, 'Tierra': 0.5, 'Volador': 2, 'Bicho': 2, 'Acero': 0.5 },
+    'Fantasma': { 'Normal': 0, 'Psíquico': 2, 'Fantasma': 2, 'Siniestro': 0.5 },
+    'Dragón': { 'Dragón': 2, 'Acero': 0.5, 'Hada': 0 },
+    'Siniestro': { 'Lucha': 0.5, 'Psíquico': 2, 'Fantasma': 2, 'Siniestro': 0.5, 'Hada': 0.5 },
+    'Acero': { 'Fuego': 0.5, 'Agua': 0.5, 'Eléctrico': 0.5, 'Hielo': 2, 'Roca': 2, 'Acero': 0.5, 'Hada': 2 },
+    'Hada': { 'Fuego': 0.5, 'Lucha': 2, 'Veneno': 0.5, 'Dragón': 2, 'Siniestro': 2, 'Acero': 0.5 }
+  };
+
+  function getMoveEffectiveness(moveType, targetTypes) {
+    if (!moveType || !targetTypes || !TYPE_EFF_CHART[moveType]) return 1.0;
+    let mult = 1.0;
+    targetTypes.forEach(t => {
+      const chart = TYPE_EFF_CHART[moveType];
+      if (chart && chart[t] !== undefined) mult *= chart[t];
+    });
+    return mult;
+  }
+
   function renderControls(mySide, rivalSide, bs) {
     const movesGrid = document.getElementById('movesGrid');
     const switchesBar = document.getElementById('switchesBar');
     const promptText = document.getElementById('promptText');
+    const tooltipEl = document.getElementById('moveTooltip');
 
     if (!movesGrid || !switchesBar) return;
 
     if (bs.phase === 'finished') {
       promptText.textContent = `🏆 ¡Combate terminado! Ganador: ${bs.winner}`;
-      movesGrid.innerHTML = `<div style="grid-column: 1 / -1; text-align: center; color: #4ade80; font-weight: 800; padding: 14px;">El duelo ha concluido.</div>`;
+      movesGrid.innerHTML = `<div style="grid-column: 1 / -1; text-align: center; color: #16a34a; font-weight: 800; padding: 12px;">El duelo ha concluido.</div>`;
       switchesBar.innerHTML = '';
+      if (tooltipEl) tooltipEl.style.display = 'none';
       return;
     }
 
     if (mySide.pendingAction) {
       promptText.textContent = '⏳ Esperando la acción del rival...';
-      movesGrid.innerHTML = `<div style="grid-column: 1 / -1; text-align: center; color: #94a3b8; padding: 14px;">Acción enviada. Esperando al contrincante...</div>`;
+      movesGrid.innerHTML = `<div style="grid-column: 1 / -1; text-align: center; color: #64748b; font-weight: 700; padding: 12px;">Acción enviada. Esperando al contrincante...</div>`;
       switchesBar.innerHTML = '';
+      if (tooltipEl) tooltipEl.style.display = 'none';
       return;
     }
 
-    promptText.textContent = `🎮 ¿Qué debería hacer ${activePokemon ? activePokemon.name : 'tu Pokémon'}?`;
+    const currentPokeName = activePokemon ? activePokemon.name : 'tu Pokémon';
+    promptText.innerHTML = `¿Qué debería hacer <strong>${currentPokeName}</strong>?`;
 
-    // 1. Botones de los 4 Movimientos
+    const rivalActivePoke = rivalSide ? rivalSide.team[rivalSide.activeIndex] : null;
+
+    // 1. Botones de los 4 Movimientos (con clases oficiales type-<Tipo> de sim-types.css)
     const moves = (activePokemon && activePokemon.movimientos) ? activePokemon.movimientos : [];
     movesGrid.innerHTML = moves.map((m, idx) => {
-      const type = m.tipo || 'Normal';
-      const color = TYPE_COLORS[type] || '#A8A878';
+      const typeEs = m.tipo || 'Normal';
+      const typeEn = SHOWDOWN_TYPE_CLASS[typeEs] || 'Normal';
       const disabled = m.pp <= 0 ? 'disabled' : '';
 
       return `
         <button 
-          class="move-btn" 
-          style="background: linear-gradient(135deg, ${color}, #1e293b);"
+          class="movemenu-btn type-${typeEn}" 
           data-move-idx="${idx}"
           ${disabled}
           onclick="window.selectMove(${idx})"
+          onmouseenter="window.onMoveHover(${idx}, this)"
+          onmouseleave="window.onMoveLeave()"
         >
-          <span>${m.nombre}</span>
-          <span class="pp-tag">${m.pp}/${m.maxPp} PP</span>
+          <div class="move-name-text">${m.nombre}</div>
+          <div class="move-meta-row">
+            <span class="move-meta-type">${typeEn}</span>
+            <span class="move-meta-pp">${m.pp}/${m.maxPp}</span>
+          </div>
         </button>
       `;
     }).join('');
 
-    // 2. Botones de Cambiar Pokémon
+    // 2. Botones de Cambiar Pokémon (Estilo plano con icono, nombre y porcentaje)
     const team = mySide.team || [];
     const switchable = team.map((p, idx) => ({ p, idx })).filter(item => item.idx !== mySide.activeIndex);
 
-    switchesBar.innerHTML = `
-      <span class="switch-label">CAMBIAR:</span>
-      ${switchable.map(item => {
-        const p = item.p;
-        const isFainted = p.fainted || p.currentHp <= 0;
-        const hpPercent = Math.max(0, Math.floor((p.currentHp / p.maxHp) * 100));
+    switchesBar.innerHTML = switchable.map(item => {
+      const p = item.p;
+      const isFainted = p.fainted || p.currentHp <= 0;
+      const hpPercent = Math.max(0, Math.floor((p.currentHp / p.maxHp) * 100));
+      const iconUrl = `https://play.pokemonshowdown.com/sprites/gen5/${(p.name || 'pikachu').toLowerCase().replace(/[^a-z0-9]/g, '')}.png`;
 
-        return `
-          <button 
-            class="switch-btn" 
-            ${isFainted ? 'disabled' : ''}
-            onclick="window.selectSwitch(${item.idx})"
-          >
-            <span>${p.name}</span>
-            <span style="font-size: 0.72rem; color: ${isFainted ? '#ef4444' : '#4ade80'}; font-weight: 800;">${isFainted ? 'Debilitado' : hpPercent + '%'}</span>
-          </button>
-        `;
-      }).join('')}
-    `;
+      return `
+        <button 
+          class="switchmenu-btn" 
+          ${isFainted ? 'disabled' : ''}
+          onclick="window.selectSwitch(${item.idx})"
+        >
+          <img src="${iconUrl}" class="switchmenu-icon" alt="${p.name}" onerror="this.style.display='none'" />
+          <span class="switchmenu-name">${p.name}</span>
+          <span class="switchmenu-hp" style="color: ${isFainted ? '#ef4444' : '#16a34a'};">
+            ${isFainted ? 'Debilitado' : hpPercent + '%'}
+          </span>
+        </button>
+      `;
+    }).join('');
   }
 
-  // Interacción de usuario: seleccionar ataque
+  // Manejador del Tooltip flotante oficial en Hover
+  window.onMoveHover = function(moveIdx, btnEl) {
+    const tooltipEl = document.getElementById('moveTooltip');
+    if (!tooltipEl || !activePokemon || !activePokemon.movimientos) return;
+
+    const m = activePokemon.movimientos[moveIdx];
+    if (!m) return;
+
+    const typeEs = m.tipo || 'Normal';
+    const typeEn = SHOWDOWN_TYPE_CLASS[typeEs] || 'Normal';
+    const cat = m.categoria || 'Físico';
+    const catColor = cat.toLowerCase().includes('esp') ? '#2563eb' : (cat.toLowerCase().includes('fís') ? '#dc2626' : '#6b7280');
+    const typeColor = TYPE_COLORS[typeEs] || '#71717a';
+
+    // Determinar efectividad contra el rival actual
+    const rivalPoke = currentRoomData?.battle_state ? 
+      ((currentRoomData.battle_state.p1.apodo || '').toLowerCase() === userNick.toLowerCase() ? 
+        currentRoomData.battle_state.p2.team[currentRoomData.battle_state.p2.activeIndex] : 
+        currentRoomData.battle_state.p1.team[currentRoomData.battle_state.p1.activeIndex]) : null;
+
+    let effHtml = '';
+    if (rivalPoke && m.categoria !== 'Estado') {
+      const mult = getMoveEffectiveness(typeEs, rivalPoke.types || []);
+      if (mult === 0) {
+        effHtml = `<div class="tooltip-eff-row" style="color: #64748b;">🛡️ Sin efecto contra ${rivalPoke.name} (0×)</div>`;
+      } else if (mult >= 2.0) {
+        effHtml = `<div class="tooltip-eff-row" style="color: #16a34a;">🔥 Súper eficaz contra ${rivalPoke.name} (${mult}×)</div>`;
+      } else if (mult <= 0.5) {
+        effHtml = `<div class="tooltip-eff-row" style="color: #dc2626;">△ Poco eficaz contra ${rivalPoke.name} (${mult}×)</div>`;
+      } else {
+        effHtml = `<div class="tooltip-eff-row" style="color: #475569;">Eficacia normal contra ${rivalPoke.name} (1×)</div>`;
+      }
+    }
+
+    tooltipEl.innerHTML = `
+      <div class="tooltip-header-row">
+        <span class="tooltip-move-title">${m.nombre}</span>
+        <div class="tooltip-icons-row">
+          <span class="tooltip-badge" style="background: ${typeColor};">${typeEn}</span>
+          <span class="tooltip-badge" style="background: ${catColor};">${cat}</span>
+        </div>
+      </div>
+      <div class="tooltip-stats-row">
+        <span>Potencia: <strong>${m.potencia ? m.potencia : '—'}</strong></span>
+        <span>Precisión: <strong>${m.precision ? m.precision + '%' : '—'}</strong></span>
+        <span>PP: <strong>${m.pp}/${m.maxPp}</strong></span>
+      </div>
+      <div class="tooltip-desc">
+        ${m.descripcion || 'Sin descripción especial.'}
+      </div>
+      ${effHtml}
+    `;
+
+    // Posicionar tooltip encima del botón que dispara el evento
+    const rect = btnEl.getBoundingClientRect();
+    const parentRect = document.getElementById('battleControlsBar').getBoundingClientRect();
+    tooltipEl.style.left = Math.max(8, (rect.left - parentRect.left)) + 'px';
+    tooltipEl.style.display = 'block';
+  };
+
+  window.onMoveLeave = function() {
+    const tooltipEl = document.getElementById('moveTooltip');
+    if (tooltipEl) tooltipEl.style.display = 'none';
+  };
+
+    // Interacción de usuario: seleccionar ataque
   window.selectMove = function(moveIndex) {
     console.log('🔘 [Pure Battle] Click en movimiento:', moveIndex, 'Nombre:', activePokemon?.movimientos?.[moveIndex]?.nombre);
     if (window.parent && window.parent !== window) {

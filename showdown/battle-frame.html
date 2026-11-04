@@ -35,7 +35,7 @@
       flex-direction: column;
       align-items: center;
       justify-content: center;
-      padding: 12px;
+      padding: 10px;
       overflow: hidden;
     }
     .battle-wrapper {
@@ -48,7 +48,6 @@
       overflow: hidden;
       border: 1px solid rgba(56, 189, 248, 0.35);
     }
-    /* Sobrescribir forzado para la arena interna de Showdown */
     .battle-wrapper .battle {
       position: absolute !important;
       top: 0 !important;
@@ -57,107 +56,238 @@
       height: 360px !important;
       border: none !important;
     }
+
+    /* CONTROLES DE COMBATE ESTILO OFICIAL SHOWDOWN */
     .arena-controls-bar {
       width: 640px;
-      background: rgba(15, 23, 42, 0.95);
-      border: 1px solid rgba(56, 189, 248, 0.35);
-      border-radius: 10px;
-      margin-top: 12px;
-      padding: 12px 16px;
+      background: rgba(248, 250, 252, 0.96);
+      border: 1px solid #cbd5e1;
+      border-radius: 8px;
+      margin-top: 8px;
+      padding: 8px 12px;
       display: flex;
       flex-direction: column;
-      gap: 10px;
-      box-shadow: 0 6px 20px rgba(0,0,0,0.6);
+      gap: 6px;
+      box-shadow: 0 4px 16px rgba(0,0,0,0.4);
       z-index: 10;
+      position: relative;
     }
     .controls-prompt {
-      font-size: 0.88rem;
-      font-weight: 800;
-      color: #38bdf8;
+      font-size: 0.82rem;
+      font-weight: 700;
+      color: #334155;
       display: flex;
       justify-content: space-between;
       align-items: center;
+      padding-bottom: 2px;
+      border-bottom: 1px solid #e2e8f0;
     }
+    .controls-section-title {
+      font-size: 0.95rem;
+      font-style: italic;
+      font-weight: 800;
+      color: #c2410c;
+      margin-bottom: 2px;
+    }
+
+    /* BOTONES DE MOVIMIENTOS (.movemenu) */
     .moves-grid {
       display: grid;
       grid-template-columns: 1fr 1fr;
-      gap: 10px;
+      gap: 8px;
     }
-    .move-btn {
-      height: 48px;
-      border: none;
-      border-radius: 8px;
-      font-weight: 800;
-      font-size: 0.92rem;
-      color: #fff;
+    .movemenu-btn {
+      position: relative;
+      height: 44px;
+      padding: 4px 10px;
+      border-radius: 5px;
+      border: 1px solid #a1a1aa;
       cursor: pointer;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      text-align: left;
+      text-decoration: none;
+      box-shadow: 0 1px 2px rgba(0,0,0,0.15), inset 0 1px 0 rgba(255,255,255,0.8);
+      transition: all 0.12s ease;
+      color: #111827;
+      font-family: inherit;
+    }
+    .movemenu-btn:hover:not(:disabled) {
+      filter: brightness(1.05);
+      border-color: #52525b;
+      box-shadow: 0 2px 5px rgba(0,0,0,0.25), inset 0 1px 0 rgba(255,255,255,0.9);
+      transform: translateY(-1px);
+    }
+    .movemenu-btn:active:not(:disabled) {
+      transform: translateY(1px);
+      box-shadow: inset 0 2px 4px rgba(0,0,0,0.2);
+    }
+    .movemenu-btn:disabled {
+      opacity: 0.5;
+      cursor: not-allowed;
+      filter: grayscale(0.7);
+    }
+    .move-name-text {
+      font-size: 0.92rem;
+      font-weight: 700;
+      color: #18181b;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+    .move-meta-row {
       display: flex;
       justify-content: space-between;
       align-items: center;
-      padding: 0 16px;
-      text-shadow: 0 1px 3px rgba(0,0,0,0.8);
-      transition: all 0.15s ease;
-      box-shadow: 0 3px 8px rgba(0,0,0,0.5);
+      font-size: 0.72rem;
+      font-weight: 600;
+      color: #71717a;
     }
-    .move-btn:hover:not(:disabled) {
-      filter: brightness(1.18);
-      transform: translateY(-2px);
+    .move-meta-type {
+      text-transform: capitalize;
     }
-    .move-btn:active:not(:disabled) {
-      transform: translateY(1px);
-    }
-    .move-btn:disabled {
-      opacity: 0.4;
-      cursor: not-allowed;
-      filter: grayscale(0.8);
-    }
-    .move-btn .pp-tag {
-      font-size: 0.75rem;
+    .move-meta-pp {
       font-weight: 700;
-      opacity: 0.9;
-      background: rgba(0,0,0,0.3);
-      padding: 2px 6px;
-      border-radius: 4px;
+    }
+
+    /* BOTONES DE CAMBIO DE POKÉMON */
+    .switches-section {
+      margin-top: 4px;
+      display: flex;
+      flex-direction: column;
+      gap: 3px;
+    }
+    .switches-title {
+      font-size: 0.95rem;
+      font-style: italic;
+      font-weight: 800;
+      color: #2563eb;
     }
     .switches-bar {
       display: flex;
-      gap: 8px;
-      padding-top: 8px;
-      border-top: 1px solid rgba(255,255,255,0.1);
-      align-items: center;
+      gap: 6px;
+      overflow-x: auto;
     }
-    .switches-bar-label {
-      font-size: 0.75rem;
-      font-weight: 800;
-      color: #94a3b8;
-      margin-right: 6px;
-    }
-    .switch-btn {
+    .switchmenu-btn {
       flex: 1;
-      height: 38px;
-      background: rgba(30, 41, 59, 0.9);
-      border: 1px solid rgba(255, 255, 255, 0.18);
-      border-radius: 6px;
-      color: #fff;
-      font-weight: 700;
+      height: 36px;
+      background: #f1f5f9;
+      background: linear-gradient(to bottom, #ffffff, #e2e8f0);
+      border: 1px solid #94a3b8;
+      border-radius: 5px;
+      color: #0f172a;
       font-size: 0.82rem;
+      font-weight: 700;
       cursor: pointer;
       display: flex;
       align-items: center;
-      justify-content: center;
-      gap: 8px;
-      transition: all 0.15s;
+      justify-content: flex-start;
+      gap: 6px;
+      padding: 0 8px;
+      box-shadow: 0 1px 2px rgba(0,0,0,0.1), inset 0 1px 0 rgba(255,255,255,0.8);
+      transition: all 0.12s ease;
+      font-family: inherit;
     }
-    .switch-btn:hover:not(:disabled) {
-      background: rgba(56, 189, 248, 0.25);
-      border-color: #38bdf8;
+    .switchmenu-btn:hover:not(:disabled) {
+      background: linear-gradient(to bottom, #f8fafc, #cbd5e1);
+      border-color: #64748b;
       transform: translateY(-1px);
     }
-    .switch-btn:disabled {
-      opacity: 0.35;
+    .switchmenu-btn:disabled {
+      opacity: 0.45;
       cursor: not-allowed;
+      filter: grayscale(0.8);
     }
-    /* Panel lateral de logs aislado para evitar choques con battle.css */
+    .switchmenu-icon {
+      width: 28px;
+      height: 24px;
+      background-size: cover;
+      display: inline-block;
+      flex-shrink: 0;
+    }
+    .switchmenu-name {
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      flex: 1;
+      text-align: left;
+    }
+    .switchmenu-hp {
+      font-size: 0.72rem;
+      font-weight: 800;
+    }
+
+    /* TOOLTIP FLOTANTE EN HOVER ESTILO OFICIAL SHOWDOWN */
+    .stadium-move-tooltip {
+      position: absolute;
+      bottom: 100%;
+      left: 20px;
+      width: 320px;
+      background: #f8fafc;
+      background: rgba(248, 250, 252, 0.98);
+      border: 1px solid #64748b;
+      border-radius: 6px;
+      box-shadow: 0 8px 24px rgba(0,0,0,0.5);
+      z-index: 1000;
+      pointer-events: none;
+      display: none;
+      color: #0f172a;
+      padding: 8px 10px;
+      margin-bottom: 8px;
+      font-size: 0.82rem;
+      line-height: 1.35;
+    }
+    .tooltip-header-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      border-bottom: 1px solid #cbd5e1;
+      padding-bottom: 5px;
+      margin-bottom: 5px;
+    }
+    .tooltip-move-title {
+      font-weight: 800;
+      font-size: 0.96rem;
+      color: #0f172a;
+    }
+    .tooltip-icons-row {
+      display: flex;
+      gap: 4px;
+      align-items: center;
+    }
+    .tooltip-badge {
+      display: inline-block;
+      padding: 1px 6px;
+      border-radius: 3px;
+      font-size: 0.7rem;
+      font-weight: 800;
+      color: #fff;
+      text-transform: uppercase;
+    }
+    .tooltip-stats-row {
+      display: flex;
+      gap: 16px;
+      margin-bottom: 5px;
+      font-size: 0.8rem;
+      color: #334155;
+    }
+    .tooltip-stats-row strong {
+      color: #0f172a;
+    }
+    .tooltip-desc {
+      font-size: 0.78rem;
+      color: #475569;
+      margin-bottom: 6px;
+    }
+    .tooltip-eff-row {
+      border-top: 1px solid #cbd5e1;
+      padding-top: 5px;
+      font-size: 0.78rem;
+      font-weight: 700;
+    }
+
+    /* PANEL LATERAL DE LOGS */
     .arena-sidebar-panel {
       width: 320px;
       height: 100%;
@@ -186,7 +316,6 @@
       color: #cbd5e1;
       font-family: monospace, sans-serif;
     }
-    /* Pantalla de carga mientras se preparan los recursos */
     .arena-loader-overlay {
       position: absolute;
       top: 0;
@@ -222,12 +351,21 @@
         <div id="battleStage"></div>
       </div>
       <div class="arena-controls-bar" id="battleControlsBar">
+        <!-- TOOLTIP FLOTANTE EN HOVER -->
+        <div class="stadium-move-tooltip" id="moveTooltip"></div>
+
         <div class="controls-prompt">
-          <span id="promptText">🎮 ¿Qué debería hacer tu Pokémon?</span>
-          <span id="turnIndicator" style="color: #94a3b8; font-size: 0.78rem;">Turno 1</span>
+          <span id="promptText">¿Qué debería hacer tu Pokémon?</span>
+          <span id="turnIndicator" style="color: #64748b; font-size: 0.78rem;">Turno 1</span>
         </div>
-        <div class="moves-grid" id="movesGrid"></div>
-        <div class="switches-bar" id="switchesBar"></div>
+
+        <div class="controls-section-title">Luchar</div>
+        <div class="moves-grid movemenu" id="movesGrid"></div>
+
+        <div class="switches-section">
+          <div class="switches-title">Cambiar</div>
+          <div class="switches-bar switchmenu" id="switchesBar"></div>
+        </div>
       </div>
     </div>
     <div class="arena-sidebar-panel">
@@ -253,13 +391,11 @@
   <script src="js/lib/ps-polyfill.js"></script>
   <script src="js/lib/html-css-sanitizer-minified.js"></script>
   <script>
-    // Inicializar exports global para módulos CommonJS en navegador
     var exports = window.exports = window;
     window.BattleText = window.BattleText || {};
   </script>
   <script src="data/text/en.js"></script>
   <script>
-    // Asegurar BattleText global
     if (window.exports && window.exports.BattleText) {
       window.BattleText = window.exports.BattleText;
     }
