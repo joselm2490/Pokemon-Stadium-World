@@ -2021,7 +2021,7 @@ class BatallaModule {
     const userTeam = generateTeam();
     const botTeam = generateTeam();
 
-    this.currentRoom = {
+    const tutorialRoom = {
       id: 999999,
       codigo: 'TUTORIAL',
       es_tutorial: true,
@@ -2041,6 +2041,14 @@ class BatallaModule {
         { id: 1, emisor: 'SISTEMA', mensaje: '⚔️ ¡Batalla Tutorial Iniciada! Prueba rápida 3 vs 3 contra la CPU.', es_sistema: true, enviado_en: new Date().toISOString() }
       ]
     };
+
+    if (window.StadiumBattleEngine) {
+      tutorialRoom.battle_state = window.StadiumBattleEngine.initBattleState(tutorialRoom);
+    }
+    if (window.BattleRoomStore) {
+      window.BattleRoomStore.updateRoom(tutorialRoom);
+    }
+    this.currentRoom = tutorialRoom;
 
     if (window.SFX) window.SFX.playSuccess();
     this.currentScreen = 'battle';
@@ -2164,16 +2172,15 @@ class BatallaModule {
     // Empaquetar el equipo del jugador actual
     const packedTeam = this.packTeamForShowdown(myPlayer ? myPlayer.equipo_pokemon : []);
 
-    // Parámetros para el bridge de Showdown
+    // Parámetros para el frame de combate puro Showdown
     const queryParams = new URLSearchParams({
       user: myNick,
       rival: rivalPlayer ? rivalPlayer.apodo : '',
       room: room.codigo || '',
-      host: isHost ? '1' : '0',
-      team: packedTeam
+      host: isHost ? '1' : '0'
     });
 
-    const showdownClientUrl = `/showdown/?${queryParams.toString()}`;
+    const showdownClientUrl = `/showdown/battle-frame.html?${queryParams.toString()}`;
 
     container.innerHTML = `
       <div class="stadium-battle-wrapper battle-combat-wrapper" style="height: 100vh; display: flex; flex-direction: column; overflow: hidden; background: #07090e;">
@@ -2183,7 +2190,7 @@ class BatallaModule {
             <div class="lobby-pokeball-brand"></div>
             <h2 class="lobby-brand-title" style="font-size: 1.15rem;">Arena Stadium — Combate Oficial Showdown</h2>
             <div class="lobby-status-pill" style="background: rgba(34, 197, 94, 0.2); border-color: rgba(34, 197, 94, 0.5); color: #4ade80; font-size: 0.76rem;">
-              ● SERVIDOR EN VIVO
+              ● BATALLA ACTIVA
             </div>
           </div>
 
@@ -2199,7 +2206,7 @@ class BatallaModule {
           </div>
         </header>
 
-        <!-- CONTENEDOR IFRAME COMPLETO DEL CLIENTE WEB OFICIAL DE SHOWDOWN -->
+        <!-- CONTENEDOR IFRAME DE BATALLA PURA SHOWDOWN -->
         <main style="flex: 1; width: 100%; position: relative; background: #000;">
           <iframe 
             id="showdownBattleFrame"
@@ -2210,6 +2217,56 @@ class BatallaModule {
         </main>
       </div>
     `;
+
+    // Enlazar escucha de eventos desde el iframe puro
+    this.setupPureBattleBridge();
+  }
+
+  static setupPureBattleBridge() {
+    if (this._pureBattleBridgeAttached) return;
+    this._pureBattleBridgeAttached = true;
+
+    window.addEventListener('message', async (ev) => {
+      if (!ev.data) return;
+      const data = ev.data;
+
+      // El iframe terminó de inicializar BattleScene y pide el estado
+      if (data.type === 'pure-battle-ready') {
+        this.syncStateToBattleFrame();
+      }
+
+      // El jugador pulsó un botón de movimiento o cambio de Pokémon
+      if (data.type === 'pure-battle-action' && data.action) {
+        if (!this.currentRoom) return;
+        const myNick = (this.userNickname || 'Entrenador').trim();
+        
+        // Si es tutorial contra la CPU, la CPU elige automáticamente un movimiento
+        if (this.currentRoom.es_tutorial) {
+          const bs = this.currentRoom.battle_state;
+          if (bs && bs.p2) {
+            const oppPoke = bs.p2.team[bs.p2.activeIndex];
+            const moveCount = (oppPoke && oppPoke.movimientos) ? oppPoke.movimientos.length : 1;
+            const randMoveIdx = Math.floor(Math.random() * moveCount);
+            bs.p2.pendingAction = { type: 'move', moveIndex: randMoveIdx };
+          }
+        }
+
+        if (window.BattleRoomStore) {
+          await window.BattleRoomStore.submitBattleAction(this.currentRoom.codigo, myNick, data.action);
+          this.syncStateToBattleFrame();
+        }
+      }
+    });
+  }
+
+  static syncStateToBattleFrame() {
+    const iframe = document.getElementById('showdownBattleFrame');
+    if (iframe && iframe.contentWindow && this.currentRoom) {
+      iframe.contentWindow.postMessage({
+        type: 'update-battle-state',
+        room: this.currentRoom
+      }, '*');
+    }
   }
 
   static async selectCombatMove(moveIndex) {
