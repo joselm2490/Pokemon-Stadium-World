@@ -12,7 +12,7 @@ Config.defaultserver = {
 	port: 443,
 	httpport: 443,
 	altport: 443,
-	registered: true
+	registered: false
 };
 
 Config.server = Config.defaultserver;

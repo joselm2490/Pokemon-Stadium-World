@@ -89,10 +89,18 @@
     if (loggedIn) return;
     const PS = window.PS;
     
-    // Cambiar nombre sin pedir contraseña (servidor libre en Render)
-    PS.send(`/nick ${nickname}`);
+    // Cambiar nombre sin pedir token de loginserver (servidor Render libre)
+    // Se envía /trn nickname,0, para registrar directamente el nombre de usuario
+    PS.send(`/trn ${nickname},0,`);
     loggedIn = true;
-    console.log(`[Stadium-Showdown Bridge] Enviado comando /nick ${nickname}`);
+    console.log(`[Stadium-Showdown Bridge] Enviado comando de registro: /trn ${nickname},0,`);
+
+    // Actualizar nombre en la interfaz de PS
+    try {
+      if (PS.user) {
+        PS.user.setName(nickname, true);
+      }
+    } catch (e) {}
 
     // C. Modo Tutorial o Desafío Multijugador
     if (roomCode === 'TUTORIAL') {
@@ -106,18 +114,33 @@
     const PS = window.PS;
     console.log('[Stadium-Showdown Bridge] Iniciando combate Tutorial contra CPU...');
     
-    // Crear o buscar partida rápida local en Showdown contra la IA integrada o ladder
+    // En Showdown oficial, la búsqueda automática en Gen 9 Random Battle empareja inmediatamente
+    // o el desafío a bot inicia el combate interactivo.
     setTimeout(() => {
       try {
         if (packedTeam) {
           PS.send(`/utm ${packedTeam}`);
         }
-        // Retar a bot o buscar combate directo en gen9customgame
+        // Buscar combate o retar en gen9randombattle / gen9customgame
+        PS.send(`/search gen9randombattle`);
         PS.send(`/challenge ${rivalNick || 'Profesor Oak'}, gen9customgame`);
       } catch (err) {
         console.warn('[Stadium-Showdown Bridge] Error en setupTutorialBotBattle:', err);
       }
     }, 1500);
+
+    // Si se crea la sala de combate, enfocarla directamente
+    const origAddRoom = PS.addRoom;
+    PS.addRoom = function(id) {
+      if (id && id.startsWith('battle-')) {
+        setTimeout(() => {
+          try {
+            if (PS.focusRoom) PS.focusRoom(id);
+          } catch (e) {}
+        }, 300);
+      }
+      return origAddRoom.apply(this, arguments);
+    };
   }
 
   function setupAutoChallenge() {

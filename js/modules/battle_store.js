@@ -516,15 +516,29 @@ class BattleRoomStore {
           // Si hay jugadores en la tabla relacional, usarlos; de lo contrario fallback a columna JSON o anfitrión
           let parsedJugadores = [];
           if (remotePlayers.length > 0) {
-            parsedJugadores = remotePlayers.map(p => ({
-              id: p.id,
-              apodo: p.apodo,
-              es_anfitrion: p.es_anfitrion === 1 || p.es_anfitrion === true,
-              listo: p.listo === 1 || p.listo === true,
-              conectado: p.conectado === 1 || p.conectado === true,
-              unido_en: p.unido_en,
-              equipo_pokemon: []
-            }));
+            parsedJugadores = remotePlayers.map(p => {
+              let team = [];
+              if (p.equipo_pokemon) {
+                try {
+                  team = typeof p.equipo_pokemon === 'string' ? JSON.parse(p.equipo_pokemon) : p.equipo_pokemon;
+                } catch (e) {
+                  team = [];
+                }
+              }
+              if ((!team || team.length === 0) && local && local.jugadores) {
+                const matchLocal = local.jugadores.find(lj => (lj.apodo || '').toLowerCase() === (p.apodo || '').toLowerCase());
+                if (matchLocal && matchLocal.equipo_pokemon) team = matchLocal.equipo_pokemon;
+              }
+              return {
+                id: p.id,
+                apodo: p.apodo,
+                es_anfitrion: p.es_anfitrion === 1 || p.es_anfitrion === true,
+                listo: p.listo === 1 || p.listo === true,
+                conectado: p.conectado === 1 || p.conectado === true,
+                unido_en: p.unido_en,
+                equipo_pokemon: team || []
+              };
+            });
           } else if (dbRoom.jugadores) {
             parsedJugadores = typeof dbRoom.jugadores === 'string' ? JSON.parse(dbRoom.jugadores) : dbRoom.jugadores;
           } else {
