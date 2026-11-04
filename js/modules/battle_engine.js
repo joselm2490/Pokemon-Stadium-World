@@ -223,15 +223,15 @@ class StadiumBattleEngine {
 
       if (def.poke.currentHp <= 0) {
         def.poke.fainted = true;
-        logs.push(`💀 ¡${def.poke.name} de ${def.oppPlayer.apodo} se ha debilitado!`);
+        logs.push(`💀 ¡${def.poke.name} de ${def.player.apodo} se ha debilitado!`);
         showdownCommands.push(`|faint|${def.sideId}: ${def.poke.name}`);
 
-        // Auto-cambiar al siguiente disponible si queda alguno
-        const nextIdx = def.oppPlayer.team.findIndex(p => !p.fainted);
+        // Auto-cambiar al siguiente disponible en el equipo del defensor
+        const nextIdx = def.player.team.findIndex(p => !p.fainted);
         if (nextIdx !== -1) {
-          def.oppPlayer.activeIndex = nextIdx;
-          const nextPoke = def.oppPlayer.team[nextIdx];
-          logs.push(`👉 ${def.oppPlayer.apodo} envía a combatir a ${nextPoke.name}!`);
+          def.player.activeIndex = nextIdx;
+          const nextPoke = def.player.team[nextIdx];
+          logs.push(`👉 ${def.player.apodo} envía a combatir a ${nextPoke.name}!`);
           showdownCommands.push(`|switch|${def.sideId}: ${nextPoke.name}|${nextPoke.name}|${nextPoke.currentHp}/${nextPoke.maxHp}`);
         }
       }
