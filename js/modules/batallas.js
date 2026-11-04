@@ -2173,7 +2173,7 @@ class BatallaModule {
       team: packedTeam
     });
 
-    const showdownClientUrl = `showdown/index.html?${queryParams.toString()}`;
+    const showdownClientUrl = `/showdown/?${queryParams.toString()}`;
 
     container.innerHTML = `
       <div class="stadium-battle-wrapper battle-combat-wrapper" style="height: 100vh; display: flex; flex-direction: column; overflow: hidden; background: #07090e;">
