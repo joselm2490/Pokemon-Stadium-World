@@ -55,6 +55,7 @@ class StadiumBattleEngine {
           movimientos: (poke.movimientos || []).map(m => ({
             id: m.id,
             nombre: m.nombre || m.name,
+            nombre_ingles: m.nombre_ingles || m.name || m.nombre,
             tipo: m.tipo || m.type || 'Normal',
             categoria: m.categoria || m.category || 'Físico',
             potencia: m.potencia !== undefined ? m.potencia : 60,
@@ -178,8 +179,9 @@ class StadiumBattleEngine {
       // Disminuir PP
       if (move.pp > 0) move.pp--;
 
+      const showdownMoveName = move.nombre_ingles || move.nombre;
       logs.push(`💥 ¡${att.poke.name} de ${att.player.apodo} usa ${move.nombre}!`);
-      showdownCommands.push(`|move|${att.sideId}: ${att.poke.name}|${move.nombre}|${def.sideId}: ${def.poke.name}`);
+      showdownCommands.push(`|move|${att.sideId}: ${att.poke.name}|${showdownMoveName}|${def.sideId}: ${def.poke.name}`);
 
       // Verificar precisión
       const acc = move.precision || 100;

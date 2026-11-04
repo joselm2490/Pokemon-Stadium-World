@@ -218,7 +218,24 @@
 
   // Sincronizar logs en el visualizador y el panel lateral
   let lastLogCount = 0;
+  let initialFieldSynced = false;
+
   function feedLogsToShowdown(mySide, rivalSide, myPoke, oppPoke, bs) {
+    // Sincronización inicial exacta en el primer turno para alinear los sprites con los Pokémon del usuario
+    if (battleInstance && !initialFieldSynced && myPoke && oppPoke) {
+      initialFieldSynced = true;
+      try {
+        battleInstance.addBatch([
+          `|switch|p1a: ${myPoke.name}|${myPoke.name}|${myPoke.currentHp}/${myPoke.maxHp}`,
+          `|switch|p2a: ${oppPoke.name}|${oppPoke.name}|${oppPoke.currentHp}/${oppPoke.maxHp}`,
+          `|turn|1`
+        ]);
+        console.log('✅ [Pure Battle] Sprites iniciales sincronizados en Showdown:', myPoke.name, 'vs', oppPoke.name);
+      } catch (e) {
+        console.warn('⚠️ [Pure Battle] Error al sincronizar sprites iniciales:', e);
+      }
+    }
+
     const logs = bs.logs || [];
     if (logs.length > lastLogCount) {
       const newLines = logs.slice(lastLogCount);
@@ -241,15 +258,8 @@
       if (battleInstance) {
         try {
           if (bs.latestCommands && bs.latestCommands.length > 0) {
+            console.log('🎬 [Pure Battle] Ejecutando comandos en Showdown Battle:', bs.latestCommands);
             battleInstance.addBatch(bs.latestCommands);
-          } else if (bs.turn > 0) {
-            const p1PokeName = myPoke ? myPoke.name : 'Pikachu';
-            const p2PokeName = oppPoke ? oppPoke.name : 'Charizard';
-            battleInstance.addBatch([
-              `|switch|p1a: ${p1PokeName}|${p1PokeName}|${myPoke.currentHp}/${myPoke.maxHp}`,
-              `|switch|p2a: ${p2PokeName}|${p2PokeName}|${oppPoke.currentHp}/${oppPoke.maxHp}`,
-              `|turn|${bs.turn}`
-            ]);
           }
         } catch (e) {
           console.warn('[Pure Battle] Log sync warning:', e);
