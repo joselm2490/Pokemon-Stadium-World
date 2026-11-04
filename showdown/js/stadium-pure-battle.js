@@ -221,7 +221,12 @@
       const p = item.p;
       const isFainted = p.fainted || p.currentHp <= 0;
       const hpPercent = Math.max(0, Math.floor((p.currentHp / p.maxHp) * 100));
-      const iconUrl = `https://play.pokemonshowdown.com/sprites/gen5/${(p.name || 'pikachu').toLowerCase().replace(/[^a-z0-9]/g, '')}.png`;
+
+      // Formatear correctamente el nombre para Showdown sprites (preservando guiones de formas regionales: golem-alola, vulpix-alola, etc.)
+      const nameL = (p.name || 'pikachu').toLowerCase();
+      let slug = nameL.replace(/\s+/g, '-').replace(/[^a-z0-9-]/g, '');
+      const primaryUrl = `https://play.pokemonshowdown.com/sprites/gen5/${slug}.png`;
+      const fallbackUrl = p.num ? `https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/${p.num}.png` : `https://play.pokemonshowdown.com/sprites/dex/${slug}.png`;
 
       return `
         <button 
@@ -229,7 +234,7 @@
           ${isFainted ? 'disabled' : ''}
           onclick="window.selectSwitch(${item.idx})"
         >
-          <img src="${iconUrl}" class="switchmenu-icon" alt="${p.name}" onerror="this.style.display='none'" />
+          <img src="${primaryUrl}" class="switchmenu-icon" alt="${p.name}" onerror="if(this.src!=='${fallbackUrl}'){this.src='${fallbackUrl}';}else{this.style.opacity='0';}" />
           <div class="switchmenu-info">
             <span class="switchmenu-name">${p.name}</span>
             <span class="switchmenu-hp" style="color: ${isFainted ? '#ef4444' : '#16a34a'};">
