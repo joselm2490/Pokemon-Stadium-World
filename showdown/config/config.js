@@ -1,6 +1,7 @@
 var Config = Config || {};
 
 Config.version = "0.11.2";
+Config.customcolors = {};
 Config.bannedHosts = [];
 Config.whitelist = [];
 
