@@ -188,7 +188,7 @@
 
     const rivalActivePoke = rivalSide ? rivalSide.team[rivalSide.activeIndex] : null;
 
-    // 1. Botones de los 4 Movimientos (con clases oficiales type-<Tipo> de sim-types.css)
+    // 1. Botones de los 4 Movimientos (con clases oficiales type-<Tipo> de sim-types.css pero etiquetas en ESPAÑOL)
     const moves = (activePokemon && activePokemon.movimientos) ? activePokemon.movimientos : [];
     movesGrid.innerHTML = moves.map((m, idx) => {
       const typeEs = m.tipo || 'Normal';
@@ -206,14 +206,14 @@
         >
           <div class="move-name-text">${m.nombre}</div>
           <div class="move-meta-row">
-            <span class="move-meta-type">${typeEn}</span>
+            <span class="move-meta-type">${typeEs}</span>
             <span class="move-meta-pp">${m.pp}/${m.maxPp}</span>
           </div>
         </button>
       `;
     }).join('');
 
-    // 2. Botones de Cambiar Pokémon (Estilo plano con icono, nombre y porcentaje)
+    // 2. Botones de Cambiar Pokémon (Grandes, claros, con miniatura, nombre y salud)
     const team = mySide.team || [];
     const switchable = team.map((p, idx) => ({ p, idx })).filter(item => item.idx !== mySide.activeIndex);
 
@@ -230,10 +230,12 @@
           onclick="window.selectSwitch(${item.idx})"
         >
           <img src="${iconUrl}" class="switchmenu-icon" alt="${p.name}" onerror="this.style.display='none'" />
-          <span class="switchmenu-name">${p.name}</span>
-          <span class="switchmenu-hp" style="color: ${isFainted ? '#ef4444' : '#16a34a'};">
-            ${isFainted ? 'Debilitado' : hpPercent + '%'}
-          </span>
+          <div class="switchmenu-info">
+            <span class="switchmenu-name">${p.name}</span>
+            <span class="switchmenu-hp" style="color: ${isFainted ? '#ef4444' : '#16a34a'};">
+              ${isFainted ? '💀 Debilitado' : hpPercent + '% PS'}
+            </span>
+          </div>
         </button>
       `;
     }).join('');
@@ -277,8 +279,8 @@
       <div class="tooltip-header-row">
         <span class="tooltip-move-title">${m.nombre}</span>
         <div class="tooltip-icons-row">
-          <span class="tooltip-badge" style="background: ${typeColor};">${typeEn}</span>
-          <span class="tooltip-badge" style="background: ${catColor};">${cat}</span>
+          <span class="tooltip-badge" style="background: ${typeColor};">${typeEs.toUpperCase()}</span>
+          <span class="tooltip-badge" style="background: ${catColor};">${cat.toUpperCase()}</span>
         </div>
       </div>
       <div class="tooltip-stats-row">
