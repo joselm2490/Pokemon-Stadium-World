@@ -333,6 +333,12 @@ class BatallaModule {
               <span class="btn-help-icon">❓</span>
               <span>¿CÓMO JUGAR?</span>
             </button>
+
+            <!-- BOTÓN DE COMBATE DE PRUEBA / TUTORIAL (DIRECTO SIN SALAS) -->
+            <button class="battle-primary-action-btn btn-tutorial" id="btnTutorialDuelo" style="margin-top: 10px; background: linear-gradient(135deg, #059669 0%, #10b981 100%); border-color: #34d399; box-shadow: 0 4px 18px rgba(16, 185, 129, 0.45);">
+              <span class="btn-action-icon">⚔️</span>
+              <span class="btn-action-text" style="font-weight: 800; letter-spacing: 0.5px;">TUTORIAL: BATALLA RÁPIDA (3 vs 3)</span>
+            </button>
           </div>
         </main>
 
@@ -807,6 +813,13 @@ class BatallaModule {
     if (btnHelp) {
       btnHelp.addEventListener('click', () => {
         alert('🎮 MODO ARENA STADIUM MULTIJUGADOR:\n\n1. Crea una sala: Se generará un código único de 6 caracteres (ej: PXXE69).\n2. Comparte ese código con tu amigo para que entre pulsando "UNIRSE A SALA".\n3. Ambos aparecerán en la lista de jugadores y podrán comunicarse mediante el chat del lobby.\n4. Configura cuántos Pokémon llevará cada uno (de 1 a 6).\n5. ¡Pulsa "INICIAR PARTIDA" cuando estén listos para el combate!');
+      });
+    }
+
+    const btnTutorial = document.getElementById('btnTutorialDuelo');
+    if (btnTutorial) {
+      btnTutorial.addEventListener('click', () => {
+        this.startTutorialBattle();
       });
     }
   }
@@ -1452,7 +1465,7 @@ class BatallaModule {
     } catch (e) {}
 
     // 2. Dar por finalizada la batalla en el store y declarar victoria al rival
-    if (this.currentRoom && window.BattleRoomStore) {
+    if (this.currentRoom && !this.currentRoom.es_tutorial && window.BattleRoomStore) {
       await window.BattleRoomStore.leaveRoom(this.currentRoom.codigo, this.userNickname);
     }
 
@@ -1948,6 +1961,86 @@ class BatallaModule {
     setTimeout(() => {
       this.hideBattleLoadingModal();
     }, 400);
+
+    if (window.SFX) window.SFX.playSuccess();
+    this.currentScreen = 'battle';
+    this.renderCurrentView();
+    this.showAssignedTeamModal();
+  }
+
+  /**
+   * INICIAR BATALLA TUTORIAL / PRUEBA RÁPIDA (3 vs 3)
+   * Sin trámites de salas ni esperas: Usuario vs Bot (CPU)
+   */
+  static startTutorialBattle() {
+    const userNick = (this.userNickname || 'Entrenador').trim();
+    const botNick = 'Profesor Oak (CPU)';
+    const countNeeded = 3;
+
+    // Obtener pool de pokémon
+    const pool = this.getFilteredPokemonPool({ generaciones: ['todas'], formas: ['todas'], categorias: ['todas'] });
+
+    if (pool.length < countNeeded * 2) {
+      alert('Cargando datos de Pokémon... por favor espera un instante.');
+      return;
+    }
+
+    // Generar equipo para el Usuario y para la CPU
+    const generateTeam = () => {
+      const team = [];
+      const used = new Set();
+      while (team.length < countNeeded) {
+        const randIdx = Math.floor(Math.random() * pool.length);
+        if (!used.has(randIdx)) {
+          used.add(randIdx);
+          const basePoke = pool[randIdx];
+          const moveIds = basePoke.movimientos_predeterminados || [];
+          const resolvedMoves = [];
+          if (window.MOVIMIENTOS_DATA) {
+            moveIds.forEach(mid => {
+              const m = window.MOVIMIENTOS_DATA.find(mv => mv.id === mid);
+              if (m) resolvedMoves.push(m);
+            });
+          }
+          team.push({
+            id: basePoke.id,
+            num: basePoke.num,
+            name: basePoke.name,
+            gen: basePoke.gen,
+            types: basePoke.types,
+            stats: basePoke.stats,
+            abilities: basePoke.abilities,
+            movimientos: resolvedMoves,
+            movimientos_predeterminados: moveIds
+          });
+        }
+      }
+      return team;
+    };
+
+    const userTeam = generateTeam();
+    const botTeam = generateTeam();
+
+    this.currentRoom = {
+      id: 999999,
+      codigo: 'TUTORIAL',
+      es_tutorial: true,
+      anfitrion_nombre: userNick,
+      estado: 'en_combate',
+      pokemon_por_jugador: 3,
+      max_jugadores: 2,
+      jugadores_actuales: 2,
+      creada_en: new Date().toISOString(),
+      iniciada_en: new Date().toISOString(),
+      ajustes: { generaciones: ['todas'], formas: ['todas'], categorias: ['todas'] },
+      jugadores: [
+        { id: 'p1', apodo: userNick, es_anfitrion: true, listo: true, conectado: true, equipo_pokemon: userTeam },
+        { id: 'p2', apodo: botNick, es_anfitrion: false, listo: true, conectado: true, equipo_pokemon: botTeam }
+      ],
+      mensajes: [
+        { id: 1, emisor: 'SISTEMA', mensaje: '⚔️ ¡Batalla Tutorial Iniciada! Prueba rápida 3 vs 3 contra la CPU.', es_sistema: true, enviado_en: new Date().toISOString() }
+      ]
+    };
 
     if (window.SFX) window.SFX.playSuccess();
     this.currentScreen = 'battle';

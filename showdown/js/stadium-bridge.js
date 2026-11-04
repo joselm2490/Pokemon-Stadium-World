@@ -94,8 +94,30 @@
     loggedIn = true;
     console.log(`[Stadium-Showdown Bridge] Enviado comando /nick ${nickname}`);
 
-    // C. Lanzar el desafío automáticamente entre Anfitrión y Rival
-    setupAutoChallenge();
+    // C. Modo Tutorial o Desafío Multijugador
+    if (roomCode === 'TUTORIAL') {
+      setupTutorialBotBattle();
+    } else {
+      setupAutoChallenge();
+    }
+  }
+
+  function setupTutorialBotBattle() {
+    const PS = window.PS;
+    console.log('[Stadium-Showdown Bridge] Iniciando combate Tutorial contra CPU...');
+    
+    // Crear o buscar partida rápida local en Showdown contra la IA integrada o ladder
+    setTimeout(() => {
+      try {
+        if (packedTeam) {
+          PS.send(`/utm ${packedTeam}`);
+        }
+        // Retar a bot o buscar combate directo en gen9customgame
+        PS.send(`/challenge ${rivalNick || 'Profesor Oak'}, gen9customgame`);
+      } catch (err) {
+        console.warn('[Stadium-Showdown Bridge] Error en setupTutorialBotBattle:', err);
+      }
+    }, 1500);
   }
 
   function setupAutoChallenge() {
