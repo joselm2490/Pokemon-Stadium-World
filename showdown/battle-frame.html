@@ -245,6 +245,11 @@
 
   <script src="js/lib/jquery-2.2.4.min.js"></script>
   <script src="config/config.js"></script>
+  <script>
+    if (window.Config && window.Config.routes) {
+      window.Config.routes.client = "play.pokemonshowdown.com";
+    }
+  </script>
   <script src="js/lib/ps-polyfill.js"></script>
   <script src="js/lib/html-css-sanitizer-minified.js"></script>
   <script>

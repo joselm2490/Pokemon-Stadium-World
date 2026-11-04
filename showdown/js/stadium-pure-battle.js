@@ -243,9 +243,26 @@
     }
   }
 
-  // Inicialización al cargar la página
+  // Inicialización al cargar la página con reintentos para asegurar conexión con el padre
   $(document).ready(function() {
     initBattle();
     notifyReady();
+    
+    // Si la ventana padre tardó en montar el bridge, reintentar la notificación
+    let retries = 0;
+    const readyInterval = setInterval(function() {
+      if (currentRoomData || retries > 10) {
+        clearInterval(readyInterval);
+        // Garantizar que la pantalla de carga no se quede pegada
+        const loader = document.getElementById('arenaLoader');
+        if (loader && loader.style.display !== 'none') {
+          loader.style.opacity = '0';
+          setTimeout(() => { loader.style.display = 'none'; }, 300);
+        }
+      } else {
+        retries++;
+        notifyReady();
+      }
+    }, 400);
   });
 })();

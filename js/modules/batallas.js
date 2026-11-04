@@ -2218,8 +2218,14 @@ class BatallaModule {
       </div>
     `;
 
-    // Enlazar escucha de eventos desde el iframe puro
+    // Enlazar escucha de eventos desde el iframe puro y sincronizar al cargar
     this.setupPureBattleBridge();
+    const frameEl = document.getElementById('showdownBattleFrame');
+    if (frameEl) {
+      frameEl.addEventListener('load', () => {
+        setTimeout(() => this.syncStateToBattleFrame(), 200);
+      });
+    }
   }
 
   static setupPureBattleBridge() {
