@@ -1,13 +1,13 @@
 // ====================================================================
-// MÓDULO: ENRUTADOR MODULAR (SPA ROUTER) - POKÉMON STADIUM WORLD
+// MÓDULO: ENRUTADOR MODULAR HTML5 (CLEAN URLS SIN #) - POKÉMON STADIUM WORLD
 // ====================================================================
 class StadiumRouter {
   static routes = {
     'pokemon': { viewId: 'view-pokemon', navId: 'menuItemPokemon' },
     'moves': { viewId: 'view-movimientos', navId: 'menuItemMovimientos' },
-    'movimientos': { viewId: 'view-movimientos', navId: 'menuItemMovimientos' }, // backward compatibility
+    'movimientos': { viewId: 'view-movimientos', navId: 'menuItemMovimientos' },
     'battle': { viewId: 'view-batalla', navId: 'menuItemBatalla' },
-    'batalla': { viewId: 'view-batalla', navId: 'menuItemBatalla' }, // backward compatibility
+    'batalla': { viewId: 'view-batalla', navId: 'menuItemBatalla' },
     'batallas': { viewId: 'view-batalla', navId: 'menuItemBatalla' },
     'users': { viewId: 'view-usuarios', navId: 'menuItemUsuarios' },
     'usuarios': { viewId: 'view-usuarios', navId: 'menuItemUsuarios' }
@@ -16,24 +16,34 @@ class StadiumRouter {
   static currentRoute = null;
 
   static init() {
-    window.addEventListener('hashchange', () => this.handleHashChange());
+    // Escuchar navegación del historial (Botones Atrás/Adelante del navegador)
+    window.addEventListener('popstate', () => this.handleLocationChange());
+    window.addEventListener('hashchange', () => this.handleLocationChange());
     this.setupNavClickListeners();
 
-    // Si la URL no tiene hash o está vacía, comenzar siempre por 'pokemon' como pidió el usuario
-    if (!window.location.hash || window.location.hash === '#' || window.location.hash === '#/') {
-      window.location.hash = '#/pokemon';
-    } else {
-      this.handleHashChange();
+    // Migrar automáticamente URLs con # a URLs limpias estándar
+    if (window.location.hash && window.location.hash.startsWith('#/')) {
+      const cleanPath = window.location.hash.replace(/^#\/?/, '/');
+      history.replaceState(null, '', cleanPath);
     }
+
+    // Si la ruta raíz es vacía o /, navegar a /pokemon
+    const path = window.location.pathname.replace(/^\/+/, '');
+    if (!path || path === '') {
+      history.replaceState(null, '', '/pokemon');
+    }
+
+    this.handleLocationChange();
   }
 
-  static parseHash() {
-    const rawHash = window.location.hash || '#/pokemon';
-    const clean = rawHash.replace(/^#\/?/, '');
-    const [pathPart, queryPart] = clean.split('?');
-    
-    // Soportar rutas anidadas como batalla/7SHTXZ o batallas/7SHTXZ
-    const segments = pathPart.split('/').filter(Boolean);
+  static parseCurrentUrl() {
+    // Si viene hash, limpiarlo
+    let cleanPath = window.location.pathname;
+    if (window.location.hash && window.location.hash.startsWith('#/')) {
+      cleanPath = window.location.hash.replace(/^#\/?/, '/');
+    }
+
+    const segments = cleanPath.split('/').filter(Boolean);
     const mainRoute = (segments[0] || 'pokemon').toLowerCase();
     const subParam = segments.length > 1 ? segments[1].toUpperCase() : null;
 
@@ -42,8 +52,8 @@ class StadiumRouter {
       params.roomCode = subParam;
     }
 
-    if (queryPart) {
-      const searchParams = new URLSearchParams(queryPart);
+    if (window.location.search) {
+      const searchParams = new URLSearchParams(window.location.search);
       for (const [k, v] of searchParams.entries()) {
         params[k] = v;
       }
@@ -54,31 +64,31 @@ class StadiumRouter {
 
   static updateBattleRoomUrl(code) {
     if (code) {
-      const newHash = `#/battle/${code.toUpperCase()}`;
-      if (window.location.hash !== newHash) {
-        history.replaceState(null, '', newHash);
+      const newUrl = `/battle/${code.toUpperCase()}`;
+      if (window.location.pathname !== newUrl) {
+        history.replaceState(null, '', newUrl);
       }
     } else {
-      if (window.location.hash.startsWith('#/battle') || window.location.hash.startsWith('#/batalla')) {
-        history.replaceState(null, '', '#/battle');
+      if (window.location.pathname.startsWith('/battle') || window.location.pathname.startsWith('/batalla')) {
+        history.replaceState(null, '', '/battle');
       }
     }
   }
 
-  static handleHashChange() {
-    const { path, params } = this.parseHash();
+  static handleLocationChange() {
+    const { path, params } = this.parseCurrentUrl();
 
-    // Manejar casos especiales de rutas de auth
+    // Casos especiales de modales de autenticación
     if (path === 'login') {
       if (window.AuthManager) window.AuthManager.openModal('login');
       return;
     }
-    if (path === 'registro') {
+    if (path === 'register' || path === 'registro') {
       if (window.AuthManager) window.AuthManager.openModal('register');
       return;
     }
 
-    // Ruta estándar: pokemon, movimientos, batallas
+    // Ruta estándar: pokemon, moves, battle, users
     const targetRoute = this.routes[path] ? path : 'pokemon';
     this.activateView(targetRoute, params);
 
@@ -89,7 +99,7 @@ class StadiumRouter {
         setTimeout(() => {
           window.PokemonModule.openPokemonDetailById(openTarget);
         }, 120);
-      } else if (targetRoute === 'movimientos' && window.MovimientosModule) {
+      } else if ((targetRoute === 'moves' || targetRoute === 'movimientos') && window.MovimientosModule) {
         setTimeout(() => {
           const moveId = parseInt(openTarget, 10);
           window.MovimientosModule.openMoveDetailById(isNaN(moveId) ? openTarget : moveId);
@@ -111,39 +121,50 @@ class StadiumRouter {
       activeSection.classList.add('active');
     }
 
+    // Actualizar tarjetas activas en la barra de navegación superior
+    document.querySelectorAll('.stadium-menu-hub .menu-card').forEach(card => {
+      card.classList.remove('active');
+    });
+    const activeNavCard = document.getElementById(routeConfig.navId);
+    if (activeNavCard) {
+      activeNavCard.classList.add('active');
+    }
+
     // Si entramos a la sección de batalla, asegurar renderizado del estado actual
-    if ((routeName === 'batalla' || routeName === 'batallas') && window.BatallaModule) {
+    if ((routeName === 'battle' || routeName === 'batalla' || routeName === 'batallas') && window.BatallaModule) {
       const roomCode = params.roomCode || null;
       if (typeof window.BatallaModule.handleRouteRoomCode === 'function') {
         window.BatallaModule.handleRouteRoomCode(roomCode);
       } else {
         window.BatallaModule.renderCurrentView();
       }
-    } else if (routeName === 'usuarios' && window.AdminUsuariosModule) {
+    } else if ((routeName === 'users' || routeName === 'usuarios') && window.AdminUsuariosModule) {
       window.AdminUsuariosModule.loadUsers();
     }
 
-    // Hide or show the top menu hub based on the route
-    if (routeName === 'batalla' || routeName === 'batallas') {
+    // Modo batalla para ocultar o compactar el hub
+    if (routeName === 'battle' || routeName === 'batalla' || routeName === 'batallas') {
       document.body.classList.add('battle-mode');
     } else {
       document.body.classList.remove('battle-mode');
     }
   }
 
+  // Navegar usando HTML5 pushState sin recarga y sin #
   static navigate(routeName, params = {}) {
-    let hash = `#/${routeName}`;
+    let cleanPath = `/${routeName}`;
     const keys = Object.keys(params);
+    let queryString = '';
     if (keys.length > 0) {
       const searchParams = new URLSearchParams(params);
-      hash += `?${searchParams.toString()}`;
+      queryString = `?${searchParams.toString()}`;
     }
-    if (window.location.hash === hash) {
-      // Forzar cambio si ya estaba en ese hash
-      this.handleHashChange();
-    } else {
-      window.location.hash = hash;
+    const fullUrl = cleanPath + queryString;
+
+    if (window.location.pathname !== cleanPath) {
+      history.pushState(null, '', fullUrl);
     }
+    this.handleLocationChange();
   }
 
   static setupNavClickListeners() {
@@ -154,7 +175,13 @@ class StadiumRouter {
       card.addEventListener('click', () => {
         const view = card.dataset.view;
         if (view) {
-          StadiumRouter.navigate(view);
+          // Mapear a nombre en inglés limpio
+          let target = view;
+          if (view === 'movimientos') target = 'moves';
+          if (view === 'batalla') target = 'battle';
+          if (view === 'usuarios') target = 'users';
+
+          StadiumRouter.navigate(target);
           window.scrollTo({ top: 180, behavior: 'smooth' });
         }
       });

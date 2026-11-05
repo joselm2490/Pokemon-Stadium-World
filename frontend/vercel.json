@@ -1,71 +1,7 @@
 {
-  "version": 2,
-  "outputDirectory": ".",
   "cleanUrls": true,
   "trailingSlash": false,
-  "builds": [
-    {
-      "src": "**/*",
-      "use": "@vercel/static"
-    }
-  ],
   "rewrites": [
-    {
-      "source": "/showdown",
-      "destination": "/showdown/index.html"
-    },
-    {
-      "source": "/showdown/",
-      "destination": "/showdown/index.html"
-    },
-    {
-      "source": "/pokemon",
-      "destination": "/pokemon.html"
-    },
-    {
-      "source": "/pokemones",
-      "destination": "/pokemones.html"
-    },
-    {
-      "source": "/movimientos",
-      "destination": "/movimientos.html"
-    },
-    {
-      "source": "/batallas",
-      "destination": "/batallas.html"
-    },
-    {
-      "source": "/batalla",
-      "destination": "/batallas.html"
-    }
-  ],
-  "headers": [
-    {
-      "source": "/sprites/(.*)",
-      "headers": [
-        {
-          "key": "Cache-Control",
-          "value": "public, max-age=31536000, immutable"
-        }
-      ]
-    },
-    {
-      "source": "/css/(.*)",
-      "headers": [
-        {
-          "key": "Cache-Control",
-          "value": "public, max-age=0, must-revalidate"
-        }
-      ]
-    },
-    {
-      "source": "/js/(.*)",
-      "headers": [
-        {
-          "key": "Cache-Control",
-          "value": "public, max-age=0, must-revalidate"
-        }
-      ]
-    }
+    { "source": "/(.*)", "destination": "/index.html" }
   ]
 }
