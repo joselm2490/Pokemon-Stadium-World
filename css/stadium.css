@@ -5965,6 +5965,73 @@ body {
   border: 1px solid rgba(255, 255, 255, 0.08);
 }
 
+/* Tipos de Sala en Crear Sala */
+.room-type-selector-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
+  margin-bottom: 16px;
+}
+
+.room-type-card {
+  border: 2px solid rgba(255, 255, 255, 0.12);
+  background: rgba(15, 23, 42, 0.6);
+  border-radius: 10px;
+  padding: 12px 10px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  position: relative;
+  text-align: center;
+}
+
+.room-type-card.active {
+  border-color: #38bdf8;
+  background: rgba(56, 189, 248, 0.12);
+  box-shadow: 0 0 16px rgba(56, 189, 248, 0.25);
+}
+
+.room-type-card.disabled {
+  opacity: 0.45;
+  cursor: not-allowed;
+  filter: grayscale(0.6);
+}
+
+.room-type-card.disabled:hover {
+  border-color: rgba(255, 255, 255, 0.12);
+  transform: none;
+}
+
+.room-type-card:not(.disabled):hover {
+  border-color: #38bdf8;
+  transform: translateY(-2px);
+}
+
+.room-type-title {
+  font-size: 0.95rem;
+  font-weight: 800;
+  color: #fff;
+  margin-bottom: 4px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+}
+
+.room-type-badge {
+  display: inline-block;
+  font-size: 0.65rem;
+  font-weight: 800;
+  padding: 2px 6px;
+  border-radius: 4px;
+  text-transform: uppercase;
+}
+
+.room-type-desc {
+  font-size: 0.74rem;
+  color: #94a3b8;
+  line-height: 1.35;
+}
+
 /* Modal de equipo asignado */
 .assigned-team-grid {
   display: grid;
@@ -5974,6 +6041,7 @@ body {
 }
 
 .assigned-pokemon-card {
+  position: relative;
   background: rgba(15, 24, 44, 0.95);
   border: 1px solid rgba(56, 189, 248, 0.3);
   border-radius: 12px;
@@ -5985,6 +6053,68 @@ body {
   gap: 6px;
   box-shadow: 0 4px 15px rgba(0, 0, 0, 0.5);
   animation: fadeIn 0.3s ease;
+  transition: all 0.2s ease;
+}
+
+.assigned-pokemon-card.is-marked-discard {
+  border-color: #ef4444;
+  background: rgba(239, 68, 68, 0.12);
+  box-shadow: 0 0 16px rgba(239, 68, 68, 0.35);
+}
+
+.pokemon-discard-badge {
+  position: absolute;
+  top: 6px;
+  right: 6px;
+  width: 24px;
+  height: 24px;
+  border-radius: 6px;
+  background: #ffffff;
+  border: 2px solid #cbd5e1;
+  color: transparent;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 900;
+  font-size: 0.85rem;
+  cursor: pointer;
+  transition: all 0.15s ease;
+  user-select: none;
+  z-index: 5;
+}
+
+.pokemon-discard-badge.active {
+  background: #ffffff;
+  border-color: #ef4444;
+  color: #ef4444;
+  box-shadow: 0 2px 8px rgba(239, 68, 68, 0.4);
+}
+
+.btn-cambiar-pokemon {
+  background: #ef4444;
+  color: #ffffff;
+  font-weight: 800;
+  border-radius: 8px;
+  padding: 10px 20px;
+  border: none;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  transition: all 0.2s;
+  box-shadow: 0 4px 14px rgba(239, 68, 68, 0.4);
+}
+
+.btn-cambiar-pokemon:hover:not(:disabled) {
+  background: #dc2626;
+  transform: translateY(-1px);
+}
+
+.btn-cambiar-pokemon:disabled {
+  background: rgba(239, 68, 68, 0.3);
+  color: rgba(255, 255, 255, 0.5);
+  cursor: not-allowed;
+  box-shadow: none;
 }
 
 .assigned-pokemon-img {

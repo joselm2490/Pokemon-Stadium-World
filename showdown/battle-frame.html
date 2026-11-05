@@ -71,25 +71,53 @@
       max-width: 400px !important;
       margin: 0 auto !important;
       color: #0f172a !important;
-      background: rgba(248, 250, 252, 0.96) !important;
+      background: rgba(248, 250, 252, 0.98) !important;
       border: 1px solid #cbd5e1 !important;
       border-radius: 6px !important;
-      padding: 4px 10px !important;
+      padding: 5px 12px !important;
       font-size: 0.85rem !important;
       font-weight: 600 !important;
       z-index: 20 !important;
       text-align: center !important;
-      box-shadow: 0 4px 12px rgba(0,0,0,0.3) !important;
+      box-shadow: 0 4px 14px rgba(0,0,0,0.35) !important;
       font-family: inherit !important;
+    }
+    .battle .messagebar,
+    .battle .messagebar * {
+      color: #0f172a !important;
     }
     .battle .messagebar strong,
     .battle .messagebar b {
-      color: #0f172a !important;
+      color: #0284c7 !important;
       font-weight: 800 !important;
     }
     .battle .messagebar small {
       color: #475569 !important;
       font-weight: 500 !important;
+    }
+
+    /* TOOLTIP FLOTANTE DE POKÉMON EN EL ESCENARIO (#tooltipwrapper) */
+    #tooltipwrapper {
+      z-index: 99999 !important;
+    }
+    #tooltipwrapper .tooltip {
+      background: rgba(248, 250, 252, 0.98) !important;
+      border: 1px solid #64748b !important;
+      border-radius: 8px !important;
+      box-shadow: 0 8px 24px rgba(0,0,0,0.45) !important;
+      color: #0f172a !important;
+      z-index: 99999 !important;
+    }
+    #tooltipwrapper .tooltip h2 {
+      color: #0f172a !important;
+      border-bottom: 1px solid #cbd5e1 !important;
+      font-weight: 800 !important;
+    }
+    #tooltipwrapper .tooltip p {
+      color: #334155 !important;
+    }
+    #tooltipwrapper .tooltip p small {
+      color: #64748b !important;
     }
 
     /* CONTROLES DE COMBATE ESTILO OFICIAL SHOWDOWN - COLOCADOS DEBAJO DEL LIENZO */
@@ -285,7 +313,7 @@
       border: 1px solid #64748b;
       border-radius: 6px;
       box-shadow: 0 8px 24px rgba(0,0,0,0.5);
-      z-index: 1000;
+      z-index: 99999 !important;
       pointer-events: none;
       display: none;
       color: #0f172a;
@@ -353,15 +381,61 @@
       flex-direction: column;
       position: relative !important;
       z-index: 5;
+      transition: width 0.25s ease, margin 0.25s ease;
+    }
+    .arena-sidebar-panel.is-hidden {
+      display: none !important;
     }
     .log-header {
-      padding: 12px 16px;
+      padding: 10px 14px;
       font-size: 0.82rem;
       font-weight: 800;
       color: #38bdf8;
       border-bottom: 1px solid rgba(255, 255, 255, 0.1);
       background: rgba(15, 23, 42, 0.9);
       letter-spacing: 0.5px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+    .log-toggle-btn {
+      background: rgba(255, 255, 255, 0.08);
+      border: 1px solid rgba(255, 255, 255, 0.15);
+      color: #cbd5e1;
+      padding: 3px 8px;
+      border-radius: 4px;
+      font-size: 0.72rem;
+      font-weight: 700;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      gap: 4px;
+      transition: all 0.15s;
+    }
+    .log-toggle-btn:hover {
+      background: rgba(56, 189, 248, 0.2);
+      border-color: #38bdf8;
+      color: #fff;
+    }
+    .floating-log-toggle-btn {
+      position: absolute;
+      top: 10px;
+      right: 10px;
+      z-index: 900;
+      background: rgba(15, 23, 42, 0.9);
+      border: 1px solid rgba(56, 189, 248, 0.4);
+      color: #38bdf8;
+      padding: 6px 12px;
+      border-radius: 6px;
+      font-size: 0.75rem;
+      font-weight: 800;
+      cursor: pointer;
+      display: none;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.5);
+    }
+    .floating-log-toggle-btn:hover {
+      background: #0284c7;
+      color: #fff;
     }
     .stadium-custom-log {
       flex: 1;
@@ -431,8 +505,16 @@
         </div>
       </div>
     </div>
-    <div class="arena-sidebar-panel">
-      <div class="log-header">📜 REGISTRO DE COMBATE</div>
+    <button class="floating-log-toggle-btn" id="floatingLogBtn" onclick="toggleBattleLog(true)">
+      📜 Mostrar Historial
+    </button>
+    <div class="arena-sidebar-panel" id="arenaSidebarPanel">
+      <div class="log-header">
+        <span>📜 REGISTRO DE COMBATE</span>
+        <button class="log-toggle-btn" onclick="toggleBattleLog(false)" title="Ocultar registro para ampliar el escenario">
+          ✕ Ocultar
+        </button>
+      </div>
       <div class="stadium-custom-log" id="battleLog"></div>
     </div>
   </div>
@@ -600,6 +682,22 @@
         }
         return origResultAnim.call(this, pokemon, result, type);
       };
+    }
+  </script>
+  <script>
+    // Control para mostrar u ocultar el panel de historial de combate
+    function toggleBattleLog(show) {
+      const panel = document.getElementById('arenaSidebarPanel');
+      const floatBtn = document.getElementById('floatingLogBtn');
+      if (panel) {
+        if (show) {
+          panel.classList.remove('is-hidden');
+          if (floatBtn) floatBtn.style.display = 'none';
+        } else {
+          panel.classList.add('is-hidden');
+          if (floatBtn) floatBtn.style.display = 'block';
+        }
+      }
     }
   </script>
   <script src="js/battle.js"></script>

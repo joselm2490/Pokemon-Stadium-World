@@ -152,6 +152,7 @@ class BattleRoomStore {
           apodo: p.apodo,
           es_anfitrion: p.es_anfitrion === 1 || p.es_anfitrion === true,
           listo: p.listo === 1 || p.listo === true,
+          equipo_confirmado: p.equipo_confirmado === 1 || p.equipo_confirmado === true,
           conectado: p.conectado === 1 || p.conectado === true,
           unido_en: p.unido_en,
           equipo_pokemon: p.equipo_pokemon 
@@ -172,7 +173,8 @@ class BattleRoomStore {
         anfitrion_nombre: remoteRoom.anfitrion_nombre,
         anfitrion_id: remoteRoom.anfitrion_id,
         estado: remoteRoom.estado,
-        pokemon_por_jugador: remoteRoom.pokemon_por_jugador || 3,
+        tipo_sala: remoteRoom.tipo_sala || (currentLocal && currentLocal.tipo_sala) || 'random',
+        pokemon_por_jugador: remoteRoom.pokemon_por_jugador || (currentLocal && currentLocal.pokemon_por_jugador) || 6,
         max_jugadores: remoteRoom.max_jugadores || 2,
         jugadores_actuales: finalPlayers.length || remoteRoom.jugadores_actuales || 1,
         creada_en: remoteRoom.creada_en,
@@ -374,7 +376,7 @@ class BattleRoomStore {
   }
 
   // Crear una nueva sala
-  static async createRoom({ hostNickname, pokemonCount = 3, maxPlayers = 2, password = null, ajustes = null }) {
+  static async createRoom({ hostNickname, pokemonCount = 6, maxPlayers = 2, password = null, ajustes = null, tipo_sala = 'random' }) {
     // Regla: Si el usuario ya tenía otra sala activa anterior, abandonarla/cerrarla automáticamente para crear la nueva
     const activeInOther = await this.checkUserActiveInOtherRoom(hostNickname);
     if (activeInOther) {
@@ -400,6 +402,7 @@ class BattleRoomStore {
       tiene_contrasena: !!cleanPassword,
       anfitrion_nombre: hostNickname,
       estado: 'esperando', // 'esperando', 'en_combate', 'finalizada', 'cancelada'
+      tipo_sala: tipo_sala,
       pokemon_por_jugador: pokemonCount,
       max_jugadores: maxPlayers,
       jugadores_actuales: 1,
@@ -534,6 +537,7 @@ class BattleRoomStore {
                 apodo: p.apodo,
                 es_anfitrion: p.es_anfitrion === 1 || p.es_anfitrion === true,
                 listo: p.listo === 1 || p.listo === true,
+                equipo_confirmado: p.equipo_confirmado === 1 || p.equipo_confirmado === true,
                 conectado: p.conectado === 1 || p.conectado === true,
                 unido_en: p.unido_en,
                 equipo_pokemon: team || []
@@ -553,7 +557,8 @@ class BattleRoomStore {
             anfitrion_nombre: dbRoom.anfitrion_nombre,
             anfitrion_id: dbRoom.anfitrion_id,
             estado: dbRoom.estado,
-            pokemon_por_jugador: dbRoom.pokemon_por_jugador || 3,
+            tipo_sala: dbRoom.tipo_sala || (local && local.tipo_sala) || 'random',
+            pokemon_por_jugador: dbRoom.pokemon_por_jugador || (local && local.pokemon_por_jugador) || 6,
             max_jugadores: dbRoom.max_jugadores || 2,
             jugadores_actuales: parsedJugadores.length,
             creada_en: dbRoom.creada_en,
@@ -623,7 +628,8 @@ class BattleRoomStore {
             anfitrion_nombre: dbRoom.anfitrion_nombre,
             anfitrion_id: dbRoom.anfitrion_id,
             estado: dbRoom.estado,
-            pokemon_por_jugador: dbRoom.pokemon_por_jugador || 3,
+            tipo_sala: dbRoom.tipo_sala || (local && local.tipo_sala) || 'random',
+            pokemon_por_jugador: dbRoom.pokemon_por_jugador || (local && local.pokemon_por_jugador) || 6,
             max_jugadores: dbRoom.max_jugadores || 2,
             jugadores_actuales: players.length || dbRoom.jugadores_actuales || 1,
             creada_en: dbRoom.creada_en,
@@ -861,15 +867,19 @@ class BattleRoomStore {
           // Sincronizar equipos de cada jugador en sala_jugadores
           if (Array.isArray(updatedRoom.jugadores)) {
             for (const p of updatedRoom.jugadores) {
+              const playerPayload = {
+                listo: p.listo ? 1 : 0
+              };
               if (p.equipo_pokemon && p.equipo_pokemon.length > 0) {
-                await window.StadiumSupabase.request(`sala_jugadores?sala_id=eq.${updatedRoom.id}&apodo=eq.${encodeURIComponent(p.apodo)}`, {
-                  method: 'PATCH',
-                  body: JSON.stringify({
-                    listo: p.listo ? 1 : 0,
-                    equipo_pokemon: JSON.stringify(p.equipo_pokemon)
-                  })
-                });
+                playerPayload.equipo_pokemon = JSON.stringify(p.equipo_pokemon);
               }
+              if (p.equipo_confirmado !== undefined) {
+                playerPayload.equipo_confirmado = p.equipo_confirmado ? 1 : 0;
+              }
+              await window.StadiumSupabase.request(`sala_jugadores?sala_id=eq.${updatedRoom.id}&apodo=eq.${encodeURIComponent(p.apodo)}`, {
+                method: 'PATCH',
+                body: JSON.stringify(playerPayload)
+              });
             }
           }
         } catch (err) {

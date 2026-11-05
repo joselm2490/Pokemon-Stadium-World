@@ -60,6 +60,33 @@
       });
 
       console.log('✅ [Pure Battle] Showdown BattleScene inicializado correctamente.');
+
+      // Interceptar etiquetas flotantes de animación para garantizar traducción al español
+      if (battleInstance && battleInstance.scene && typeof battleInstance.scene.resultAnim === 'function') {
+        const animTranslations = {
+          'Resisted': 'Resistido',
+          'Super-effective': 'Súper eficaz',
+          'Critical hit': 'Golpe crítico',
+          'Immune': 'Inmune',
+          'Missed': 'Falló',
+          'Protected': 'Protegido',
+          'Paralyzed': 'Paralizado',
+          'Frozen': 'Congelado',
+          'Asleep': 'Dormido',
+          'Poisoned': 'Envenenado',
+          'Burned': 'Quemado',
+          'Confused': 'Confuso',
+          'Flinched': 'Retrocedió',
+          'Failed': 'Falló'
+        };
+        const origResultAnim = battleInstance.scene.resultAnim;
+        battleInstance.scene.resultAnim = function(pokemon, result, type) {
+          if (typeof result === 'string' && animTranslations[result]) {
+            result = animTranslations[result];
+          }
+          return origResultAnim.call(this, pokemon, result, type);
+        };
+      }
     } catch (err) {
       console.error('❌ [Pure Battle] Error inicializando BattleScene:', err);
     }

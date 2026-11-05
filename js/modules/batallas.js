@@ -377,12 +377,42 @@ class BatallaModule {
 
       <!-- MODAL PARA CREAR SALA (CON OPCIÓN DE CONTRASEÑA) -->
       <div class="battle-modal-overlay" id="createRoomModal" style="display: none;">
-        <div class="battle-modal-card" style="max-width: 440px;">
+        <div class="battle-modal-card" style="max-width: 480px;">
           <div class="battle-modal-header">
             <h3>🚀 Crear Nueva Sala</h3>
             <button class="battle-modal-close" onclick="BatallaModule.closeCreateModal()">✕</button>
           </div>
           <div class="battle-modal-body">
+            <!-- SELECTOR DE TIPO DE SALA (NORMAL VS RANDOM) -->
+            <div style="margin-bottom: 14px;">
+              <label style="font-size: 0.82rem; font-weight: 700; color: #cbd5e1; display: block; margin-bottom: 8px;">
+                Selecciona la modalidad de combate:
+              </label>
+              <div class="room-type-selector-grid">
+                <!-- SALA NORMAL (DESHABILITADA POR AHORA) -->
+                <div class="room-type-card disabled" title="Modo Normal próximamente disponible">
+                  <div class="room-type-title">
+                    ⚔️ Normal
+                    <span class="room-type-badge" style="background: rgba(148, 163, 184, 0.2); color: #94a3b8;">Pronto</span>
+                  </div>
+                  <div class="room-type-desc">
+                    Reglas libres con selección personalizada de filtros.
+                  </div>
+                </div>
+
+                <!-- SALA RANDOM (ACTIVA Y SELECCIONADA) -->
+                <div class="room-type-card active">
+                  <div class="room-type-title" style="color: #38bdf8;">
+                    🎲 Random
+                    <span class="room-type-badge" style="background: #0284c7; color: #fff;">Campeones</span>
+                  </div>
+                  <div class="room-type-desc">
+                    Fase final automática (Campeones). Opciones fijas con 3 descartes de Pokémon.
+                  </div>
+                </div>
+              </div>
+            </div>
+
             <div class="create-room-form-group">
               <label class="password-toggle-row">
                 <input type="checkbox" id="createRoomHasPassword" onchange="BatallaModule.toggleCreatePasswordInput()" />
@@ -555,20 +585,22 @@ class BatallaModule {
     }
 
     const room = this.currentRoom;
+    const isRandomRoom = room.tipo_sala === 'random' || !room.tipo_sala;
     const myNick = (this.userNickname || '').toLowerCase();
     const isHost = (room.anfitrion_nombre || '').toLowerCase() === myNick;
     const hasEnoughPlayers = room.jugadores && room.jugadores.length >= 2;
 
-    // Buscar estado del invitado
-    const guestPlayer = (room.jugadores || []).find(p => !p.es_anfitrion);
-    const guestIsReady = guestPlayer ? (guestPlayer.listo === true || guestPlayer.listo === 1) : false;
-
-    // Buscar si yo mismo (en caso de ser invitado) estoy listo
+    // Buscar estado del rival y estado propio
     const myPlayer = (room.jugadores || []).find(p => (p.apodo || '').toLowerCase() === myNick);
-    const amIReady = myPlayer ? (myPlayer.listo === true || myPlayer.listo === 1) : false;
+    const rivalPlayer = (room.jugadores || []).find(p => (p.apodo || '').toLowerCase() !== myNick);
 
-    // El anfitrión solo puede iniciar si hay al menos 2 jugadores y el invitado está listo
-    const canStartHost = isHost && hasEnoughPlayers && guestIsReady;
+    const amIReady = myPlayer ? (myPlayer.listo === true || myPlayer.listo === 1) : false;
+    const isMyTeamConfirmed = myPlayer ? (myPlayer.equipo_confirmado === true || myPlayer.equipo_confirmado === 1) : false;
+    const isRivalTeamConfirmed = rivalPlayer ? (rivalPlayer.equipo_confirmado === true || rivalPlayer.equipo_confirmado === 1) : false;
+    const isRivalReady = rivalPlayer ? (rivalPlayer.listo === true || rivalPlayer.listo === 1) : false;
+
+    // Ambos confirmaron su equipo
+    const bothConfirmed = isMyTeamConfirmed && isRivalTeamConfirmed;
 
     container.innerHTML = `
       <div class="stadium-battle-wrapper battle-lobby-wrapper">
@@ -673,30 +705,30 @@ class BatallaModule {
               <!-- FILTRO 1: GENERACIÓN DE POKÉMON -->
               <div class="filter-setting-block">
                 <div class="filter-setting-header">
-                  <span>🌐</span> Generación:
+                  <span>🌐</span> Generación: ${isRandomRoom ? '<span style="font-size:0.75rem; color:#38bdf8; margin-left: 6px;">(Fijo: Campeones Todas)</span>' : ''}
                 </div>
                 <div class="filter-pills-row">
-                  ${this.renderGenFilterPills(room.ajustes, isHost)}
+                  ${this.renderGenFilterPills(room.ajustes, isHost, isRandomRoom)}
                 </div>
               </div>
 
               <!-- FILTRO 2: FORMA DE POKÉMON -->
               <div class="filter-setting-block">
                 <div class="filter-setting-header">
-                  <span>⭐</span> Forma:
+                  <span>⭐</span> Forma: ${isRandomRoom ? '<span style="font-size:0.75rem; color:#38bdf8; margin-left: 6px;">(Fijo: Estándar y Regionales)</span>' : ''}
                 </div>
                 <div class="filter-pills-row">
-                  ${this.renderFormFilterPills(room.ajustes, isHost)}
+                  ${this.renderFormFilterPills(room.ajustes, isHost, isRandomRoom)}
                 </div>
               </div>
 
               <!-- FILTRO 3: CATEGORÍAS DE RAREZA -->
               <div class="filter-setting-block">
                 <div class="filter-setting-header">
-                  <span>🏆</span> Categorías:
+                  <span>🏆</span> Categorías: ${isRandomRoom ? '<span style="font-size:0.75rem; color:#38bdf8; margin-left: 6px;">(Fijo: Fase Final / Campeones)</span>' : ''}
                 </div>
                 <div class="filter-pills-row">
-                  ${this.renderCategoryFilterPills(room.ajustes, isHost)}
+                  ${this.renderCategoryFilterPills(room.ajustes, isHost, isRandomRoom)}
                 </div>
               </div>
 
@@ -749,41 +781,37 @@ class BatallaModule {
         <!-- FOOTER DEL LOBBY -->
         <footer class="lobby-footer-bar">
           <div class="lobby-start-action-center" style="width: 100%;">
+            <!-- BOTÓN PRINCIPAL PARA SELECCIONAR / REVISAR POKÉMON (DRAFT) -->
+            <div style="display: flex; gap: 12px; justify-content: center; align-items: center; margin-bottom: 10px; flex-wrap: wrap;">
+              <button 
+                class="battle-primary-action-btn"
+                onclick="BatallaModule.openPokemonSelectionModal()"
+                style="background: ${isMyTeamConfirmed ? '#10b981' : '#0284c7'}; color: #fff; padding: 10px 22px; font-weight: 800; font-size: 0.95rem; border-radius: 8px; box-shadow: 0 4px 15px rgba(2, 132, 199, 0.4); border: none; cursor: pointer; display: inline-flex; align-items: center; gap: 8px;"
+              >
+                <span>🎮</span> ${isMyTeamConfirmed ? '✔ Pokémon Confirmados (Ver Equipo)' : 'Seleccionar Pokémon'}
+              </button>
+            </div>
+
             <div class="lobby-waiting-hint" id="lobbyWaitingStatusText">
-              ${isHost 
-                ? (canStartHost 
-                    ? '✅ ¡Tu rival está listo! Puedes iniciar el combate.' 
-                    : (hasEnoughPlayers 
-                        ? '⏳ Esperando a que el invitado presione ¡LISTO!' 
-                        : `⏳ Esperando a que se una tu rival (${room.jugadores.length}/${room.max_jugadores} jugadores)`))
-                : (amIReady 
-                    ? '✅ ¡Estás listo! Esperando a que el anfitrión inicie la partida...' 
-                    : '👉 Presiona "¡LISTO!" para confirmar que estás preparado para el combate.')
+              ${!hasEnoughPlayers
+                ? `⏳ Esperando a que se una tu rival (${room.jugadores.length}/${room.max_jugadores} jugadores)...`
+                : (bothConfirmed
+                    ? '⚔️ ¡Ambos entrenadores están listos! Iniciando combate...'
+                    : (isMyTeamConfirmed && !isRivalTeamConfirmed
+                        ? '⏳ Esperando que el otro usuario seleccione los Pokémon...'
+                        : (!isMyTeamConfirmed && isRivalTeamConfirmed
+                            ? '⚡ ¡Tu rival ya está listo! Esperando por ti: abre "Seleccionar Pokémon" y dale a ¡Entendido, al combate!'
+                            : '👉 Ambos jugadores deben pulsar "Seleccionar Pokémon" y confirmar su equipo.')
+                      )
+                  )
               }
             </div>
 
-            ${isHost ? `
-              <button 
-                class="btn-iniciar-partida ${canStartHost ? 'ready' : 'disabled'}" 
-                id="btnIniciarPartida"
-                ${canStartHost ? '' : 'disabled'}
-                onclick="BatallaModule.startMatch()"
-                style="${canStartHost ? 'background: #22c55e; box-shadow: 0 4px 18px rgba(34, 197, 94, 0.4);' : ''}"
-              >
-                INICIAR PARTIDA
-              </button>
-            ` : `
-              <button 
-                class="btn-iniciar-partida ${amIReady ? 'ready' : 'ready'}" 
-                id="btnInvitadoListo"
-                onclick="BatallaModule.toggleGuestReady()"
-                style="${amIReady 
-                  ? 'background: #22c55e; color: #fff; box-shadow: 0 4px 18px rgba(34, 197, 94, 0.45);' 
-                  : 'background: #0284c7; color: #fff; box-shadow: 0 4px 18px rgba(2, 132, 199, 0.4);'}"
-              >
-                ${amIReady ? '✔ ¡ESTOY LISTO!' : '⚡ ¡LISTO!'}
-              </button>
-            `}
+            ${hasEnoughPlayers && bothConfirmed ? `
+              <div style="margin-top: 8px; font-size: 0.85rem; color: #4ade80; font-weight: 800;">
+                ⚡ Cargando datos y generando combate...
+              </div>
+            ` : ''}
           </div>
         </footer>
       </div>
@@ -896,7 +924,7 @@ class BatallaModule {
       return;
     }
 
-    const pokemonCount = 3; // Valor inicial por defecto (se configura y ajusta libremente adentro de la sala)
+    const pokemonCount = 6; // Valor inicial por defecto (6 vs 6 para salas Random)
 
     const hasPassword = document.getElementById('createRoomHasPassword')?.checked;
     const passInput = document.getElementById('createRoomPasswordInput');
@@ -918,7 +946,8 @@ class BatallaModule {
           hostNickname: nick,
           pokemonCount: pokemonCount,
           maxPlayers: 2,
-          password: password
+          password: password,
+          tipo_sala: 'random'
         });
       } catch (err) {
         const errDiv = document.getElementById('createModalErrorMsg');
@@ -937,6 +966,7 @@ class BatallaModule {
         anfitrion_nombre: nick,
         contrasena: password,
         estado: 'esperando',
+        tipo_sala: 'random',
         pokemon_por_jugador: pokemonCount,
         max_jugadores: 2,
         jugadores: [{ id: '1', apodo: nick, es_anfitrion: true }],
@@ -1521,10 +1551,15 @@ class BatallaModule {
 
   static adjustPokemonCount(delta) {
     if (!this.currentRoom) return;
-    let next = this.currentRoom.pokemon_por_jugador + delta;
+    const currentCount = parseInt(this.currentRoom.pokemon_por_jugador, 10) || 6;
+    let next = currentCount + delta;
     if (next < 1) next = 1;
     if (next > 6) next = 6;
     this.currentRoom.pokemon_por_jugador = next;
+
+    // Si los jugadores ya tenían equipo generado o están en el draft, reiniciar los descartes locales
+    this._markedDiscards = new Set();
+    this._discardCount = 0;
 
     if (window.BattleRoomStore) {
       window.BattleRoomStore.updateRoom(this.currentRoom);
@@ -1626,9 +1661,10 @@ class BatallaModule {
     return 'estandar';
   }
 
-  static renderGenFilterPills(ajustes = {}, isHost = true) {
+  static renderGenFilterPills(ajustes = {}, isHost = true, isRandom = false) {
     const gens = ajustes.generaciones || ['todas'];
     const allSelected = gens.includes('todas');
+    const disabledAttr = (isHost && !isRandom) ? '' : 'disabled';
 
     const genItems = [
       { id: 'todas', label: 'Todas' },
@@ -1648,7 +1684,7 @@ class BatallaModule {
       return `
         <button 
           class="filter-pill-btn ${active ? 'active' : ''}" 
-          ${isHost ? '' : 'disabled'}
+          ${disabledAttr}
           onclick="BatallaModule.toggleGenFilter('${item.id}')"
         >
           ${item.label}
@@ -1657,9 +1693,10 @@ class BatallaModule {
     }).join('');
   }
 
-  static renderFormFilterPills(ajustes = {}, isHost = true) {
+  static renderFormFilterPills(ajustes = {}, isHost = true, isRandom = false) {
     const formas = ajustes.formas || ['todas'];
     const allSelected = formas.includes('todas');
+    const disabledAttr = (isHost && !isRandom) ? '' : 'disabled';
 
     const formItems = [
       { id: 'todas', label: 'Todas' },
@@ -1672,7 +1709,7 @@ class BatallaModule {
       return `
         <button 
           class="filter-pill-btn ${active ? 'active' : ''}" 
-          ${isHost ? '' : 'disabled'}
+          ${disabledAttr}
           onclick="BatallaModule.toggleFormFilter('${item.id}')"
         >
           ${item.label}
@@ -1681,9 +1718,10 @@ class BatallaModule {
     }).join('');
   }
 
-  static renderCategoryFilterPills(ajustes = {}, isHost = true) {
+  static renderCategoryFilterPills(ajustes = {}, isHost = true, isRandom = false) {
     const cats = ajustes.categorias || ['todas'];
     const allSelected = cats.includes('todas');
+    const disabledAttr = (isHost && !isRandom) ? '' : 'disabled';
 
     const catItems = [
       { id: 'todas', label: 'Todas' },
@@ -1697,7 +1735,7 @@ class BatallaModule {
       return `
         <button 
           class="filter-pill-btn ${active ? 'active' : ''}" 
-          ${isHost ? '' : 'disabled'}
+          ${disabledAttr}
           onclick="BatallaModule.toggleCategoryFilter('${item.id}')"
         >
           ${item.label}
@@ -1796,8 +1834,15 @@ class BatallaModule {
     if (window.SFX) window.SFX.playCardClick();
   }
 
-  static getFilteredPokemonPool(ajustes = {}) {
+  static getFilteredPokemonPool(ajustes = {}, isRandomRoom = false) {
     const all = window.POKEMON_DATA || [];
+    
+    // Si la sala es modo Random (o no se especifica y room.tipo_sala es random), SOLO Pokémon Campeones
+    const isRandom = isRandomRoom || (this.currentRoom && (this.currentRoom.tipo_sala === 'random' || !this.currentRoom.tipo_sala));
+    if (isRandom) {
+      return all.filter(p => p.campeon === 1);
+    }
+
     const gens = ajustes.generaciones || ['todas'];
     const formas = ajustes.formas || ['todas'];
     const categorias = ajustes.categorias || (ajustes.legendarios === 'si' ? ['todas'] : (ajustes.legendarios === 'no' ? ['estandar', 'pseudolegendario'] : ['todas']));
@@ -1833,7 +1878,8 @@ class BatallaModule {
   }
 
   static getFilteredPokemonCount(ajustes = {}) {
-    return this.getFilteredPokemonPool(ajustes).length;
+    const isRandom = this.currentRoom && (this.currentRoom.tipo_sala === 'random' || !this.currentRoom.tipo_sala);
+    return this.getFilteredPokemonPool(ajustes, isRandom).length;
   }
 
   static async toggleGuestReady() {
@@ -2082,10 +2128,223 @@ class BatallaModule {
     this.showAssignedTeamModal();
   }
 
-  static showAssignedTeamModal() {
+  // ------------------------------------------------------------------
+  // GESTIÓN DE DRAFT / SELECCIÓN Y DESCARTE DE POKÉMON (MÁX 3 CAMBIOS)
+  // ------------------------------------------------------------------
+  static _markedDiscards = new Set();
+  static _discardCount = 0;
+
+  static openPokemonSelectionModal() {
+    if (!this.currentRoom) return;
+    const room = this.currentRoom;
+    const myNick = (this.userNickname || '').toLowerCase();
+    let myPlayer = (room.jugadores || []).find(p => (p.apodo || '').toLowerCase() === myNick);
+    if (!myPlayer) return;
+
+    const countNeeded = parseInt(room.pokemon_por_jugador, 10) || 6;
+
+    // Si el jugador aún no tiene equipo asignado o cambió el número de Pokémon, generarlo
+    if (!myPlayer.equipo_pokemon || myPlayer.equipo_pokemon.length !== countNeeded) {
+      myPlayer.equipo_pokemon = this.generateRandomTeam(countNeeded);
+      this._markedDiscards.clear();
+      this._discardCount = 0;
+      if (window.BattleRoomStore) {
+        window.BattleRoomStore.updateRoom(room);
+      }
+    }
+
+    this.showAssignedTeamModal();
+  }
+
+  static generateRandomTeam(countNeeded) {
+    const rawPool = this.getFilteredPokemonPool(this.currentRoom?.ajustes || {});
+    // Si la sala es random, garantizar fase final / Campeones
+    const isRandom = this.currentRoom && (this.currentRoom.tipo_sala === 'random' || !this.currentRoom.tipo_sala);
+    const pool = isRandom ? rawPool.filter(p => p.campeon === 1) : rawPool;
+
+    const team = [];
+    const used = new Set();
+    let attempts = 0;
+
+    while (team.length < countNeeded && attempts < 1000) {
+      attempts++;
+      const randIdx = Math.floor(Math.random() * pool.length);
+      if (!used.has(randIdx) || pool.length <= countNeeded) {
+        used.add(randIdx);
+        const basePoke = pool[randIdx];
+        const moveIds = basePoke.movimientos_predeterminados || [];
+        const resolvedMoves = [];
+        if (window.MOVIMIENTOS_DATA) {
+          moveIds.forEach(mid => {
+            const m = window.MOVIMIENTOS_DATA.find(mv => mv.id === mid);
+            if (m) resolvedMoves.push(m);
+          });
+        }
+        team.push({
+          id: basePoke.id,
+          num: basePoke.num,
+          name: basePoke.name,
+          gen: basePoke.gen,
+          types: basePoke.types,
+          stats: basePoke.stats,
+          abilities: basePoke.abilities,
+          movimientos: resolvedMoves,
+          movimientos_predeterminados: moveIds
+        });
+      }
+    }
+    return team;
+  }
+
+  static toggleDiscardPokemon(index) {
+    if (this._discardCount >= 3) return;
+    if (this._markedDiscards.has(index)) {
+      this._markedDiscards.delete(index);
+    } else {
+      this._markedDiscards.add(index);
+    }
+    if (window.SFX) window.SFX.playCardClick();
+    this.showAssignedTeamModal();
+  }
+
+  static discardAndReplaceMarkedPokemon() {
+    if (this._markedDiscards.size === 0 || this._discardCount >= 3) return;
+    if (!this.currentRoom) return;
+
     const myNick = (this.userNickname || '').toLowerCase();
     const myPlayer = (this.currentRoom.jugadores || []).find(p => (p.apodo || '').toLowerCase() === myNick);
-    if (!myPlayer || !myPlayer.equipo_pokemon || myPlayer.equipo_pokemon.length === 0) return;
+    if (!myPlayer || !myPlayer.equipo_pokemon) return;
+
+    const rawPool = this.getFilteredPokemonPool(this.currentRoom.ajustes || {});
+    const isRandom = this.currentRoom.tipo_sala === 'random' || !this.currentRoom.tipo_sala;
+    const pool = isRandom ? rawPool.filter(p => p.campeon === 1) : rawPool;
+
+    const currentPokeIds = new Set(myPlayer.equipo_pokemon.map(p => p.id));
+
+    this._markedDiscards.forEach(idx => {
+      if (idx >= 0 && idx < myPlayer.equipo_pokemon.length) {
+        let attempts = 0;
+        let newPoke = null;
+        while (attempts < 300) {
+          attempts++;
+          const randIdx = Math.floor(Math.random() * pool.length);
+          const candidate = pool[randIdx];
+          if (!currentPokeIds.has(candidate.id) || pool.length <= myPlayer.equipo_pokemon.length) {
+            newPoke = candidate;
+            currentPokeIds.add(candidate.id);
+            break;
+          }
+        }
+        if (!newPoke) newPoke = pool[Math.floor(Math.random() * pool.length)];
+
+        const moveIds = newPoke.movimientos_predeterminados || [];
+        const resolvedMoves = [];
+        if (window.MOVIMIENTOS_DATA) {
+          moveIds.forEach(mid => {
+            const m = window.MOVIMIENTOS_DATA.find(mv => mv.id === mid);
+            if (m) resolvedMoves.push(m);
+          });
+        }
+
+        myPlayer.equipo_pokemon[idx] = {
+          id: newPoke.id,
+          num: newPoke.num,
+          name: newPoke.name,
+          gen: newPoke.gen,
+          types: newPoke.types,
+          stats: newPoke.stats,
+          abilities: newPoke.abilities,
+          movimientos: resolvedMoves,
+          movimientos_predeterminados: moveIds
+        };
+      }
+    });
+
+    this._markedDiscards.clear();
+    this._discardCount++;
+
+    if (window.SFX) window.SFX.playSuccess();
+    if (window.BattleRoomStore) {
+      window.BattleRoomStore.updateRoom(this.currentRoom);
+    }
+    this.showAssignedTeamModal();
+  }
+
+  static confirmTeamSelection() {
+    const modal = document.getElementById('assignedTeamModal');
+    if (modal) modal.style.display = 'none';
+
+    if (!this.currentRoom) return;
+    const myNick = (this.userNickname || '').toLowerCase();
+    const myPlayer = (this.currentRoom.jugadores || []).find(p => (p.apodo || '').toLowerCase() === myNick);
+    if (myPlayer) {
+      myPlayer.equipo_confirmado = true;
+      myPlayer.listo = true;
+    }
+
+    if (this.currentRoom.es_tutorial) {
+      // En tutorial se va directo al combate
+      this.currentScreen = 'battle';
+      this.renderCurrentView();
+      return;
+    }
+
+    if (window.BattleRoomStore) {
+      window.BattleRoomStore.updateRoom(this.currentRoom);
+    }
+
+    // Verificar si ambos jugadores ya confirmaron su equipo
+    const allConfirmed = (this.currentRoom.jugadores || []).length >= 2 &&
+      this.currentRoom.jugadores.every(p => p.equipo_confirmado === true || p.equipo_confirmado === 1);
+
+    if (allConfirmed) {
+      this.launchConfirmedBattle();
+    } else {
+      this.renderCurrentView();
+    }
+  }
+
+  static async launchConfirmedBattle() {
+    if (!this.currentRoom) return;
+    const room = this.currentRoom;
+
+    // Iniciar carga de datos y creación de combate
+    this.showBattleLoadingModal('¡Ambos entrenadores listos! Cargando datos y creando batalla...');
+
+    await new Promise(r => setTimeout(r, 400));
+
+    room.estado = 'en_combate';
+    room.iniciada_en = new Date().toISOString();
+
+    if (window.StadiumBattleEngine) {
+      room.battle_state = window.StadiumBattleEngine.initBattleState(room);
+    }
+
+    if (window.BattleRoomStore) {
+      await window.BattleRoomStore.updateRoom(room);
+    }
+
+    setTimeout(() => {
+      this.hideBattleLoadingModal();
+      this.currentScreen = 'battle';
+      this.renderCurrentView();
+    }, 600);
+  }
+
+  static showAssignedTeamModal() {
+    if (!this.currentRoom) return;
+    const myNick = (this.userNickname || '').toLowerCase();
+    let myPlayer = (this.currentRoom.jugadores || []).find(p => (p.apodo || '').toLowerCase() === myNick);
+    
+    const countNeeded = parseInt(this.currentRoom.pokemon_por_jugador, 10) || 6;
+    if (!myPlayer || !myPlayer.equipo_pokemon || myPlayer.equipo_pokemon.length === 0) {
+      if (myPlayer) {
+        myPlayer.equipo_pokemon = this.generateRandomTeam(countNeeded);
+        if (window.BattleRoomStore) window.BattleRoomStore.updateRoom(this.currentRoom);
+      } else {
+        return;
+      }
+    }
 
     let modal = document.getElementById('assignedTeamModal');
     if (!modal) {
@@ -2095,19 +2354,24 @@ class BatallaModule {
       document.body.appendChild(modal);
     }
 
+    const hasMarked = this._markedDiscards.size > 0;
+    const remainingChanges = Math.max(0, 3 - this._discardCount);
+    const canChange = hasMarked && remainingChanges > 0;
+
     modal.innerHTML = `
-      <div class="battle-modal-card" style="max-width: 650px;">
+      <div class="battle-modal-card" style="max-width: 720px;">
         <div class="battle-modal-header">
           <h3>🎮 ¡Tu Equipo Pokémon Asignado!</h3>
           <button class="battle-modal-close" onclick="document.getElementById('assignedTeamModal').style.display='none'">✕</button>
         </div>
         <div class="battle-modal-body">
-          <p style="color: #94a3b8; font-size: 0.88rem; margin-bottom: 12px;">
-            Generados aleatoriamente según los filtros activos de la sala (${this.currentRoom.pokemon_por_jugador} Pokémon con movimientos predeterminados):
+          <p style="color: #94a3b8; font-size: 0.88rem; margin-bottom: 12px; line-height: 1.4;">
+            Marca con una <strong style="color: #ef4444;">X</strong> los Pokémon que no desees conservar y presiona <strong>"CAMBIAR POKÉMON"</strong> para reemplazarlos al azar por otros Campeones (Máximo 3 cambios: te quedan <strong>${remainingChanges}/3</strong>).
           </p>
 
-          <div class="assigned-team-grid">
-            ${myPlayer.equipo_pokemon.map(poke => {
+          <div class="assigned-team-grid" style="grid-template-columns: repeat(auto-fit, minmax(170px, 1fr)); gap: 10px;">
+            ${myPlayer.equipo_pokemon.map((poke, idx) => {
+              const isMarked = this._markedDiscards.has(idx);
               const sprite = window.PokemonModule 
                 ? window.PokemonModule.getPokemonSpriteUrl(poke) 
                 : `https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/${poke.num}.png`;
@@ -2117,7 +2381,12 @@ class BatallaModule {
                 : 'Ataques listos';
 
               return `
-                <div class="assigned-pokemon-card">
+                <div class="assigned-pokemon-card ${isMarked ? 'is-marked-discard' : ''}" onclick="BatallaModule.toggleDiscardPokemon(${idx})">
+                  <!-- CASILLA DE DESCARTE CON X -->
+                  <div class="pokemon-discard-badge ${isMarked ? 'active' : ''}" title="Marcar para descartar">
+                    ${isMarked ? '✕' : ''}
+                  </div>
+
                   <img src="${sprite}" alt="${poke.name}" class="assigned-pokemon-img" onerror="this.src='https://play.pokemonshowdown.com/sprites/gen5/${poke.name.toLowerCase()}.png'" />
                   <div class="assigned-pokemon-name">${poke.name}</div>
                   <div class="assigned-pokemon-types">
@@ -2131,8 +2400,23 @@ class BatallaModule {
             }).join('')}
           </div>
 
-          <div class="battle-modal-actions" style="margin-top: 18px; display: flex; justify-content: flex-end;">
-            <button class="battle-primary-action-btn btn-crear-sala" style="width: auto; padding: 10px 24px;" onclick="document.getElementById('assignedTeamModal').style.display='none'; BatallaModule.currentScreen='battle'; BatallaModule.renderCurrentView();">
+          <div class="battle-modal-actions" style="margin-top: 20px; display: flex; justify-content: space-between; align-items: center; gap: 12px; flex-wrap: wrap;">
+            <!-- BOTÓN DE CAMBIAR POKÉMON -->
+            <button 
+              class="btn-cambiar-pokemon"
+              ${canChange ? '' : 'disabled'}
+              onclick="BatallaModule.discardAndReplaceMarkedPokemon()"
+              title="${remainingChanges <= 0 ? 'Has alcanzado el límite de 3 cambios' : (hasMarked ? 'Cambiar los Pokémon marcados con X' : 'Marca al menos un Pokémon con X para cambiarlo')}"
+            >
+              <span>🔑</span> CAMBIAR POKÉMON (${remainingChanges}/3)
+            </button>
+
+            <!-- BOTÓN DE ENTENDIDO AL COMBATE -->
+            <button 
+              class="battle-primary-action-btn btn-crear-sala" 
+              style="width: auto; padding: 10px 24px;" 
+              onclick="BatallaModule.confirmTeamSelection()"
+            >
               ¡Entendido, al combate!
             </button>
           </div>
@@ -2308,6 +2592,18 @@ class BatallaModule {
             console.warn('⚠️ [BatallaModule] BattleRoomStore.submitBattleAction devolvió null.');
           }
           this.syncStateToBattleFrame();
+
+          // Si el combate finalizó (tutorial o sala normal/random), volver automáticamente al menú principal de salas
+          if (this.currentRoom && (this.currentRoom.estado === 'finalizada' || this.currentRoom.battle_state?.phase === 'finished')) {
+            console.log('🏁 [BatallaModule] Batalla finalizada. Volviendo al menú principal...');
+            setTimeout(() => {
+              sessionStorage.removeItem('stadium_active_room_code');
+              if (window.StadiumRouter) window.StadiumRouter.updateBattleRoomUrl(null);
+              this.currentRoom = null;
+              this.currentScreen = 'landing';
+              this.renderCurrentView();
+            }, 3500);
+          }
         }
       }
     });
