@@ -51,6 +51,7 @@
       border: 1px solid rgba(56, 189, 248, 0.35);
       flex-shrink: 0;
       margin-bottom: 4px;
+      z-index: 1;
     }
     .battle-wrapper .battle {
       position: absolute !important;
@@ -70,7 +71,7 @@
       max-width: 400px !important;
       margin: 0 auto !important;
       color: #0f172a !important;
-      background: rgba(248, 250, 252, 0.95) !important;
+      background: rgba(248, 250, 252, 0.96) !important;
       border: 1px solid #cbd5e1 !important;
       border-radius: 6px !important;
       padding: 4px 10px !important;
@@ -80,6 +81,15 @@
       text-align: center !important;
       box-shadow: 0 4px 12px rgba(0,0,0,0.3) !important;
       font-family: inherit !important;
+    }
+    .battle .messagebar strong,
+    .battle .messagebar b {
+      color: #0f172a !important;
+      font-weight: 800 !important;
+    }
+    .battle .messagebar small {
+      color: #475569 !important;
+      font-weight: 500 !important;
     }
 
     /* CONTROLES DE COMBATE ESTILO OFICIAL SHOWDOWN - COLOCADOS DEBAJO DEL LIENZO */
@@ -94,7 +104,7 @@
       flex-direction: column;
       gap: 6px;
       box-shadow: 0 4px 16px rgba(0,0,0,0.4);
-      z-index: 10;
+      z-index: 50;
       position: relative;
       flex-shrink: 0;
     }
