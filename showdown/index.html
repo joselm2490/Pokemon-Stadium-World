@@ -35,8 +35,9 @@
       flex-direction: column;
       align-items: center;
       justify-content: flex-start;
-      padding: 6px 10px;
+      padding: 12px 10px;
       overflow-y: auto;
+      gap: 14px;
     }
     .battle-wrapper {
       position: relative;
@@ -49,6 +50,7 @@
       overflow: hidden;
       border: 1px solid rgba(56, 189, 248, 0.35);
       flex-shrink: 0;
+      margin-bottom: 4px;
     }
     .battle-wrapper .battle {
       position: absolute !important;
@@ -59,23 +61,34 @@
       border: none !important;
     }
 
-    /* Ocultar barra de mensajes redundantes en inglés en el lienzo */
+    /* Barra de mensajes y anuncios en el lienzo traducida y estilizada */
     .battle .messagebar {
-      display: none !important;
+      position: absolute !important;
+      bottom: 8px !important;
+      left: 20px !important;
+      right: 20px !important;
+      color: #f8fafc !important;
+      background: rgba(15, 23, 42, 0.88) !important;
+      border: 1px solid rgba(56, 189, 248, 0.4) !important;
+      border-radius: 6px !important;
+      padding: 6px 12px !important;
+      z-index: 50 !important;
+      text-align: center !important;
+      box-shadow: 0 4px 14px rgba(0,0,0,0.6) !important;
+      font-family: inherit !important;
     }
 
-    /* CONTROLES DE COMBATE ESTILO OFICIAL SHOWDOWN */
+    /* CONTROLES DE COMBATE ESTILO OFICIAL SHOWDOWN - COLOCADOS DEBAJO DEL LIENZO */
     .arena-controls-bar {
       width: 640px;
       background: rgba(248, 250, 252, 0.96);
       border: 1px solid #cbd5e1;
       border-radius: 8px;
-      margin-top: 6px;
-      margin-bottom: 6px;
-      padding: 6px 10px;
+      margin: 0 !important;
+      padding: 8px 12px;
       display: flex;
       flex-direction: column;
-      gap: 4px;
+      gap: 6px;
       box-shadow: 0 4px 16px rgba(0,0,0,0.4);
       z-index: 10;
       position: relative;
@@ -434,6 +447,50 @@
   <script>
     if (window.exports && window.exports.BattleText) {
       window.BattleText = window.exports.BattleText;
+    }
+    // Traducción completa de los anuncios y textos de combate de Showdown al español
+    if (window.BattleText && window.BattleText.en && window.BattleText.en.default) {
+      const def = window.BattleText.en.default;
+      const target = def.default || def;
+      Object.assign(target, {
+        startBattle: "¡Comienza el combate entre {TRAINER1} y {TRAINER2}!",
+        winBattle: "¡**{TRAINER}** ha ganado el combate!",
+        tieBattle: "¡El combate ha terminado en EMPATE!",
+        pokemon: "{NICKNAME}",
+        opposingPokemon: "el {NICKNAME} rival",
+        fullName: "{NICKNAME} ({SPECIES})",
+        team: "tu equipo",
+        opposingTeam: "el equipo rival",
+        party: "tu Pokémon aliado",
+        opposingParty: "el Pokémon rival",
+        turn: "== Turno {NUMBER} ==",
+        switchIn: "¡{TRAINER} envió a {FULLNAME}!",
+        switchInOwn: "¡Adelante {FULLNAME}!",
+        switchOut: "¡{TRAINER} retiró a {NICKNAME}!",
+        switchOutOwn: "¡{NICKNAME}, regresa!",
+        drag: "¡{FULLNAME} fue obligado a salir al combate!",
+        faint: "¡{POKEMON} se ha debilitado!",
+        swap: "¡{POKEMON} y {TARGET} cambiaron de posición!",
+        swapCenter: "¡{POKEMON} se movió al centro!",
+        move: "¡{POKEMON} usó **{MOVE}**!",
+        abilityActivation: "[¡{ABILITY} de {POKEMON}!]",
+        superEffective: "  ¡Es súper eficaz!",
+        superEffectiveSpread: "  ¡Es súper eficaz contra {POKEMON}!",
+        resisted: "  No es muy eficaz...",
+        resistedSpread: "  No es muy eficaz contra {POKEMON}...",
+        extremelyEffective: "  ¡Es sumamente eficaz!",
+        extremelyEffectiveSpread: "  ¡Es sumamente eficaz contra {POKEMON}!",
+        mostlyIneffective: "  Casi no surtió efecto...",
+        crit: "  ¡Un golpe crítico!",
+        damage: "  (¡{POKEMON} recibió daño!)",
+        damagePercentage: "  (¡{POKEMON} perdió {PERCENTAGE}% de su salud!)",
+        damageFromPokemon: "  (¡{POKEMON} recibió daño por {ITEM} de {SOURCE}!)",
+        damageFromItem: "  (¡{POKEMON} recibió daño por su {ITEM}!)",
+        heal: "  ¡{POKEMON} restauró sus PS!",
+        fail: "  ¡Pero ha fallado!",
+        cant: "¡{POKEMON} no puede usar {MOVE}!",
+        cantNoMove: "¡{POKEMON} no se puede mover!"
+      });
     }
   </script>
   <script src="js/battle-sound.js"></script>
