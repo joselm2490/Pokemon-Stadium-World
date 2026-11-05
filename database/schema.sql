@@ -84,10 +84,18 @@ CREATE TABLE IF NOT EXISTS pokemon (
     experiencia_base INTEGER,
     curva_crecimiento TEXT,
     categoria_rareza TEXT NOT NULL DEFAULT 'estandar', -- 'estandar', 'legendario', 'pseudolegendario'
-    movimientos_predeterminados TEXT -- JSON Array con los 4 IDs de movimientos predeterminados
+    movimientos_predeterminados TEXT, -- JSON Array con los 4 IDs de movimientos predeterminados
+    preevolucion INTEGER REFERENCES pokemon(id) ON DELETE SET NULL, -- ID del Pokémon preevolución
+    evolucion INTEGER REFERENCES pokemon(id) ON DELETE SET NULL,    -- ID del Pokémon evolución directa
+    campeon INTEGER NOT NULL DEFAULT 0,                            -- 1 si está en fase final, 0 si no
+    fase INTEGER NOT NULL DEFAULT 1                                -- Fase evolutiva: 1 (básica), 2 (primera evo), 3 (segunda evo)
 );
 
 CREATE INDEX IF NOT EXISTS idx_poke_categoria_rareza ON pokemon(categoria_rareza);
+CREATE INDEX IF NOT EXISTS idx_poke_preevolucion ON pokemon(preevolucion);
+CREATE INDEX IF NOT EXISTS idx_poke_evolucion ON pokemon(evolucion);
+CREATE INDEX IF NOT EXISTS idx_poke_campeon ON pokemon(campeon);
+CREATE INDEX IF NOT EXISTS idx_poke_fase ON pokemon(fase);
 
 -- --------------------------------------------------------------------
 -- 6. TABLA: estadisticas_base (Stats de cada Pokémon)
