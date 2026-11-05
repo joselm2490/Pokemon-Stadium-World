@@ -448,6 +448,9 @@
   </script>
   <script src="data/text/en.js"></script>
   <script src="data/text/moves_es.js"></script>
+  <script src="data/text/abilities_es.js"></script>
+  <script src="data/text/items_es.js"></script>
+  <script src="data/text/tooltip_translator.js"></script>
   <script>
     if (window.exports && window.exports.BattleText) {
       window.BattleText = window.exports.BattleText;
@@ -510,6 +513,28 @@
           }
         }
       }
+
+      // Inyectar traducción de habilidades al español
+      if (window.BattleText_Abilities_ES && window.BattleText.en.Abilities) {
+        for (const [id, nameEs] of Object.entries(window.BattleText_Abilities_ES)) {
+          if (window.BattleText.en.Abilities[id]) {
+            window.BattleText.en.Abilities[id].name = nameEs;
+          } else {
+            window.BattleText.en.Abilities[id] = { name: nameEs };
+          }
+        }
+      }
+
+      // Inyectar traducción de objetos al español
+      if (window.BattleText_Items_ES && window.BattleText.en.Items) {
+        for (const [id, nameEs] of Object.entries(window.BattleText_Items_ES)) {
+          if (window.BattleText.en.Items[id]) {
+            window.BattleText.en.Items[id].name = nameEs;
+          } else {
+            window.BattleText.en.Items[id] = { name: nameEs };
+          }
+        }
+      }
     }
   </script>
   <script src="js/battle-sound.js"></script>
@@ -525,6 +550,18 @@
   <script src="src/battle-log-misc.js"></script>
   <script src="js/battle-log.js"></script>
   <script src="js/battle-tooltips.js"></script>
+  <script>
+    // Interceptar tooltips de Showdown para traducir al español en tiempo real
+    if (window.BattleTooltips && window.BattleTooltips.prototype && window.BattleTooltips.prototype.placeTooltip) {
+      const origPlaceTooltip = window.BattleTooltips.prototype.placeTooltip;
+      window.BattleTooltips.prototype.placeTooltip = function(innerHTML, hoveredElem, notRelativeToParent, type) {
+        if (typeof window.translateShowdownTooltipHtml === 'function') {
+          innerHTML = window.translateShowdownTooltipHtml(innerHTML);
+        }
+        return origPlaceTooltip.call(this, innerHTML, hoveredElem, notRelativeToParent, type);
+      };
+    }
+  </script>
   <script src="js/battle-animations.js"></script>
   <script src="js/battle.js"></script>
   <script src="js/stadium-pure-battle.js"></script>
