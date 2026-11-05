@@ -242,3 +242,4 @@ class BattleLobbyConsumer(AsyncWebsocketConsumer):
             'tiene_contrasena': bool(r.contrasena),
             'jugadores': jugadores
         }
+
