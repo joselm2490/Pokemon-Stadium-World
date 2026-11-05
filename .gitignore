@@ -6,3 +6,9 @@ battle/pokemon-showdown-client-master/node_modules/
 .DS_Store
 # Excluir codigo fuente de compilacion del cliente pero mantener build en showdown/
 battle/pokemon-showdown-client-master/
+
+venv/
+backend/.env
+*.pyc
+__pycache__/
+
