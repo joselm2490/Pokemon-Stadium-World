@@ -1585,43 +1585,68 @@ class BatallaModule {
     }
   }
 
+  static _pokemonCountDebounceTimer = null;
+
   static adjustPokemonCount(delta) {
     if (!this.currentRoom) return;
     const currentCount = parseInt(this.currentRoom.pokemon_por_jugador, 10) || 6;
     let next = currentCount + delta;
     if (next < 1) next = 1;
     if (next > 6) next = 6;
+
+    if (next === currentCount) return;
+
     this.currentRoom.pokemon_por_jugador = next;
+
+    // Actualizar visualmente de forma instantánea y fluida sin trabar la interfaz
+    const el = document.getElementById('settingPokemonVal');
+    if (el) el.textContent = next;
+    if (window.SFX) window.SFX.playCardClick();
 
     // Si los jugadores ya tenían equipo generado o están en el draft, reiniciar los descartes locales
     this._markedDiscards = new Set();
     this._discardCount = 0;
 
-    if (window.BattleRoomStore) {
-      window.BattleRoomStore.updateRoom(this.currentRoom);
+    // Debounce de 300ms para evitar colapsar la base de datos o el re-render en clics rápidos
+    if (this._pokemonCountDebounceTimer) {
+      clearTimeout(this._pokemonCountDebounceTimer);
     }
 
-    const el = document.getElementById('settingPokemonVal');
-    if (el) el.textContent = next;
-    if (window.SFX) window.SFX.playCardClick();
+    this._pokemonCountDebounceTimer = setTimeout(() => {
+      if (window.BattleRoomStore && this.currentRoom) {
+        window.BattleRoomStore.updateRoom(this.currentRoom);
+      }
+    }, 300);
   }
+
+  static _maxPlayersDebounceTimer = null;
 
   static adjustMaxPlayers(delta) {
     if (!this.currentRoom) return;
-    let next = this.currentRoom.max_jugadores + delta;
+    const currentMax = parseInt(this.currentRoom.max_jugadores, 10) || 2;
+    let next = currentMax + delta;
     if (next < 2) next = 2;
     if (next > 8) next = 8;
-    this.currentRoom.max_jugadores = next;
 
-    if (window.BattleRoomStore) {
-      window.BattleRoomStore.updateRoom(this.currentRoom);
-    }
+    if (next === currentMax) return;
+
+    this.currentRoom.max_jugadores = next;
 
     const el = document.getElementById('settingMaxPlayersVal');
     if (el) el.textContent = next;
     const badge = document.getElementById('playersCountBadge');
     if (badge) badge.textContent = `${this.currentRoom.jugadores.length}/${next}`;
     if (window.SFX) window.SFX.playCardClick();
+
+    if (this._maxPlayersDebounceTimer) {
+      clearTimeout(this._maxPlayersDebounceTimer);
+    }
+
+    this._maxPlayersDebounceTimer = setTimeout(() => {
+      if (window.BattleRoomStore && this.currentRoom) {
+        window.BattleRoomStore.updateRoom(this.currentRoom);
+      }
+    }, 300);
   }
 
   static sendChatMessage(e) {
