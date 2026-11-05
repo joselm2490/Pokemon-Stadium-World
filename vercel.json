@@ -1,5 +1,9 @@
 {
+  "buildCommand": null,
+  "outputDirectory": "frontend",
+  "cleanUrls": true,
+  "trailingSlash": false,
   "rewrites": [
-    { "source": "/(.*)", "destination": "/frontend/" }
+    { "source": "/((?!js/|css/|sprites/|battle/|showdown/|database/|favicon.ico).*)$", "destination": "/index.html" }
   ]
 }
