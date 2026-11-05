@@ -7,3 +7,4 @@ urlpatterns = [
     path('logout/', views.api_logout, name='api_logout'),
     path('me/', views.api_current_user, name='api_current_user'),
 ]
+

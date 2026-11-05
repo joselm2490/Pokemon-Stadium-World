@@ -34,6 +34,7 @@ INSTALLED_APPS = [
     # Apps del proyecto
     'accounts',
     'battles',
+    'pokedex',
 ]
 
 MIDDLEWARE = [
