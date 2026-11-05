@@ -61,7 +61,7 @@
       border: none !important;
     }
 
-    /* Barra de mensajes y anuncios en el lienzo compacta y centrada */
+    /* Barra de mensajes y anuncios en el lienzo compacta y centrada (estilo claro y elegante) */
     .battle .messagebar {
       position: absolute !important;
       bottom: 8px !important;
@@ -69,15 +69,16 @@
       right: 120px !important;
       max-width: 400px !important;
       margin: 0 auto !important;
-      color: #f8fafc !important;
-      background: rgba(15, 23, 42, 0.88) !important;
-      border: 1px solid rgba(56, 189, 248, 0.4) !important;
+      color: #0f172a !important;
+      background: rgba(248, 250, 252, 0.95) !important;
+      border: 1px solid #cbd5e1 !important;
       border-radius: 6px !important;
       padding: 4px 10px !important;
       font-size: 0.85rem !important;
-      z-index: 50 !important;
+      font-weight: 600 !important;
+      z-index: 20 !important;
       text-align: center !important;
-      box-shadow: 0 4px 12px rgba(0,0,0,0.6) !important;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.3) !important;
       font-family: inherit !important;
     }
 
@@ -563,6 +564,34 @@
     }
   </script>
   <script src="js/battle-animations.js"></script>
+  <script>
+    // Traducir las etiquetas flotantes de animación en combate (ej. "Resisted" -> "Resistido")
+    if (window.BattleScene && window.BattleScene.prototype && window.BattleScene.prototype.resultAnim) {
+      const animTranslations = {
+        'Resisted': 'Resistido',
+        'Super-effective': 'Súper eficaz',
+        'Critical hit': 'Golpe crítico',
+        'Immune': 'Inmune',
+        'Missed': 'Falló',
+        'Protected': 'Protegido',
+        'Paralyzed': 'Paralizado',
+        'Frozen': 'Congelado',
+        'Asleep': 'Dormido',
+        'Poisoned': 'Envenenado',
+        'Burned': 'Quemado',
+        'Confused': 'Confuso',
+        'Flinched': 'Retrocedió',
+        'Failed': 'Falló'
+      };
+      const origResultAnim = window.BattleScene.prototype.resultAnim;
+      window.BattleScene.prototype.resultAnim = function(pokemon, result, type) {
+        if (typeof result === 'string' && animTranslations[result]) {
+          result = animTranslations[result];
+        }
+        return origResultAnim.call(this, pokemon, result, type);
+      };
+    }
+  </script>
   <script src="js/battle.js"></script>
   <script src="js/stadium-pure-battle.js"></script>
 </body>
