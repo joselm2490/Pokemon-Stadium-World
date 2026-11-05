@@ -51,7 +51,6 @@ def api_register(request):
     """
     Endpoint de Registro en Django
     POST /api/auth/register/
-    Body: {"username": "...", "email": "...", "password": "...", "first_name": "..."}
     """
     try:
         data = json.loads(request.body)
@@ -100,20 +99,12 @@ def api_register(request):
 @csrf_exempt
 @require_http_methods(["POST", "GET"])
 def api_logout(request):
-    """
-    Endpoint de Logout en Django
-    POST /api/auth/logout/
-    """
     logout(request)
     return JsonResponse({"ok": True, "message": "Sesión cerrada exitosamente."})
 
 
 @require_http_methods(["GET"])
 def api_current_user(request):
-    """
-    Verificar sesión activa en Django
-    GET /api/auth/me/
-    """
     if request.user.is_authenticated:
         return JsonResponse({
             "ok": True,
@@ -129,3 +120,39 @@ def api_current_user(request):
             }
         })
     return JsonResponse({"ok": True, "is_authenticated": False, "user": None})
+
+
+@require_http_methods(["GET"])
+def api_list_users_admin(request):
+    """
+    VISTA PROTEGIDA EXCLUSIVA PARA SUPERUSUARIO
+    GET /api/auth/users/
+    Solo accesible si el usuario autenticado tiene is_superuser == True
+    """
+    if not request.user.is_authenticated or not request.user.is_superuser:
+        return JsonResponse({
+            "ok": False,
+            "error": "Acceso denegado. Se requieren permisos de superusuario para ver este módulo."
+        }, status=403)
+
+    users = User.objects.all().order_by('-date_joined')
+    data = []
+    for u in users:
+        data.append({
+            "id": u.id,
+            "username": u.username,
+            "email": u.email,
+            "first_name": u.first_name,
+            "last_name": u.last_name,
+            "is_active": u.is_active,
+            "is_staff": u.is_staff,
+            "is_superuser": u.is_superuser,
+            "date_joined": u.date_joined.isoformat() if u.date_joined else None,
+            "last_login": u.last_login.isoformat() if u.last_login else None
+        })
+
+    return JsonResponse({
+        "ok": True,
+        "total": len(data),
+        "data": data
+    })

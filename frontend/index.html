@@ -82,6 +82,18 @@
           <p>Arena Stadium de combate por turnos, cálculo de daño y selección de equipo.</p>
         </div>
       </div>
+
+      <!-- 4. GESTIÓN DE USUARIOS (SOLO SUPERUSUARIO DJANGO) -->
+      <div class="menu-card" data-view="usuarios" id="menuItemUsuarios" style="display: none;">
+        <div class="menu-card-header">
+          <span class="menu-card-icon">👑</span>
+          <span class="status-badge status-active" style="background: rgba(234, 179, 8, 0.2); color: #facc15; border: 1px solid #eab308;">Admin</span>
+        </div>
+        <div>
+          <h3>Usuarios</h3>
+          <p>Gestión de cuentas y entrenadores (Exclusivo Superusuario).</p>
+        </div>
+      </div>
     </nav>
 
     <!-- ====================================================================
@@ -308,6 +320,13 @@
     </div>
   </div>
 
+  <!-- ====================================================================
+       SECCIÓN 4: VISTA DE GESTIÓN DE USUARIOS (SOLO SUPERUSUARIO DJANGO)
+       ==================================================================== -->
+  <section class="view-section" id="view-usuarios">
+    <!-- Contenido generado dinámicamente desde js/modules/admin_usuarios.js -->
+  </section>
+
   <!-- BASES DE DATOS DEL VIDEOJUEGO -->
   <script src="js/movimientos_data.js?v=19"></script>
   <script src="js/pokemon_data.js?v=19"></script>
@@ -318,15 +337,16 @@
   <script src="js/modules/audio.js?v=42"></script>
   <script src="js/modules/auth.js?v=48"></script>
   <script src="js/modules/router.js?v=48"></script>
+  <script src="js/modules/admin_usuarios.js?v=20261105_1632"></script>
   <script src="js/modules/pokemon.js?v=48"></script>
   <script src="js/modules/movimientos.js?v=48"></script>
   <script src="js/modules/typechart.js?v=50"></script>
   <script src="js/modules/battle_engine.js?v=50"></script>
-  <script src="js/modules/battle_store.js?v=20261105_1608"></script>
-  <script src="js/modules/django_ws.js?v=20261105_1608"></script>
-  <script src="js/modules/batallas_v2.js?v=20261105_1608"></script>
+  <script src="js/modules/battle_store.js?v=20261105_1632"></script>
+  <script src="js/modules/django_ws.js?v=20261105_1632"></script>
+  <script src="js/modules/batallas_v2.js?v=20261105_1632"></script>
 
   <!-- MOTOR PRINCIPAL Y ORQUESTADOR -->
-  <script src="js/app.js?v=20261105_1608"></script>
+  <script src="js/app.js?v=20261105_1632"></script>
 </body>
 </html>

@@ -6,7 +6,8 @@ class StadiumRouter {
     'pokemon': { viewId: 'view-pokemon', navId: 'menuItemPokemon' },
     'movimientos': { viewId: 'view-movimientos', navId: 'menuItemMovimientos' },
     'batalla': { viewId: 'view-batalla', navId: 'menuItemBatalla' },
-    'batallas': { viewId: 'view-batalla', navId: 'menuItemBatalla' }
+    'batallas': { viewId: 'view-batalla', navId: 'menuItemBatalla' },
+    'usuarios': { viewId: 'view-usuarios', navId: 'menuItemUsuarios' }
   };
 
   static currentRoute = null;
@@ -115,6 +116,8 @@ class StadiumRouter {
       } else {
         window.BatallaModule.renderCurrentView();
       }
+    } else if (routeName === 'usuarios' && window.AdminUsuariosModule) {
+      window.AdminUsuariosModule.loadUsers();
     }
 
     // Hide or show the top menu hub based on the route

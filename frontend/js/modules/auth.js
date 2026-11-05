@@ -285,6 +285,16 @@ class AuthManager {
     if (!widget) return;
 
     const user = this.getCurrentUser();
+    const adminTab = document.getElementById('menuItemUsuarios');
+
+    if (adminTab) {
+      if (user && (user.is_superuser === true || user.is_superuser === 1)) {
+        adminTab.style.display = 'flex';
+      } else {
+        adminTab.style.display = 'none';
+      }
+    }
+
     if (user) {
       widget.innerHTML = `
         <div class="user-session-pill">
