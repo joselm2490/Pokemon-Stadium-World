@@ -109,4 +109,16 @@ STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
 CORS_ALLOW_ALL_ORIGINS = True
 CORS_ALLOW_CREDENTIALS = True
 
+# CSRF Trusted Origins (Requerido en Django 4+ y 6+ para despliegues con HTTPS)
+CSRF_TRUSTED_ORIGINS = [
+    'https://pokemon-stadium-backend.onrender.com',
+    'https://*.onrender.com',
+    'https://pokemonstadiumworld.vercel.app',
+    'https://*.vercel.app',
+    'http://localhost:8000',
+    'http://127.0.0.1:8000',
+]
+
+SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'https')
+
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
