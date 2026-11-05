@@ -61,20 +61,23 @@
       border: none !important;
     }
 
-    /* Barra de mensajes y anuncios en el lienzo traducida y estilizada */
+    /* Barra de mensajes y anuncios en el lienzo compacta y centrada */
     .battle .messagebar {
       position: absolute !important;
       bottom: 8px !important;
-      left: 20px !important;
-      right: 20px !important;
+      left: 120px !important;
+      right: 120px !important;
+      max-width: 400px !important;
+      margin: 0 auto !important;
       color: #f8fafc !important;
       background: rgba(15, 23, 42, 0.88) !important;
       border: 1px solid rgba(56, 189, 248, 0.4) !important;
       border-radius: 6px !important;
-      padding: 6px 12px !important;
+      padding: 4px 10px !important;
+      font-size: 0.85rem !important;
       z-index: 50 !important;
       text-align: center !important;
-      box-shadow: 0 4px 14px rgba(0,0,0,0.6) !important;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.6) !important;
       font-family: inherit !important;
     }
 
@@ -444,53 +447,69 @@
     window.BattleText = window.BattleText || {};
   </script>
   <script src="data/text/en.js"></script>
+  <script src="data/text/moves_es.js"></script>
   <script>
     if (window.exports && window.exports.BattleText) {
       window.BattleText = window.exports.BattleText;
     }
     // Traducción completa de los anuncios y textos de combate de Showdown al español
-    if (window.BattleText && window.BattleText.en && window.BattleText.en.default) {
-      const def = window.BattleText.en.default;
-      const target = def.default || def;
-      Object.assign(target, {
-        startBattle: "¡Comienza el combate entre {TRAINER1} y {TRAINER2}!",
-        winBattle: "¡**{TRAINER}** ha ganado el combate!",
-        tieBattle: "¡El combate ha terminado en EMPATE!",
-        pokemon: "{NICKNAME}",
-        opposingPokemon: "el {NICKNAME} rival",
-        fullName: "{NICKNAME} ({SPECIES})",
-        team: "tu equipo",
-        opposingTeam: "el equipo rival",
-        party: "tu Pokémon aliado",
-        opposingParty: "el Pokémon rival",
-        turn: "== Turno {NUMBER} ==",
-        switchIn: "¡{TRAINER} envió a {FULLNAME}!",
-        switchInOwn: "¡Adelante {FULLNAME}!",
-        switchOut: "¡{TRAINER} retiró a {NICKNAME}!",
-        switchOutOwn: "¡{NICKNAME}, regresa!",
-        drag: "¡{FULLNAME} fue obligado a salir al combate!",
-        faint: "¡{POKEMON} se ha debilitado!",
-        swap: "¡{POKEMON} y {TARGET} cambiaron de posición!",
-        swapCenter: "¡{POKEMON} se movió al centro!",
-        move: "¡{POKEMON} usó **{MOVE}**!",
-        abilityActivation: "[¡{ABILITY} de {POKEMON}!]",
-        superEffective: "  ¡Es súper eficaz!",
-        superEffectiveSpread: "  ¡Es súper eficaz contra {POKEMON}!",
-        resisted: "  No es muy eficaz...",
-        resistedSpread: "  No es muy eficaz contra {POKEMON}...",
-        extremelyEffective: "  ¡Es sumamente eficaz!",
-        extremelyEffectiveSpread: "  ¡Es sumamente eficaz contra {POKEMON}!",
-        mostlyIneffective: "  Casi no surtió efecto...",
-        crit: "  ¡Un golpe crítico!",
-        damage: "  (¡{POKEMON} recibió daño!)",
-        damagePercentage: "  (¡{POKEMON} perdió {PERCENTAGE}% de su salud!)",
-        damageFromPokemon: "  (¡{POKEMON} recibió daño por {ITEM} de {SOURCE}!)",
-        damageFromItem: "  (¡{POKEMON} recibió daño por su {ITEM}!)",
-        heal: "  ¡{POKEMON} restauró sus PS!",
-        fail: "  ¡Pero ha fallado!",
-        cant: "¡{POKEMON} no puede usar {MOVE}!",
-        cantNoMove: "¡{POKEMON} no se puede mover!"
-      });
+    if (window.BattleText && window.BattleText.en) {
+      const target = (window.BattleText.en.Default && window.BattleText.en.Default.default) 
+        || (window.BattleText.en.default && window.BattleText.en.default.default)
+        || window.BattleText.en.default;
+
+      if (target) {
+        Object.assign(target, {
+          startBattle: "¡Comienza el combate entre {TRAINER1} y {TRAINER2}!",
+          winBattle: "¡**{TRAINER}** ha ganado el combate!",
+          tieBattle: "¡El combate ha terminado en EMPATE!",
+          pokemon: "{NICKNAME}",
+          opposingPokemon: "el {NICKNAME} rival",
+          fullName: "{NICKNAME} ({SPECIES})",
+          team: "tu equipo",
+          opposingTeam: "el equipo rival",
+          party: "tu Pokémon aliado",
+          opposingParty: "el Pokémon rival",
+          turn: "== Turno {NUMBER} ==",
+          switchIn: "¡{TRAINER} envió a {FULLNAME}!",
+          switchInOwn: "¡Adelante {FULLNAME}!",
+          switchOut: "¡{TRAINER} retiró a {NICKNAME}!",
+          switchOutOwn: "¡{NICKNAME}, regresa!",
+          drag: "¡{FULLNAME} fue obligado a salir al combate!",
+          faint: "¡{POKEMON} se ha debilitado!",
+          swap: "¡{POKEMON} y {TARGET} cambiaron de posición!",
+          swapCenter: "¡{POKEMON} se movió al centro!",
+          move: "¡{POKEMON} usó **{MOVE}**!",
+          abilityActivation: "[¡{ABILITY} de {POKEMON}!]",
+          superEffective: "  ¡Es súper eficaz!",
+          superEffectiveSpread: "  ¡Es súper eficaz contra {POKEMON}!",
+          resisted: "  No es muy eficaz...",
+          resistedSpread: "  No es muy eficaz contra {POKEMON}...",
+          extremelyEffective: "  ¡Es sumamente eficaz!",
+          extremelyEffectiveSpread: "  ¡Es sumamente eficaz contra {POKEMON}!",
+          mostlyIneffective: "  Casi no surtió efecto...",
+          crit: "  ¡Un golpe crítico!",
+          damage: "  (¡{POKEMON} recibió daño!)",
+          damagePercentage: "  (¡{POKEMON} perdió {PERCENTAGE}% de su salud!)",
+          damageFromPokemon: "  (¡{POKEMON} recibió daño por {ITEM} de {SOURCE}!)",
+          damageFromItem: "  (¡{POKEMON} recibió daño por su {ITEM}!)",
+          heal: "  ¡{POKEMON} restauró sus PS!",
+          fail: "  ¡Pero ha fallado!",
+          cant: "¡{POKEMON} no puede usar {MOVE}!",
+          cantNoMove: "¡{POKEMON} no se puede mover!"
+        });
+      }
+
+      // Inyectar traducción de nombres de movimientos al español
+      if (window.BattleText_Moves_ES && window.BattleText.en.Moves) {
+        for (const [id, nameEs] of Object.entries(window.BattleText_Moves_ES)) {
+          if (window.BattleText.en.Moves[id]) {
+            window.BattleText.en.Moves[id].name = nameEs;
+          } else {
+            window.BattleText.en.Moves[id] = { name: nameEs };
+          }
+        }
+      }
     }
   </script>
   <script src="js/battle-sound.js"></script>
