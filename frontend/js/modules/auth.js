@@ -92,6 +92,14 @@ class AuthManager {
     return this.getCurrentUser() !== null;
   }
 
+  // Base URL para API de Django (Render en producción o localhost)
+  static getApiBaseUrl() {
+    if (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1') {
+      return 'http://127.0.0.1:8000/api/auth';
+    }
+    return window.DJANGO_API_URL || 'https://pokemon-stadium-backend.onrender.com/api/auth';
+  }
+
   static async register({ nombre, apellido, username, email, contrasena }) {
     const cleanNombre = (nombre || '').trim();
     const cleanApellido = (apellido || '').trim();
@@ -110,31 +118,57 @@ class AuthManager {
       return { ok: false, error: 'La contraseña debe tener al menos 4 caracteres.' };
     }
 
-    // 1. Verificar primero en caché local rápida
-    const localUsers = this.getUsers();
-    if (localUsers.some(u => u.username.toLowerCase() === cleanUsername)) {
-      return { ok: false, error: `El nombre de usuario "${cleanUsername}" ya está registrado.` };
-    }
-    if (localUsers.some(u => u.email.toLowerCase() === cleanEmail)) {
-      return { ok: false, error: `El correo "${cleanEmail}" ya está registrado.` };
-    }
+    // 1. Registro nativo en el backend Django (conectado a PostgreSQL)
+    try {
+      const response = await fetch(`${this.getApiBaseUrl()}/register/`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          username: cleanUsername,
+          email: cleanEmail,
+          password: cleanPass,
+          first_name: cleanNombre,
+          last_name: cleanApellido
+        })
+      });
 
-    // 2. Verificar en Supabase si está disponible
-    if (window.StadiumSupabase) {
-      try {
-        const checkU = await window.StadiumSupabase.request(`usuarios?username=eq.${encodeURIComponent(cleanUsername)}&select=id`);
-        if (checkU.ok && checkU.data && checkU.data.length > 0) {
-          return { ok: false, error: `El nombre de usuario "${cleanUsername}" ya está registrado.` };
-        }
-        const checkE = await window.StadiumSupabase.request(`usuarios?email=eq.${encodeURIComponent(cleanEmail)}&select=id`);
-        if (checkE.ok && checkE.data && checkE.data.length > 0) {
-          return { ok: false, error: `El correo "${cleanEmail}" ya está registrado.` };
-        }
-      } catch (e) {
-        console.warn('Error verificando usuario en Supabase:', e);
+      const resData = await response.json();
+      if (!response.ok || !resData.ok) {
+        return { ok: false, error: resData.error || 'Error al registrar usuario en Django.' };
       }
+
+      const newUser = {
+        id: resData.user.id,
+        nombre: resData.user.first_name || cleanNombre,
+        apellido: resData.user.last_name || cleanApellido,
+        username: resData.user.username,
+        email: resData.user.email,
+        contrasena: cleanPass,
+        is_staff: resData.user.is_staff,
+        is_superuser: resData.user.is_superuser,
+        creado_en: new Date().toISOString(),
+        ultimo_login: new Date().toISOString()
+      };
+
+      const localUsers = this.getUsers();
+      localUsers.push(newUser);
+      this.saveUsers(localUsers);
+      this.setCurrentUser(newUser);
+
+      this.renderUserWidget();
+      if (window.BatallaModule && typeof window.BatallaModule.syncUserNickname === 'function') {
+        window.BatallaModule.syncUserNickname();
+        if (window.BatallaModule.currentScreen === 'landing') {
+          window.BatallaModule.renderCurrentView();
+        }
+      }
+      if (window.SFX) window.SFX.playSuccess();
+      return { ok: true, user: newUser };
+    } catch (err) {
+      console.warn('Fallo de conexión con Django register, usando fallback local/Supabase:', err);
     }
 
+    // Fallback de contingencia si el backend está hibernando
     let newUser = {
       id: Date.now(),
       nombre: cleanNombre,
@@ -146,28 +180,7 @@ class AuthManager {
       ultimo_login: new Date().toISOString()
     };
 
-    // Guardar en Supabase para que esté disponible globalmente
-    if (window.StadiumSupabase) {
-      try {
-        const supaRes = await window.StadiumSupabase.request('usuarios', {
-          method: 'POST',
-          headers: { 'Prefer': 'return=representation' },
-          body: JSON.stringify({
-            nombre: cleanNombre,
-            apellido: cleanApellido,
-            username: cleanUsername,
-            email: cleanEmail,
-            contrasena: cleanPass
-          })
-        });
-        if (supaRes.ok && Array.isArray(supaRes.data) && supaRes.data.length > 0) {
-          newUser = supaRes.data[0];
-        }
-      } catch (err) {
-        console.warn('Error guardando usuario en Supabase:', err);
-      }
-    }
-
+    const localUsers = this.getUsers();
     localUsers.push(newUser);
     this.saveUsers(localUsers);
     this.setCurrentUser(newUser);
@@ -184,60 +197,75 @@ class AuthManager {
   }
 
   static async login({ identifier, contrasena }) {
-    const cleanId = (identifier || '').trim().toLowerCase();
+    const cleanId = (identifier || '').trim();
     const cleanPass = (contrasena || '').trim();
 
     if (!cleanId) return { ok: false, error: 'Ingresa tu usuario o correo electrónico.' };
     if (!cleanPass) return { ok: false, error: 'Ingresa tu contraseña.' };
 
-    let user = null;
+    // 1. Autenticación nativa contra el endpoint de Django
+    try {
+      const response = await fetch(`${this.getApiBaseUrl()}/login/`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          username: cleanId,
+          password: cleanPass
+        })
+      });
 
-    // 1. Verificación instantánea en caché local
+      const resData = await response.json();
+      if (response.ok && resData.ok && resData.user) {
+        const user = {
+          id: resData.user.id,
+          nombre: resData.user.first_name || resData.user.username,
+          username: resData.user.username,
+          email: resData.user.email,
+          contrasena: cleanPass,
+          is_staff: resData.user.is_staff,
+          is_superuser: resData.user.is_superuser,
+          ultimo_login: new Date().toISOString()
+        };
+
+        this.setCurrentUser(user);
+        this.renderUserWidget();
+        if (window.BatallaModule && typeof window.BatallaModule.syncUserNickname === 'function') {
+          window.BatallaModule.syncUserNickname();
+          if (window.BatallaModule.currentScreen === 'landing') {
+            window.BatallaModule.renderCurrentView();
+          }
+        }
+        if (window.SFX) window.SFX.playSuccess();
+        return { ok: true, user };
+      } else if (response.status === 401 || (resData && !resData.ok)) {
+        if (window.SFX) window.SFX.playError();
+        return { ok: false, error: resData.error || 'Credenciales inválidas. Verifica tu usuario y contraseña.' };
+      }
+    } catch (err) {
+      console.warn('Error conectando a Django Login API, intentando fallback:', err);
+    }
+
+    // 2. Fallback local/Supabase para compatibilidad si la conexión a Render tarda en despertar
     const users = this.getUsers();
-    user = users.find(u => 
-      (u.username.toLowerCase() === cleanId || u.email.toLowerCase() === cleanId) &&
+    const localUser = users.find(u => 
+      (u.username.toLowerCase() === cleanId.toLowerCase() || u.email.toLowerCase() === cleanId.toLowerCase()) &&
       u.contrasena === cleanPass
     );
-
-    // 2. Si no está en caché local, buscar en Supabase (con filtro rápido eq)
-    if (!user && window.StadiumSupabase) {
-      try {
-        const queryField = cleanId.includes('@') ? 'email' : 'username';
-        const res = await window.StadiumSupabase.request(
-          `usuarios?${queryField}=eq.${encodeURIComponent(cleanId)}&contrasena=eq.${encodeURIComponent(cleanPass)}&select=*`
-        );
-        if (res.ok && Array.isArray(res.data) && res.data.length > 0) {
-          user = res.data[0];
+    if (localUser) {
+      this.setCurrentUser(localUser);
+      this.renderUserWidget();
+      if (window.BatallaModule && typeof window.BatallaModule.syncUserNickname === 'function') {
+        window.BatallaModule.syncUserNickname();
+        if (window.BatallaModule.currentScreen === 'landing') {
+          window.BatallaModule.renderCurrentView();
         }
-      } catch (e) {
-        console.warn('Error autenticando contra Supabase:', e);
       }
+      if (window.SFX) window.SFX.playSuccess();
+      return { ok: true, user: localUser };
     }
 
-    if (!user) {
-      if (window.SFX) window.SFX.playError();
-      return { ok: false, error: 'Credenciales inválidas. Verifica tu usuario/correo y contraseña.' };
-    }
-
-    user.ultimo_login = new Date().toISOString();
-    const uIdx = users.findIndex(u => u.username.toLowerCase() === user.username.toLowerCase());
-    if (uIdx !== -1) {
-      users[uIdx] = user;
-    } else {
-      users.push(user);
-    }
-    this.saveUsers(users);
-    this.setCurrentUser(user);
-
-    this.renderUserWidget();
-    if (window.BatallaModule && typeof window.BatallaModule.syncUserNickname === 'function') {
-      window.BatallaModule.syncUserNickname();
-      if (window.BatallaModule.currentScreen === 'landing') {
-        window.BatallaModule.renderCurrentView();
-      }
-    }
-    if (window.SFX) window.SFX.playSuccess();
-    return { ok: true, user };
+    if (window.SFX) window.SFX.playError();
+    return { ok: false, error: 'Credenciales inválidas o servidor no disponible.' };
   }
 
   static logout() {
