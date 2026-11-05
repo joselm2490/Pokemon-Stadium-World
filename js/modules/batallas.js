@@ -2002,8 +2002,9 @@ class BatallaModule {
     const botNick = 'Profesor Oak (CPU)';
     const countNeeded = 3;
 
-    // Obtener pool de pokémon
-    const pool = this.getFilteredPokemonPool({ generaciones: ['todas'], formas: ['todas'], categorias: ['todas'] });
+    // Obtener pool de pokémon (en Modo Tutorial solo se toman los Pokémon en fase final / Campeones)
+    const rawPool = this.getFilteredPokemonPool({ generaciones: ['todas'], formas: ['todas'], categorias: ['todas'] });
+    const pool = rawPool.filter(p => p.campeon === 1);
 
     if (pool.length < countNeeded * 2) {
       alert('Cargando datos de Pokémon... por favor espera un instante.');
