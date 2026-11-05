@@ -180,6 +180,17 @@ class AuthManager {
     if (window.SFX) window.SFX.playNav();
   }
 
+  static getDjangoAdminLoginUrl() {
+    if (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1') {
+      return 'http://127.0.0.1:8000/admin/login/';
+    }
+    return 'https://pokemon-stadium-backend.onrender.com/admin/login/';
+  }
+
+  static redirectToDjangoLogin() {
+    window.location.href = this.getDjangoAdminLoginUrl();
+  }
+
   static renderUserWidget() {
     const widget = document.getElementById('userAuthWidget');
     if (!widget) return;
@@ -216,94 +227,22 @@ class AuthManager {
       }
     } else {
       widget.innerHTML = `
-        <button class="auth-open-btn" id="authOpenBtn">
+        <a href="${this.getDjangoAdminLoginUrl()}" class="auth-open-btn" id="authOpenBtn" style="text-decoration: none;">
           <span class="auth-icon">👤</span>
-          <span>Ingresar / Registro</span>
-        </button>
+          <span>Ingresar / Registro (Django)</span>
+        </a>
       `;
-      const openBtn = document.getElementById('authOpenBtn');
-      if (openBtn) {
-        openBtn.addEventListener('click', () => {
-          AuthManager.openModal('login');
-        });
-      }
     }
   }
 
   static openModal(mode = 'login') {
-    let modal = document.getElementById('authModal');
-    if (!modal) {
-      modal = document.createElement('div');
-      modal.id = 'authModal';
-      modal.className = 'modal-backdrop';
-      document.body.appendChild(modal);
-    }
-
-    modal.innerHTML = `
-      <div class="modal-hud-window auth-modal-window">
-        <div class="modal-sticky-header">
-          <div class="auth-modal-header-tabs">
-            <button class="auth-tab-btn ${mode === 'login' ? 'active' : ''}" id="authTabLogin">Iniciar Sesión</button>
-            <button class="auth-tab-btn ${mode === 'register' ? 'active' : ''}" id="authTabRegister">Crear Cuenta</button>
-          </div>
-          <button class="modal-close-btn" id="authModalCloseBtn" aria-label="Cerrar">✕</button>
-        </div>
-
-        <div class="auth-modal-body">
-          <div id="authAlert" class="auth-alert" style="display: none;"></div>
-
-          <!-- FORMULARIO DE LOGIN CON DJANGO -->
-          <form id="loginForm" class="auth-form" style="display: ${mode === 'login' ? 'flex' : 'none'};">
-            <div class="auth-form-group">
-              <label for="loginIdentifier">Usuario:</label>
-              <input type="text" id="loginIdentifier" placeholder="Ej: joselm2490" required autocomplete="username">
-            </div>
-            <div class="auth-form-group">
-              <label for="loginPassword">Contraseña:</label>
-              <input type="password" id="loginPassword" placeholder="Tu contraseña" required autocomplete="current-password">
-            </div>
-            <button type="submit" class="auth-submit-btn">Entrar a la Arena</button>
-          </form>
-
-          <!-- FORMULARIO DE REGISTRO CON DJANGO -->
-          <form id="registerForm" class="auth-form" style="display: ${mode === 'register' ? 'flex' : 'none'};">
-            <div class="auth-form-row">
-              <div class="auth-form-group">
-                <label for="regNombre">Nombre:</label>
-                <input type="text" id="regNombre" placeholder="Tu nombre" required autocomplete="given-name">
-              </div>
-              <div class="auth-form-group">
-                <label for="regApellido">Apellido:</label>
-                <input type="text" id="regApellido" placeholder="Tu apellido" autocomplete="family-name">
-              </div>
-            </div>
-            <div class="auth-form-group">
-              <label for="regUsername">Nombre de Usuario (Login):</label>
-              <input type="text" id="regUsername" placeholder="Ej: red_champion" required autocomplete="username">
-            </div>
-            <div class="auth-form-group">
-              <label for="regEmail">Correo Electrónico:</label>
-              <input type="email" id="regEmail" placeholder="entrenador@pokemon.com" required autocomplete="email">
-            </div>
-            <div class="auth-form-group">
-              <label for="regPassword">Contraseña (Mín. 6 caracteres):</label>
-              <input type="password" id="regPassword" placeholder="Mínimo 6 caracteres" required minlength="6" autocomplete="new-password">
-            </div>
-            <button type="submit" class="auth-submit-btn">Registrarse en la Liga</button>
-          </form>
-        </div>
-      </div>
-    `;
-
-    modal.classList.add('active');
-    this.bindModalEvents(modal);
+    // Redirección directa al login oficial de Django adaptado al diseño de Stadium
+    this.redirectToDjangoLogin();
   }
 
   static closeModal() {
     const modal = document.getElementById('authModal');
-    if (modal) {
-      modal.classList.remove('active');
-    }
+    if (modal) modal.remove();
   }
 
   static bindModalEvents(modal) {

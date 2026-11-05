@@ -1,0 +1,184 @@
+{% extends "admin/base_site.html" %}
+{% load i18n static %}
+
+{% block extrastyle %}
+{{ block.super }}
+<style>
+  /* ESTILO POKÉMON STADIUM PARA DJANGO LOGIN */
+  @import url('https://fonts.googleapis.com/css2?family=Chakra+Petch:wght@400;600;700;800&family=Inter:wght@400;500;600;700&display=swap');
+
+  body.login {
+    background: radial-gradient(circle at 50% 20%, #1e293b 0%, #090d16 80%, #030712 100%) !important;
+    color: #f1f5f9 !important;
+    font-family: 'Inter', -apple-system, sans-serif !important;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 100vh;
+    margin: 0;
+  }
+
+  /* Cuadrícula holográfica de fondo estilo Stadium */
+  body.login::before {
+    content: '';
+    position: fixed;
+    top: 0; left: 0; right: 0; bottom: 0;
+    background-image: 
+      linear-gradient(rgba(56, 189, 248, 0.04) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(56, 189, 248, 0.04) 1px, transparent 1px);
+    background-size: 36px 36px;
+    pointer-events: none;
+    z-index: 0;
+  }
+
+  #container {
+    background: transparent !important;
+    border: none !important;
+    width: 100% !important;
+    max-width: 440px !important;
+    margin: 0 auto !important;
+    position: relative;
+    z-index: 10;
+  }
+
+  #header {
+    background: transparent !important;
+    color: #38bdf8 !important;
+    text-align: center;
+    padding: 0 0 20px 0 !important;
+  }
+
+  #header #site-name {
+    font-family: 'Chakra Petch', sans-serif !important;
+    font-size: 1.6rem !important;
+    font-weight: 800 !important;
+    letter-spacing: 1px !important;
+    text-transform: uppercase;
+    text-shadow: 0 0 16px rgba(56, 189, 248, 0.6);
+  }
+
+  #header #site-name a {
+    color: #38bdf8 !important;
+    text-decoration: none;
+  }
+
+  #content {
+    background: rgba(15, 23, 42, 0.85) !important;
+    backdrop-filter: blur(16px);
+    border: 1px solid rgba(56, 189, 248, 0.3) !important;
+    border-radius: 16px !important;
+    box-shadow: 0 20px 45px rgba(0, 0, 0, 0.7), 0 0 25px rgba(56, 189, 248, 0.15) !important;
+    padding: 30px !important;
+    margin: 0 !important;
+  }
+
+  .form-row {
+    padding: 12px 0 !important;
+    border: none !important;
+  }
+
+  .form-row label {
+    display: block;
+    font-family: 'Chakra Petch', sans-serif;
+    font-weight: 700;
+    font-size: 0.85rem;
+    color: #94a3b8 !important;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    margin-bottom: 6px;
+  }
+
+  .form-row input[type="text"],
+  .form-row input[type="password"] {
+    width: 100% !important;
+    box-sizing: border-box !important;
+    background: rgba(30, 41, 59, 0.8) !important;
+    border: 1px solid rgba(148, 163, 184, 0.25) !important;
+    border-radius: 8px !important;
+    padding: 12px 14px !important;
+    font-size: 0.95rem !important;
+    color: #f8fafc !important;
+    outline: none !important;
+    transition: all 0.2s ease;
+  }
+
+  .form-row input[type="text"]:focus,
+  .form-row input[type="password"]:focus {
+    border-color: #38bdf8 !important;
+    box-shadow: 0 0 0 3px rgba(56, 189, 248, 0.2) !important;
+    background: rgba(30, 41, 59, 1) !important;
+  }
+
+  .submit-row {
+    padding: 20px 0 0 0 !important;
+    margin: 0 !important;
+    background: transparent !important;
+    border: none !important;
+    text-align: center !important;
+  }
+
+  .submit-row input[type="submit"] {
+    width: 100% !important;
+    background: linear-gradient(135deg, #0284c7 0%, #0369a1 100%) !important;
+    border: 1px solid #38bdf8 !important;
+    color: #ffffff !important;
+    font-family: 'Chakra Petch', sans-serif !important;
+    font-size: 1rem !important;
+    font-weight: 800 !important;
+    text-transform: uppercase !important;
+    letter-spacing: 1px !important;
+    padding: 12px 20px !important;
+    border-radius: 8px !important;
+    cursor: pointer !important;
+    box-shadow: 0 4px 15px rgba(2, 132, 199, 0.4) !important;
+    transition: all 0.2s ease !important;
+  }
+
+  .submit-row input[type="submit"]:hover {
+    background: linear-gradient(135deg, #0369a1 0%, #0284c7 100%) !important;
+    box-shadow: 0 6px 20px rgba(56, 189, 248, 0.6) !important;
+    transform: translateY(-1px);
+  }
+
+  .errornote {
+    background: rgba(239, 68, 68, 0.2) !important;
+    border: 1px solid #ef4444 !important;
+    color: #fca5a5 !important;
+    border-radius: 8px !important;
+    padding: 10px 14px !important;
+    margin-bottom: 16px !important;
+    font-size: 0.88rem !important;
+  }
+
+  /* Botón para volver a la arena */
+  .back-to-game {
+    display: block;
+    text-align: center;
+    margin-top: 20px;
+    font-size: 0.85rem;
+    color: #38bdf8;
+    text-decoration: none;
+    font-weight: 600;
+    transition: color 0.2s;
+  }
+
+  .back-to-game:hover {
+    color: #7dd3fc;
+    text-decoration: underline;
+  }
+</style>
+{% endblock %}
+
+{% block branding %}
+<h1 id="site-name">
+  <span style="font-size: 1.8rem; vertical-align: middle; margin-right: 6px;">⚡</span>
+  <a href="https://pokemonstadiumworld.vercel.app">Pokémon Stadium World</a>
+</h1>
+{% endblock %}
+
+{% block content %}
+{{ block.super }}
+<a href="https://pokemonstadiumworld.vercel.app" class="back-to-game">
+  ← Volver a la Arena Stadium
+</a>
+{% endblock %}

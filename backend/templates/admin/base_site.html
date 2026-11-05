@@ -1,0 +1,15 @@
+{% extends "admin/base.html" %}
+{% load i18n static %}
+
+{% block title %}{{ title }} | Pokémon Stadium World Admin{% endblock %}
+
+{% block branding %}
+<h1 id="site-name">
+  <span style="font-size: 1.4rem; vertical-align: middle;">⚡</span>
+  <a href="{% url 'admin:index' %}" style="font-family: 'Chakra Petch', sans-serif; font-weight: 800; letter-spacing: 0.5px; color: #38bdf8;">
+    Pokémon Stadium World
+  </a>
+</h1>
+{% endblock %}
+
+{% block nav-global %}{% endblock %}
