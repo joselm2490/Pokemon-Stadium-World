@@ -5974,62 +5974,84 @@ body {
 }
 
 .room-type-card {
-  border: 2px solid rgba(255, 255, 255, 0.12);
-  background: rgba(15, 23, 42, 0.6);
-  border-radius: 10px;
-  padding: 12px 10px;
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  text-align: left;
+  border: 2px solid rgba(255, 255, 255, 0.15);
+  background: rgba(15, 23, 42, 0.7);
+  border-radius: 12px;
+  padding: 12px 14px;
   cursor: pointer;
   transition: all 0.2s ease;
-  position: relative;
-  text-align: center;
+  user-select: none;
+}
+
+.room-type-radio-input {
+  position: absolute;
+  top: 14px;
+  right: 14px;
+  width: 18px;
+  height: 18px;
+  accent-color: #38bdf8;
+  cursor: pointer;
+  margin: 0;
 }
 
 .room-type-card.active {
   border-color: #38bdf8;
-  background: rgba(56, 189, 248, 0.12);
-  box-shadow: 0 0 16px rgba(56, 189, 248, 0.25);
+  background: rgba(56, 189, 248, 0.14);
+  box-shadow: 0 0 18px rgba(56, 189, 248, 0.3);
 }
 
 .room-type-card.disabled {
   opacity: 0.45;
   cursor: not-allowed;
-  filter: grayscale(0.6);
+  filter: grayscale(0.7);
+}
+
+.room-type-card.disabled .room-type-radio-input {
+  cursor: not-allowed;
 }
 
 .room-type-card.disabled:hover {
-  border-color: rgba(255, 255, 255, 0.12);
+  border-color: rgba(255, 255, 255, 0.15);
   transform: none;
 }
 
 .room-type-card:not(.disabled):hover {
   border-color: #38bdf8;
   transform: translateY(-2px);
+  background: rgba(56, 189, 248, 0.18);
 }
 
 .room-type-title {
-  font-size: 0.95rem;
+  font-size: 0.98rem;
   font-weight: 800;
   color: #fff;
-  margin-bottom: 4px;
+  margin-bottom: 6px;
   display: flex;
   align-items: center;
-  justify-content: center;
-  gap: 6px;
+  gap: 8px;
+  width: calc(100% - 24px);
 }
 
 .room-type-badge {
   display: inline-block;
   font-size: 0.65rem;
   font-weight: 800;
-  padding: 2px 6px;
+  padding: 2px 7px;
   border-radius: 4px;
   text-transform: uppercase;
+  letter-spacing: 0.5px;
 }
 
 .room-type-desc {
-  font-size: 0.74rem;
+  font-size: 0.75rem;
   color: #94a3b8;
-  line-height: 1.35;
+  line-height: 1.4;
+  margin-top: 2px;
 }
 
 /* Modal de equipo asignado */

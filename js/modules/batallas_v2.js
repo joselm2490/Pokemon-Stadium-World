@@ -383,33 +383,47 @@ class BatallaModule {
             <button class="battle-modal-close" onclick="BatallaModule.closeCreateModal()">✕</button>
           </div>
           <div class="battle-modal-body">
-            <!-- SELECTOR DE TIPO DE SALA (NORMAL VS RANDOM) -->
-            <div style="margin-bottom: 14px;">
-              <label style="font-size: 0.82rem; font-weight: 700; color: #cbd5e1; display: block; margin-bottom: 8px;">
+            <!-- SELECTOR DE TIPO DE SALA CON TARJETAS E INPUT RADIO -->
+            <div style="margin-bottom: 16px;">
+              <label style="font-size: 0.85rem; font-weight: 800; color: #cbd5e1; display: block; margin-bottom: 10px; letter-spacing: 0.3px;">
                 Selecciona la modalidad de combate:
               </label>
               <div class="room-type-selector-grid">
-                <!-- SALA NORMAL (DESHABILITADA POR AHORA) -->
-                <div class="room-type-card disabled" title="Modo Normal próximamente disponible">
+                <!-- TARJETA SALA NORMAL (DESHABILITADA POR AHORA) -->
+                <label class="room-type-card disabled" id="cardRoomTypeNormal" title="Modo Normal próximamente disponible">
+                  <input 
+                    type="radio" 
+                    name="roomTypeSelection" 
+                    value="normal" 
+                    class="room-type-radio-input" 
+                    disabled 
+                  />
                   <div class="room-type-title">
-                    ⚔️ Normal
-                    <span class="room-type-badge" style="background: rgba(148, 163, 184, 0.2); color: #94a3b8;">Pronto</span>
+                    <span>⚔️ Normal</span>
+                    <span class="room-type-badge" style="background: rgba(148, 163, 184, 0.2); color: #94a3b8; border: 1px solid rgba(148, 163, 184, 0.3);">Pronto</span>
                   </div>
                   <div class="room-type-desc">
-                    Reglas libres con selección personalizada de filtros.
+                    Reglas libres con selección personalizada de filtros de generación y forma.
                   </div>
-                </div>
+                </label>
 
-                <!-- SALA RANDOM (ACTIVA Y SELECCIONADA) -->
-                <div class="room-type-card active">
+                <!-- TARJETA SALA RANDOM (ACTIVA Y SELECCIONADA CON RADIO CHECKED) -->
+                <label class="room-type-card active" id="cardRoomTypeRandom" onclick="BatallaModule.selectRoomType('random')">
+                  <input 
+                    type="radio" 
+                    name="roomTypeSelection" 
+                    value="random" 
+                    class="room-type-radio-input" 
+                    checked 
+                  />
                   <div class="room-type-title" style="color: #38bdf8;">
-                    🎲 Random
-                    <span class="room-type-badge" style="background: #0284c7; color: #fff;">Campeones</span>
+                    <span>🎲 Random</span>
+                    <span class="room-type-badge" style="background: #0284c7; color: #fff; box-shadow: 0 0 10px rgba(2, 132, 199, 0.5);">Campeones</span>
                   </div>
                   <div class="room-type-desc">
                     Fase final automática (Campeones). Opciones fijas con 3 descartes de Pokémon.
                   </div>
-                </div>
+                </label>
               </div>
             </div>
 
@@ -877,6 +891,20 @@ class BatallaModule {
     }
   }
 
+  static selectedRoomType = 'random';
+
+  static selectRoomType(type) {
+    if (type === 'normal') return; // Deshabilitado por ahora
+    this.selectedRoomType = type;
+    const cards = document.querySelectorAll('.room-type-card');
+    cards.forEach(c => c.classList.remove('active'));
+    const targetCard = document.getElementById(`cardRoomType${type.charAt(0).toUpperCase() + type.slice(1)}`);
+    if (targetCard) targetCard.classList.add('active');
+    const radio = targetCard ? targetCard.querySelector('input[type="radio"]') : null;
+    if (radio) radio.checked = true;
+    if (window.SFX) window.SFX.playCardClick();
+  }
+
   // ------------------------------------------------------------------
   // OPERACIONES DE SALA (INTEGRADAS CON BASE DE DATOS Y STORAGE)
   // ------------------------------------------------------------------
@@ -884,6 +912,14 @@ class BatallaModule {
     const modal = document.getElementById('createRoomModal');
     if (modal) {
       modal.style.display = 'flex';
+      this.selectedRoomType = 'random';
+      const randomRadio = document.querySelector('input[name="roomTypeSelection"][value="random"]');
+      if (randomRadio) randomRadio.checked = true;
+      const cards = document.querySelectorAll('.room-type-card');
+      cards.forEach(c => c.classList.remove('active'));
+      const cardRandom = document.getElementById('cardRoomTypeRandom');
+      if (cardRandom) cardRandom.classList.add('active');
+
       const checkbox = document.getElementById('createRoomHasPassword');
       if (checkbox) checkbox.checked = false;
       const passContainer = document.getElementById('createRoomPasswordContainer');
