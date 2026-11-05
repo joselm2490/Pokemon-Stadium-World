@@ -19,6 +19,7 @@
   let battleInstance = null;
   let currentRoomData = null;
   let activePokemon = null;
+  let isActionLocked = false;
 
   const TYPE_COLORS = {
     'Normal': '#A8A878', 'Fuego': '#F08030', 'Agua': '#6890F0', 'Planta': '#78C850',
@@ -95,6 +96,11 @@
     // Determinar qué lado es el usuario actual
     const mySide = (bs.p1.apodo || '').toLowerCase() === userNick.toLowerCase() ? bs.p1 : bs.p2;
     const rivalSide = (bs.p1.apodo || '').toLowerCase() === userNick.toLowerCase() ? bs.p2 : bs.p1;
+
+    // Si el turno avanzó o ya no hay acción pendiente en el estado oficial, desbloquear interacción
+    if (!mySide.pendingAction) {
+      isActionLocked = false;
+    }
 
     activePokemon = mySide.team[mySide.activeIndex];
     const rivalPokemon = rivalSide.team[rivalSide.activeIndex];
@@ -175,9 +181,9 @@
       return;
     }
 
-    if (mySide.pendingAction) {
-      promptText.textContent = '⏳ Esperando la acción del rival...';
-      movesGrid.innerHTML = `<div style="grid-column: 1 / -1; text-align: center; color: #64748b; font-weight: 700; padding: 12px;">Acción enviada. Esperando al contrincante...</div>`;
+    if (mySide.pendingAction || isActionLocked) {
+      promptText.textContent = '⏳ Ejecutando turno... Por favor espera';
+      movesGrid.innerHTML = `<div style="grid-column: 1 / -1; text-align: center; color: #64748b; font-weight: 700; padding: 12px;">⚔️ Procesando acciones del turno...</div>`;
       switchesBar.innerHTML = '';
       if (tooltipEl) tooltipEl.style.display = 'none';
       return;
@@ -313,6 +319,23 @@
 
     // Interacción de usuario: seleccionar ataque
   window.selectMove = function(moveIndex) {
+    if (isActionLocked) {
+      console.warn('⚠️ [Pure Battle] Acción bloqueada: ya se envió una orden para este turno.');
+      return;
+    }
+    isActionLocked = true;
+
+    // Deshabilitar botones de inmediato visualmente para evitar clics repetidos
+    const movesGrid = document.getElementById('movesGrid');
+    const switchesBar = document.getElementById('switchesBar');
+    const promptText = document.getElementById('promptText');
+    const tooltipEl = document.getElementById('moveTooltip');
+    if (tooltipEl) tooltipEl.style.display = 'none';
+
+    if (promptText) promptText.textContent = '⏳ Ejecutando ataque... Por favor espera';
+    if (movesGrid) movesGrid.innerHTML = `<div style="grid-column: 1 / -1; text-align: center; color: #64748b; font-weight: 700; padding: 12px;">⚔️ Procesando movimiento...</div>`;
+    if (switchesBar) switchesBar.innerHTML = '';
+
     console.log('🔘 [Pure Battle] Click en movimiento:', moveIndex, 'Nombre:', activePokemon?.movimientos?.[moveIndex]?.nombre);
     if (window.parent && window.parent !== window) {
       console.log('📤 [Pure Battle] Enviando postMessage pure-battle-action (move) a parent');
@@ -328,6 +351,22 @@
 
   // Interacción de usuario: seleccionar cambio de Pokémon
   window.selectSwitch = function(targetIndex) {
+    if (isActionLocked) {
+      console.warn('⚠️ [Pure Battle] Acción bloqueada: ya se envió una orden para este turno.');
+      return;
+    }
+    isActionLocked = true;
+
+    const movesGrid = document.getElementById('movesGrid');
+    const switchesBar = document.getElementById('switchesBar');
+    const promptText = document.getElementById('promptText');
+    const tooltipEl = document.getElementById('moveTooltip');
+    if (tooltipEl) tooltipEl.style.display = 'none';
+
+    if (promptText) promptText.textContent = '⏳ Cambiando Pokémon... Por favor espera';
+    if (movesGrid) movesGrid.innerHTML = `<div style="grid-column: 1 / -1; text-align: center; color: #64748b; font-weight: 700; padding: 12px;">🔄 Realizando cambio...</div>`;
+    if (switchesBar) switchesBar.innerHTML = '';
+
     console.log('🔘 [Pure Battle] Click en cambiar Pokémon a índice:', targetIndex);
     if (window.parent && window.parent !== window) {
       console.log('📤 [Pure Battle] Enviando postMessage pure-battle-action (switch) a parent');

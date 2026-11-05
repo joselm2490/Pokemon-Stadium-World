@@ -2275,9 +2275,18 @@ class BatallaModule {
           return;
         }
 
-        // Obtener apodo del jugador (priorizando el que envió el frame o el de la sesión o el de p1)
         const bs = this.currentRoom.battle_state;
         const myNick = (data.userNick || bs?.p1?.apodo || this.userNickname || 'Entrenador').trim();
+        const nickLower = myNick.toLowerCase();
+
+        // Evitar procesar acciones repetidas si el jugador ya tiene pendingAction asignado para este turno
+        const isP1 = (bs?.p1?.apodo || '').toLowerCase().trim() === nickLower || (!nickLower && true);
+        const myPlayerState = isP1 ? bs?.p1 : bs?.p2;
+        if (myPlayerState && myPlayerState.pendingAction) {
+          console.warn('⚠️ [BatallaModule] Acción rechazada: el jugador ya tiene una acción pendiente para este turno.');
+          return;
+        }
+
         console.log('🎮 [BatallaModule] Ejecutando acción para apodo:', myNick, 'Acción:', data.action);
         
         // Si es tutorial contra la CPU, la CPU elige automáticamente un movimiento
