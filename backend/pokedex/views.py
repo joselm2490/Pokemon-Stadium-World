@@ -1,55 +1,55 @@
 import json
 from django.http import JsonResponse
 from django.views.decorators.http import require_http_methods
-from battles.models import Pokemon, Movimientos, Tipos
+from battles.models import Pokemon, Moves, Types
 
 
 @require_http_methods(["GET"])
 def list_pokemon(request):
     """
     GET /api/pokedex/pokemon/
-    Filtros: ?gen=1&campeon=1&tipo=fuego&search=pika&limit=50&offset=0
+    Query params: ?gen=1&is_champion=1&search=pika&limit=100&offset=0
     """
     qs = Pokemon.objects.all()
 
     gen = request.GET.get('gen')
-    if gen and gen != 'todas':
+    if gen and gen != 'all':
         try:
             qs = qs.filter(gen=int(gen))
         except ValueError:
             pass
 
-    campeon = request.GET.get('campeon')
-    if campeon is not None:
+    champion = request.GET.get('is_champion') or request.GET.get('campeon')
+    if champion is not None:
         try:
-            qs = qs.filter(campeon=int(campeon))
+            qs = qs.filter(is_champion=int(champion))
         except ValueError:
             pass
 
     search = request.GET.get('search')
     if search:
-        qs = qs.filter(nombre__icontains=search.strip())
+        qs = qs.filter(name__icontains=search.strip())
 
     limit = min(int(request.GET.get('limit', 100)), 300)
     offset = int(request.GET.get('offset', 0))
 
     total = qs.count()
-    items = list(qs.order_by('numero_pokedex')[offset:offset+limit].values(
-        'id', 'numero_pokedex', 'nombre', 'nombre_ingles', 'gen', 'tipo1__nombre', 'tipo2__nombre', 'campeon', 'fase'
+    items = list(qs.order_by('pokedex_number')[offset:offset+limit].values(
+        'id', 'pokedex_number', 'name', 'name_en', 'gen', 'type1__name', 'type2__name', 'is_champion', 'stage'
     ))
 
     data = []
     for p in items:
         data.append({
             'id': p['id'],
-            'numero_pokedex': p['numero_pokedex'],
-            'nombre': p['nombre'],
-            'nombre_ingles': p['nombre_ingles'],
+            'pokedex_number': p['pokedex_number'],
+            'name': p['name'],
+            'name_en': p['name_en'],
             'gen': p['gen'],
-            'tipo1': p['tipo1__nombre'],
-            'tipo2': p['tipo2__nombre'],
-            'campeon': p['campeon'],
-            'fase': p['fase']
+            'type1': p['type1__name'],
+            'type2': p['type2__name'],
+            'is_champion': p['is_champion'],
+            'stage': p['stage']
         })
 
     return JsonResponse({
@@ -72,46 +72,44 @@ def get_pokemon_detail(request, pk):
             'ok': True,
             'data': {
                 'id': p.id,
-                'numero_pokedex': p.numero_pokedex,
-                'nombre': p.nombre,
-                'nombre_ingles': p.nombre_ingles,
+                'pokedex_number': p.pokedex_number,
+                'name': p.name,
+                'name_en': p.name_en,
                 'gen': p.gen,
-                'tipo1': p.tipo1.nombre if p.tipo1 else None,
-                'tipo2': p.tipo2.nombre if p.tipo2 else None,
-                'campeon': p.campeon,
-                'fase': p.fase,
-                'categoria_rareza': p.categoria_rareza
+                'type1': p.type1.name if p.type1 else None,
+                'type2': p.type2.name if p.type2 else None,
+                'weight_kg': p.weight_kg,
+                'height_m': p.height_m,
+                'is_champion': p.is_champion,
+                'stage': p.stage,
+                'rarity': p.rarity
             }
         })
     except Pokemon.DoesNotExist:
-        return JsonResponse({'ok': False, 'error': 'Pokémon no encontrado'}, status=404)
+        return JsonResponse({'ok': False, 'error': 'Pokemon not found'}, status=404)
 
 
 @require_http_methods(["GET"])
-def list_movimientos(request):
+def list_moves(request):
     """
-    GET /api/pokedex/movimientos/
+    GET /api/pokedex/moves/
     """
-    qs = Movimientos.objects.all()
+    qs = Moves.objects.all()
 
-    tipo = request.GET.get('tipo')
-    if tipo and tipo != 'todos':
-        qs = qs.filter(tipo__iexact=tipo.strip())
-
-    clase = request.GET.get('clase')
-    if clase and clase != 'todas':
-        qs = qs.filter(clase__iexact=clase.strip())
+    category = request.GET.get('category') or request.GET.get('clase')
+    if category and category != 'all':
+        qs = qs.filter(category__iexact=category.strip())
 
     search = request.GET.get('search')
     if search:
-        qs = qs.filter(nombre__icontains=search.strip())
+        qs = qs.filter(name__icontains=search.strip())
 
     limit = min(int(request.GET.get('limit', 100)), 500)
     offset = int(request.GET.get('offset', 0))
 
     total = qs.count()
     items = list(qs.order_by('id')[offset:offset+limit].values(
-        'id', 'codigo', 'nombre', 'nombre_ingles', 'gen', 'tipo', 'clase', 'potencia', 'precision', 'pp', 'prioridad'
+        'id', 'code', 'name', 'name_en', 'gen', 'type_name', 'category', 'power', 'accuracy', 'pp', 'priority'
     ))
 
     return JsonResponse({

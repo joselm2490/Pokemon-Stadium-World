@@ -14,11 +14,10 @@ window.StadiumDjangoWS = {
   getWsBaseUrl() {
     // Si estamos en localhost, conectar al puerto de Django local
     if (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1') {
-      return 'ws://127.0.0.1:8000/ws/sala/';
+      return 'ws://127.0.0.1:8000/ws/room/';
     }
     // En producción (Vercel), conectar al servicio Daphne en Render
-    // Puedes sobrescribir window.DJANGO_WS_URL en producción si tienes un subdominio específico
-    return window.DJANGO_WS_URL || 'wss://pokemon-stadium-backend.onrender.com/ws/sala/';
+    return window.DJANGO_WS_URL || 'wss://pokemon-stadium-backend.onrender.com/ws/room/';
   },
 
   // Conectar al socket de una sala específica

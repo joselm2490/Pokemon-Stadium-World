@@ -1,36 +1,36 @@
 from django.contrib import admin
-from .models import SalasBatalla, SalaJugadores, SalaMensajes, Pokemon, Movimientos, Tipos, ClasesMovimiento
+from .models import BattleRooms, RoomPlayers, RoomMessages, Pokemon, Moves, Types, MoveClasses
 
 
-@admin.register(SalasBatalla)
-class SalasBatallaAdmin(admin.ModelAdmin):
-    list_display = ('codigo', 'anfitrion_nombre', 'estado', 'pokemon_por_jugador', 'jugadores_actuales', 'creada_en')
-    list_filter = ('estado', 'pokemon_por_jugador')
-    search_fields = ('codigo', 'anfitrion_nombre')
+@admin.register(BattleRooms)
+class BattleRoomsAdmin(admin.ModelAdmin):
+    list_display = ('code', 'host_name', 'status', 'pokemon_per_player', 'current_players', 'created_at')
+    list_filter = ('status', 'pokemon_per_player')
+    search_fields = ('code', 'host_name')
 
 
-@admin.register(SalaJugadores)
-class SalaJugadoresAdmin(admin.ModelAdmin):
-    list_display = ('apodo', 'sala', 'es_anfitrion', 'listo', 'conectado', 'unido_en')
-    list_filter = ('es_anfitrion', 'listo', 'conectado')
-    search_fields = ('apodo', 'sala__codigo')
+@admin.register(RoomPlayers)
+class RoomPlayersAdmin(admin.ModelAdmin):
+    list_display = ('nickname', 'room', 'is_host', 'is_ready', 'is_connected', 'joined_at')
+    list_filter = ('is_host', 'is_ready', 'is_connected')
+    search_fields = ('nickname', 'room__code')
 
 
-@admin.register(SalaMensajes)
-class SalaMensajesAdmin(admin.ModelAdmin):
-    list_display = ('sala', 'emisor', 'mensaje', 'es_sistema', 'enviado_en')
-    search_fields = ('emisor', 'mensaje', 'sala__codigo')
+@admin.register(RoomMessages)
+class RoomMessagesAdmin(admin.ModelAdmin):
+    list_display = ('room', 'sender', 'message', 'is_system', 'sent_at')
+    search_fields = ('sender', 'message', 'room__code')
 
 
 @admin.register(Pokemon)
 class PokemonAdmin(admin.ModelAdmin):
-    list_display = ('numero_pokedex', 'nombre', 'gen', 'tipo1', 'tipo2', 'campeon', 'fase')
-    list_filter = ('gen', 'campeon', 'fase', 'tipo1')
-    search_fields = ('nombre', 'numero_pokedex')
+    list_display = ('pokedex_number', 'name', 'gen', 'type1', 'type2', 'is_champion', 'stage')
+    list_filter = ('gen', 'is_champion', 'stage', 'type1')
+    search_fields = ('name', 'pokedex_number')
 
 
-@admin.register(Movimientos)
-class MovimientosAdmin(admin.ModelAdmin):
-    list_display = ('codigo', 'nombre', 'tipo', 'clase', 'potencia', 'precision', 'pp')
-    list_filter = ('tipo', 'clase', 'gen')
-    search_fields = ('nombre', 'codigo')
+@admin.register(Moves)
+class MovesAdmin(admin.ModelAdmin):
+    list_display = ('code', 'name', 'category', 'power', 'accuracy', 'pp')
+    list_filter = ('category', 'gen')
+    search_fields = ('name', 'code')

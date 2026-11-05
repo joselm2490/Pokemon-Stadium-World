@@ -4,9 +4,12 @@
 class StadiumRouter {
   static routes = {
     'pokemon': { viewId: 'view-pokemon', navId: 'menuItemPokemon' },
-    'movimientos': { viewId: 'view-movimientos', navId: 'menuItemMovimientos' },
-    'batalla': { viewId: 'view-batalla', navId: 'menuItemBatalla' },
+    'moves': { viewId: 'view-movimientos', navId: 'menuItemMovimientos' },
+    'movimientos': { viewId: 'view-movimientos', navId: 'menuItemMovimientos' }, // backward compatibility
+    'battle': { viewId: 'view-batalla', navId: 'menuItemBatalla' },
+    'batalla': { viewId: 'view-batalla', navId: 'menuItemBatalla' }, // backward compatibility
     'batallas': { viewId: 'view-batalla', navId: 'menuItemBatalla' },
+    'users': { viewId: 'view-usuarios', navId: 'menuItemUsuarios' },
     'usuarios': { viewId: 'view-usuarios', navId: 'menuItemUsuarios' }
   };
 
@@ -51,13 +54,13 @@ class StadiumRouter {
 
   static updateBattleRoomUrl(code) {
     if (code) {
-      const newHash = `#/batalla/${code.toUpperCase()}`;
+      const newHash = `#/battle/${code.toUpperCase()}`;
       if (window.location.hash !== newHash) {
         history.replaceState(null, '', newHash);
       }
     } else {
-      if (window.location.hash.startsWith('#/batalla')) {
-        history.replaceState(null, '', '#/batalla');
+      if (window.location.hash.startsWith('#/battle') || window.location.hash.startsWith('#/batalla')) {
+        history.replaceState(null, '', '#/battle');
       }
     }
   }
