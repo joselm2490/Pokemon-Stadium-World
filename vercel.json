@@ -4,6 +4,6 @@
   "cleanUrls": true,
   "trailingSlash": false,
   "rewrites": [
-    { "source": "/((?!js/|css/|sprites/|battle/|showdown/|database/|favicon.ico).*)$", "destination": "/index.html" }
+    { "source": "/((?!js/|css/|assets/|sprites/|database/|favicon.ico).*)$", "destination": "/index.html" }
   ]
 }
