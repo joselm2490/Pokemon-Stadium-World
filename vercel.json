@@ -1,12 +1,7 @@
 {
-  "buildCommand": null,
-  "outputDirectory": "frontend",
-  "cleanUrls": true,
-  "trailingSlash": false,
-  "rewrites": [
-    {
-      "source": "/((?!js/|css/|assets/|sprites/|database/|favicon\\.ico).*)",
-      "destination": "/index.html"
-    }
+  "routes": [
+    { "src": "/(js|css|assets|sprites|database)/(.*)", "dest": "/$1/$2" },
+    { "src": "/favicon.ico", "dest": "/favicon.ico" },
+    { "src": "/(.*)", "dest": "/index.html" }
   ]
 }
