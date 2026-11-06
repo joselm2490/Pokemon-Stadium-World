@@ -239,6 +239,9 @@ class StadiumBattleEngine {
     p2.pendingAction = null;
     bs.turn = (bs.turn || 1) + 1;
 
+    // Registrar eventos para la cola de animación
+    bs.turnEvents = bs.turnEvents || [];
+
     // Verificar condición de victoria
     const p1Alive = p1.team.some(p => p.currentHp > 0);
     const p2Alive = p2.team.some(p => p.currentHp > 0);
@@ -247,39 +250,86 @@ class StadiumBattleEngine {
       bs.phase = 'finished';
       bs.winner = 'Empate';
       bs.logs.push('¡Todos los Pokémon se han debilitado! ¡Empate!');
+      bs.turnEvents.push({ type: 'finish', winner: 'Empate', message: '¡Todos los Pokémon se han debilitado! ¡Empate!' });
     } else if (!p1Alive) {
       bs.phase = 'finished';
       bs.winner = p2.apodo;
       bs.logs.push(`¡${p1.apodo} no tiene más Pokémon! ¡${p2.apodo} gana el combate!`);
+      bs.turnEvents.push({ type: 'finish', winner: p2.apodo, message: `¡${p1.apodo} no tiene más Pokémon! ¡${p2.apodo} gana!` });
     } else if (!p2Alive) {
       bs.phase = 'finished';
       bs.winner = p1.apodo;
       bs.logs.push(`¡${p2.apodo} no tiene más Pokémon! ¡${p1.apodo} gana el combate!`);
+      bs.turnEvents.push({ type: 'finish', winner: p1.apodo, message: `¡${p2.apodo} no tiene más Pokémon! ¡${p1.apodo} gana!` });
     }
   }
 
   static _applyMoveAction(action, bs) {
-    const { user, poke, target, targetPoke, move } = action;
+    const { actor, user, poke, target, targetPoke, move } = action;
+    bs.turnEvents = bs.turnEvents || [];
+
     bs.logs.push(`¡${poke.name} de ${user.apodo} usó ${move.name}!`);
+    bs.turnEvents.push({
+      type: 'attack',
+      actor: actor, // 'p1' o 'p2'
+      pokeName: poke.name,
+      userName: user.apodo,
+      moveName: move.name,
+      moveType: move.type,
+      message: `¡${poke.name} de ${user.apodo} usó ${move.name}!`
+    });
 
     const result = GBABattleEngine.calculateDamage(poke, targetPoke, move);
+    const prevHp = targetPoke.currentHp;
     targetPoke.currentHp = Math.max(0, targetPoke.currentHp - result.damage);
 
+    let effectivenessMsg = null;
     if (result.mult > 1.0) {
-      bs.logs.push('¡Es muy eficaz!');
+      effectivenessMsg = '¡Es muy eficaz!';
+      bs.logs.push(effectivenessMsg);
     } else if (result.mult === 0.0) {
-      bs.logs.push('No tuvo ningún efecto...');
+      effectivenessMsg = 'No tuvo ningún efecto...';
+      bs.logs.push(effectivenessMsg);
     } else if (result.mult < 1.0 && result.mult > 0) {
-      bs.logs.push('No es muy eficaz...');
+      effectivenessMsg = 'No es muy eficaz...';
+      bs.logs.push(effectivenessMsg);
     }
+
+    bs.turnEvents.push({
+      type: 'damage',
+      target: actor === 'p1' ? 'p2' : 'p1',
+      targetPokeName: targetPoke.name,
+      damage: result.damage,
+      prevHp: prevHp,
+      newHp: targetPoke.currentHp,
+      maxHp: targetPoke.maxHp,
+      isSuperEffective: result.mult > 1.0,
+      effectivenessMsg: effectivenessMsg
+    });
 
     if (targetPoke.currentHp === 0) {
       bs.logs.push(`¡${targetPoke.name} enemigo se debilitó!`);
+      bs.turnEvents.push({
+        type: 'faint',
+        target: actor === 'p1' ? 'p2' : 'p1',
+        pokeName: targetPoke.name,
+        message: `¡${targetPoke.name} se debilitó!`
+      });
+
       // Cambio automático al siguiente disponible
       const nextIdx = target.team.findIndex(p => p.currentHp > 0);
       if (nextIdx !== -1) {
         target.activeIndex = nextIdx;
         bs.logs.push(`¡${target.apodo} envió a ${target.team[nextIdx].name}!`);
+        bs.turnEvents.push({
+          type: 'switch_in',
+          target: actor === 'p1' ? 'p2' : 'p1',
+          pokeName: target.team[nextIdx].name,
+          level: target.team[nextIdx].level || 50,
+          currentHp: target.team[nextIdx].currentHp,
+          maxHp: target.team[nextIdx].maxHp,
+          message: `¡${target.apodo} envió a ${target.team[nextIdx].name}!`
+        });
       }
     }
   }

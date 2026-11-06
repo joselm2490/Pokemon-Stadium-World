@@ -2565,6 +2565,7 @@ class BatallaModule {
     ];
 
     const teamList = mySide.team || myPlayer?.equipo_pokemon || [];
+    const isShowingMoves = !!this._showMovesMenu;
 
     container.innerHTML = `
       <div class="gba-battle-screen">
@@ -2581,62 +2582,94 @@ class BatallaModule {
           <!-- Fondo oficial GBA -->
           <div class="gba-arena-background"></div>
 
-          <!-- Oponente -->
-          <div class="gba-opponent-wrapper">
-            <div class="gba-healthbox gba-healthbox-opponent">
+          <!-- Oponente (Arriba a la derecha) -->
+          <div class="gba-opponent-wrapper" id="gbaOpponentWrapper">
+            <div class="gba-healthbox gba-healthbox-opponent" id="gbaOpponentHealthbox">
               <div class="gba-hb-name-row">
-                <span class="gba-poke-name">${this.escapeHtml(oppActivePoke.name || 'Rival')}</span>
-                <span class="gba-poke-level">Nv${oppActivePoke.level || 50}</span>
+                <span class="gba-poke-name" id="gbaOpponentName">${this.escapeHtml(oppActivePoke.name || 'Rival')}</span>
+                <span class="gba-poke-level" id="gbaOpponentLevel">Nv${oppActivePoke.level || 50}</span>
               </div>
-              <div class="gba-hp-bar-track">
-                <div class="gba-hp-bar-fill" style="width: ${oppHpPercent}%; background: ${oppHpPercent > 50 ? '#22c55e' : (oppHpPercent > 20 ? '#eab308' : '#ef4444')};"></div>
+              <div class="gba-hp-row-wrapper">
+                <span class="gba-hp-badge">HP</span>
+                <div class="gba-hp-bar-track">
+                  <div class="gba-hp-bar-fill" id="gbaOpponentHpFill" style="width: ${oppHpPercent}%; background: ${oppHpPercent > 50 ? '#22c55e' : (oppHpPercent > 20 ? '#eab308' : '#ef4444')};"></div>
+                </div>
               </div>
             </div>
             <div class="gba-platform-opponent"></div>
-            <img src="${oppSprite}" class="gba-sprite-opponent" alt="${oppActivePoke.name}">
+            <img src="${oppSprite}" class="gba-sprite-opponent" id="gbaOpponentSprite" alt="${oppActivePoke.name}">
           </div>
 
-          <!-- Jugador -->
-          <div class="gba-player-wrapper">
+          <!-- Jugador (Abajo a la izquierda) -->
+          <div class="gba-player-wrapper" id="gbaPlayerWrapper">
             <div class="gba-platform-player"></div>
-            <img src="${mySprite}" class="gba-sprite-player" alt="${myActivePoke.name}">
-            <div class="gba-healthbox gba-healthbox-player">
+            <img src="${mySprite}" class="gba-sprite-player" id="gbaPlayerSprite" alt="${myActivePoke.name}">
+            <div class="gba-healthbox gba-healthbox-player" id="gbaPlayerHealthbox">
               <div class="gba-hb-name-row">
-                <span class="gba-poke-name">${this.escapeHtml(myActivePoke.name || 'Mi Pokémon')}</span>
-                <span class="gba-poke-level">Nv${myActivePoke.level || 50}</span>
+                <span class="gba-poke-name" id="gbaPlayerName">${this.escapeHtml(myActivePoke.name || 'Mi Pokémon')}</span>
+                <span class="gba-poke-level" id="gbaPlayerLevel">Nv${myActivePoke.level || 50}</span>
               </div>
-              <div class="gba-hp-bar-track">
-                <div class="gba-hp-bar-fill" style="width: ${myHpPercent}%; background: ${myHpPercent > 50 ? '#22c55e' : (myHpPercent > 20 ? '#eab308' : '#ef4444')};"></div>
+              <div class="gba-hp-row-wrapper">
+                <span class="gba-hp-badge">HP</span>
+                <div class="gba-hp-bar-track">
+                  <div class="gba-hp-bar-fill" id="gbaPlayerHpFill" style="width: ${myHpPercent}%; background: ${myHpPercent > 50 ? '#22c55e' : (myHpPercent > 20 ? '#eab308' : '#ef4444')};"></div>
+                </div>
               </div>
-              <div class="gba-hp-numbers">${myActivePoke.currentHp || 100} / ${myActivePoke.maxHp || 100}</div>
+              <div class="gba-hp-numbers" id="gbaPlayerHpNumbers">${myActivePoke.currentHp || 100} / ${myActivePoke.maxHp || 100}</div>
             </div>
           </div>
         </main>
 
-        <!-- Panel de Control GBA Showdown-Style -->
+        <!-- Consola de Combate GBA (Estilo FireRed / pokemon-battle-sim-master) -->
         <footer class="gba-battle-controls">
           <div class="gba-dialog-log-box" id="gbaDialogBox">
-            <div class="gba-log-text">
+            <div class="gba-log-text" id="gbaDialogText">
               ${(bs.logs && bs.logs.length > 0) ? this.escapeHtml(bs.logs[bs.logs.length - 1]) : `¿Qué debería hacer ${this.escapeHtml(myActivePoke.name)}?`}
             </div>
           </div>
 
-          <div class="gba-action-console">
-            <div class="gba-moves-grid">
-              ${moves.slice(0, 4).map((m, idx) => `
-                <button class="gba-move-btn type-${(m.type || m.type_name || 'NORMAL').toLowerCase()}" onclick="BatallaModule.selectCombatMove(${idx})">
-                  <div class="gba-move-name">${this.escapeHtml(m.name || m.nombre)}</div>
-                  <div class="gba-move-info">
-                    <span>${m.type || m.type_name || 'NORMAL'}</span>
-                    <span>PP ${m.currentPp ?? m.pp ?? 20}/${m.pp ?? 20}</span>
-                  </div>
+          <div class="gba-action-console" id="gbaActionConsole">
+            ${isShowingMoves ? `
+              <!-- SUBMENÚ 1: SELECCIÓN DE MOVIMIENTOS (2x2) -->
+              <div class="gba-moves-view">
+                <div class="gba-moves-header-bar">
+                  <span style="font-size:0.75rem; font-weight:700; color:#94a3b8;">SELECCIONA UN MOVIMIENTO</span>
+                  <button class="gba-btn-back" onclick="BatallaModule.setBattleMenuState(false)">← VOLVER</button>
+                </div>
+                <div class="gba-moves-grid">
+                  ${moves.slice(0, 4).map((m, idx) => `
+                    <button class="gba-move-btn type-${(m.type || m.type_name || 'NORMAL').toLowerCase()}" onclick="BatallaModule.selectCombatMove(${idx})">
+                      <div class="gba-move-name">${this.escapeHtml(m.name || m.nombre)}</div>
+                      <div class="gba-move-info">
+                        <span>${m.type || m.type_name || 'NORMAL'}</span>
+                        <span>PP ${m.currentPp ?? m.pp ?? 20}/${m.pp ?? 20}</span>
+                      </div>
+                    </button>
+                  `).join('')}
+                </div>
+              </div>
+            ` : `
+              <!-- MENÚ PRINCIPAL GBA: LUCHA, POKÉMON, MOCHILA, HUIR -->
+              <div class="gba-main-menu-grid">
+                <button class="gba-btn-menu-action action-fight" onclick="BatallaModule.setBattleMenuState(true)">
+                  <span>⚔️ LUCHA</span>
                 </button>
-              `).join('')}
-            </div>
+                <button class="gba-btn-menu-action action-bag" onclick="alert('Mochila no disponible en torneo de estadio.')">
+                  <span>🎒 MOCHILA</span>
+                </button>
+                <button class="gba-btn-menu-action action-pokemon" onclick="document.getElementById('gbaBenchBar').scrollIntoView({behavior:'smooth'})">
+                  <span>🐾 EQUIPO</span>
+                </button>
+                <button class="gba-btn-menu-action action-run" onclick="BatallaModule.leaveRoom()">
+                  <span>🏃 HUIR</span>
+                </button>
+              </div>
+            `}
 
-            <div class="gba-bench-team-grid">
+            <!-- BANQUILLO / EQUIPO DE APOYO -->
+            <div class="gba-bench-team-grid" id="gbaBenchBar">
               ${teamList.map((tp, idx) => `
-                <button class="gba-bench-poke-btn ${idx === (mySide.activeIndex || 0) ? 'active-bench' : ''}" onclick="BatallaModule.selectCombatSwitch(${idx})">
+                <button class="gba-bench-poke-btn ${idx === (mySide.activeIndex || 0) ? 'active-bench' : ''}" onclick="BatallaModule.selectCombatSwitch(${idx})" title="Cambiar a ${this.escapeHtml(tp.name)}">
                   <span class="gba-bench-name">${this.escapeHtml(tp.name)}</span>
                   <span class="gba-bench-hp">${tp.currentHp ?? 100}/${tp.maxHp ?? 100} HP</span>
                 </button>
@@ -2646,6 +2679,13 @@ class BatallaModule {
         </footer>
       </div>
     `;
+
+    // Si hay eventos de combate pendientes en este turno, reproducir animaciones paso a paso
+    if (bs.turnEvents && bs.turnEvents.length > 0 && !this._isAnimating) {
+      const events = [...bs.turnEvents];
+      bs.turnEvents = []; // Limpiar para no repetir
+      setTimeout(() => this.playTurnAnimationSequence(events), 300);
+    }
   }
 
   static setupPureBattleBridge() {
@@ -2757,6 +2797,129 @@ class BatallaModule {
       if (window.SFX) window.SFX.playCardClick();
       this.renderCurrentView();
     }
+  }
+
+  static setBattleMenuState(showMoves) {
+    this._showMovesMenu = !!showMoves;
+    if (window.SFX) window.SFX.playNav();
+    this.renderCurrentView();
+  }
+
+  /**
+   * REPRODUCCIÓN SECUENCIAL DE ANIMACIONES PASO A PASO (Estilo pokemon-battle-sim-master)
+   */
+  static async playTurnAnimationSequence(events = []) {
+    if (!events || events.length === 0) return;
+    this._isAnimating = true;
+
+    const dialogEl = document.getElementById('gbaDialogText');
+    const playerSprite = document.getElementById('gbaPlayerSprite');
+    const oppSprite = document.getElementById('gbaOpponentSprite');
+    const playerHpFill = document.getElementById('gbaPlayerHpFill');
+    const oppHpFill = document.getElementById('gbaOpponentHpFill');
+    const playerHpNum = document.getElementById('gbaPlayerHpNumbers');
+
+    const wait = (ms) => new Promise(r => setTimeout(r, ms));
+
+    for (const ev of events) {
+      if (ev.type === 'attack') {
+        // 1. Mostrar mensaje en la caja de diálogo
+        if (dialogEl) dialogEl.textContent = ev.message;
+
+        // 2. Animación de embestida (Lunge)
+        const isPlayer = (ev.actor === 'p1');
+        const sprite = isPlayer ? playerSprite : oppSprite;
+        const lungeClass = isPlayer ? 'gba-anim-lunge-player' : 'gba-anim-lunge-opponent';
+
+        if (window.SFX) window.SFX.playAttackTackle();
+        if (sprite) {
+          sprite.classList.add(lungeClass);
+          await wait(350);
+          sprite.classList.remove(lungeClass);
+        }
+        await wait(250);
+      } 
+      else if (ev.type === 'damage') {
+        // 1. Parpadeo de impacto y sonido de golpe
+        const isPlayerTarget = (ev.target === 'p1');
+        const targetSprite = isPlayerTarget ? playerSprite : oppSprite;
+        const targetHpFill = isPlayerTarget ? playerHpFill : oppHpFill;
+
+        if (window.SFX) window.SFX.playDamageHit(ev.isSuperEffective);
+        if (targetSprite) {
+          targetSprite.classList.add('gba-anim-damage');
+        }
+
+        // 2. Drenaje progresivo de la barra de HP
+        if (targetHpFill && ev.maxHp > 0) {
+          const targetPct = Math.max(0, Math.min(100, Math.round((ev.newHp / ev.maxHp) * 100)));
+          targetHpFill.style.width = targetPct + '%';
+          targetHpFill.style.background = targetPct > 50 ? '#22c55e' : (targetPct > 20 ? '#eab308' : '#ef4444');
+          if (window.SFX) window.SFX.playHpDrain();
+        }
+
+        if (isPlayerTarget && playerHpNum && ev.maxHp > 0) {
+          playerHpNum.textContent = `${ev.newHp} / ${ev.maxHp}`;
+        }
+
+        await wait(500);
+        if (targetSprite) targetSprite.classList.remove('gba-anim-damage');
+
+        // Mensaje de efectividad
+        if (ev.effectivenessMsg && dialogEl) {
+          dialogEl.textContent = ev.effectivenessMsg;
+          await wait(700);
+        }
+      } 
+      else if (ev.type === 'faint') {
+        const isPlayerTarget = (ev.target === 'p1');
+        const targetSprite = isPlayerTarget ? playerSprite : oppSprite;
+
+        if (dialogEl) dialogEl.textContent = ev.message;
+        if (window.SFX) window.SFX.playFaint();
+
+        if (targetSprite) {
+          targetSprite.classList.add('gba-anim-faint');
+          await wait(850);
+        }
+      } 
+      else if (ev.type === 'switch_in') {
+        const isPlayerTarget = (ev.target === 'p1');
+        const targetSprite = isPlayerTarget ? playerSprite : oppSprite;
+        const targetHpFill = isPlayerTarget ? playerHpFill : oppHpFill;
+
+        if (dialogEl) dialogEl.textContent = ev.message;
+        if (window.SFX) window.SFX.playPokeballOpen();
+
+        if (targetSprite) {
+          targetSprite.classList.remove('gba-anim-faint');
+          targetSprite.style.opacity = '0';
+          // Actualizar imagen con la nueva especie
+          const newUrl = window.GBABattleEngine 
+            ? window.GBABattleEngine.getSpriteUrl(ev.pokeName, isPlayerTarget)
+            : targetSprite.src;
+          targetSprite.src = newUrl;
+          await wait(100);
+          targetSprite.style.opacity = '1';
+        }
+
+        if (targetHpFill && ev.maxHp > 0) {
+          const pct = Math.max(0, Math.min(100, Math.round((ev.currentHp / ev.maxHp) * 100)));
+          targetHpFill.style.width = pct + '%';
+          targetHpFill.style.background = pct > 50 ? '#22c55e' : (pct > 20 ? '#eab308' : '#ef4444');
+        }
+
+        await wait(600);
+      } 
+      else if (ev.type === 'finish') {
+        if (dialogEl) dialogEl.textContent = ev.message;
+        if (window.SFX) window.SFX.playSuccess();
+        await wait(1500);
+      }
+    }
+
+    this._isAnimating = false;
+    this.renderCurrentView();
   }
 
   static escapeHtml(str) {

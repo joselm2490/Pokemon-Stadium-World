@@ -70,6 +70,39 @@ class StadiumAudio {
     this.playTone(220, 'sawtooth', 0.12, 0.04);
     setTimeout(() => this.playTone(180, 'sawtooth', 0.15, 0.04), 100);
   }
+
+  // --- EFECTOS DE SONIDO AUTÉNTICOS GBA DE BATALLA ---
+  playAttackTackle() {
+    this.playTone(180, 'square', 0.08, 0.06);
+    setTimeout(() => this.playTone(260, 'square', 0.1, 0.07), 50);
+  }
+
+  playDamageHit(isSuperEffective = false) {
+    if (isSuperEffective) {
+      this.playTone(120, 'sawtooth', 0.22, 0.12);
+      setTimeout(() => this.playTone(90, 'square', 0.18, 0.1), 60);
+      setTimeout(() => this.playTone(60, 'sawtooth', 0.25, 0.1), 120);
+    } else {
+      this.playTone(160, 'sawtooth', 0.14, 0.08);
+      setTimeout(() => this.playTone(110, 'square', 0.15, 0.07), 40);
+    }
+  }
+
+  playHpDrain() {
+    this.playTone(480, 'sine', 0.04, 0.03);
+  }
+
+  playFaint() {
+    this.playTone(320, 'sawtooth', 0.15, 0.08);
+    setTimeout(() => this.playTone(240, 'sawtooth', 0.18, 0.08), 80);
+    setTimeout(() => this.playTone(160, 'sawtooth', 0.22, 0.08), 160);
+    setTimeout(() => this.playTone(100, 'sawtooth', 0.35, 0.1), 260);
+  }
+
+  playPokeballOpen() {
+    this.playTone(700, 'triangle', 0.06, 0.04);
+    setTimeout(() => this.playTone(950, 'triangle', 0.1, 0.05), 60);
+  }
 }
 
 const SFX = new StadiumAudio();
