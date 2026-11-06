@@ -1,0 +1,18 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <title>Pokémon Stadium World</title>
+  <script>
+    // SPA Fallback: Si Vercel devuelve 404 a una ruta limpia (/admin, /moves, /pokemon, /battle)
+    // Redirigir limpiamente a la URL destino sin #
+    const path = window.location.pathname;
+    const search = window.location.search;
+    sessionStorage.setItem('stadium_spa_redirect', path + search);
+    window.location.replace('/' + search);
+  </script>
+</head>
+<body>
+  <p>Cargando Pokémon Stadium World...</p>
+</body>
+</html>
