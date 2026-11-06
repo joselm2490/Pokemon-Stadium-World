@@ -33,11 +33,16 @@ class GBABattleEngine {
   }
 
   static getSpriteUrl(pokemonName, isBack = false) {
-    if (!pokemonName) return '/assets/gba/pokemon/species_0001/front.png';
-    const key = pokemonName.toLowerCase().trim();
+    if (!pokemonName) return isBack ? '/assets/gba/pokemon/species_0001/back.png' : '/assets/gba/pokemon/species_0001/front.png';
+    const rawKey = pokemonName.toLowerCase().trim();
+    const cleanKey = rawKey.replace(/[^a-z0-9]/g, '');
     let numStr = '0001';
-    if (this.speciesMapping && this.speciesMapping[key]) {
-      numStr = this.speciesMapping[key];
+    if (this.speciesMapping) {
+      if (this.speciesMapping[cleanKey]) {
+        numStr = this.speciesMapping[cleanKey];
+      } else if (this.speciesMapping[rawKey]) {
+        numStr = this.speciesMapping[rawKey];
+      }
     }
     const side = isBack ? 'back.png' : 'front.png';
     return `/assets/gba/pokemon/species_${numStr}/${side}`;

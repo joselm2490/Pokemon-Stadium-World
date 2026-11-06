@@ -2552,7 +2552,9 @@ class BatallaModule {
     const myHpPercent = Math.max(0, Math.min(100, Math.round(((myActivePoke.currentHp || 100) / (myActivePoke.maxHp || 100)) * 100)));
     const oppHpPercent = Math.max(0, Math.min(100, Math.round(((oppActivePoke.currentHp || 100) / (oppActivePoke.maxHp || 100)) * 100)));
 
+    // TU POKÉMON (Player): Sprite de ESPALDA (isBack = true)
     const mySprite = window.GBABattleEngine ? window.GBABattleEngine.getSpriteUrl(myActivePoke.name, true) : '/assets/gba/pokemon/species_0001/back.png';
+    // POKÉMON RIVAL (Opponent): Sprite FRONTAL (isBack = false)
     const oppSprite = window.GBABattleEngine ? window.GBABattleEngine.getSpriteUrl(oppActivePoke.name, false) : '/assets/gba/pokemon/species_0004/front.png';
 
     const moves = myActivePoke.moves || myActivePoke.movimientos || [
