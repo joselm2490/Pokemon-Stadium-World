@@ -17,6 +17,12 @@ class StadiumRouter {
   static currentRoute = null;
 
   static init() {
+    // Si venimos redirigidos desde 404.html por ruta directa (/admin, /moves, /pokemon, /battle)
+    const spaRedirect = sessionStorage.getItem('stadium_spa_redirect');
+    if (spaRedirect) {
+      sessionStorage.removeItem('stadium_spa_redirect');
+      history.replaceState(null, '', spaRedirect);
+    }
     // 1. Eliminar cualquier # de la URL de forma inmediata e irreversible
     if (window.location.hash) {
       let clean = window.location.hash.replace(/^#\/?/, '/');
