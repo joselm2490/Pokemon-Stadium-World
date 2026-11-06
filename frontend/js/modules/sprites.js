@@ -2,7 +2,7 @@
 // MÓDULO: GESTOR DE SPRITES DE ATAQUES Y VISUALES - POKÉMON STADIUM WORLD
 // ====================================================================
 class AttackSpriteManager {
-  static CDN_BASE = 'https://play.pokemonshowdown.com/sprites';
+  static CDN_BASE = '/assets/gba';
 
   // Mapeo oficial de tipos a sus archivos GIF descargados en sprites/tipos/
   static TYPE_FILES = {
@@ -134,7 +134,7 @@ class AttackSpriteManager {
     const badgeUrl = this.getTypeBadgeUrl(typeName);
     const className = (options && options.className) ? options.className : 'filter-type-badge-img';
     const alt = typeName || 'Tipo';
-    const fallbackUrl = `https://play.pokemonshowdown.com/sprites/types/${typeName}.png`;
+    const fallbackUrl = `/assets/gba/battle_interface/type_badges/${typeName.toLowerCase()}.png`;
     const tooltipText = (options && options.tooltip !== undefined)
       ? options.tooltip
       : (this.TYPE_DESCRIPTIONS[typeName] || `Tipo ${typeName}: Determina las ventajas y desventajas elementales de daño.`);

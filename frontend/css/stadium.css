@@ -6176,3 +6176,319 @@ body {
     text-align: center;
   }
 }
+
+/* ==========================================================================
+   VISTA DE BATALLA GBA RED 1VS1 PURA (SIN SHOWDOWN)
+   ========================================================================== */
+.gba-battle-screen {
+  display: flex;
+  flex-direction: column;
+  height: 100vh;
+  width: 100%;
+  background: #020617;
+  color: #f8fafc;
+  font-family: 'Outfit', sans-serif;
+  overflow: hidden;
+  user-select: none;
+}
+
+.gba-battle-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 8px 16px;
+  background: rgba(15, 23, 42, 0.95);
+  border-bottom: 2px solid rgba(56, 189, 248, 0.3);
+  z-index: 20;
+}
+
+.gba-header-brand {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.gba-badge {
+  background: #dc2626;
+  color: #fff;
+  font-weight: 900;
+  padding: 2px 8px;
+  border-radius: 4px;
+  font-size: 0.8rem;
+  letter-spacing: 1px;
+}
+
+.gba-room-code {
+  font-family: 'JetBrains Mono', monospace;
+  font-weight: 700;
+  color: #38bdf8;
+}
+
+.gba-turn-pill {
+  background: rgba(56, 189, 248, 0.15);
+  border: 1px solid #38bdf8;
+  color: #38bdf8;
+  padding: 2px 8px;
+  border-radius: 12px;
+  font-size: 0.75rem;
+  font-weight: 700;
+}
+
+.gba-btn-exit {
+  background: #ef4444;
+  color: #fff;
+  border: none;
+  padding: 6px 14px;
+  border-radius: 6px;
+  font-weight: 700;
+  cursor: pointer;
+  transition: background 0.2s;
+}
+
+.gba-btn-exit:hover {
+  background: #dc2626;
+}
+
+/* Escenario de Batalla GBA */
+.gba-battle-arena-stage {
+  flex: 1;
+  position: relative;
+  overflow: hidden;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.gba-arena-background {
+  position: absolute;
+  top: 0; left: 0; right: 0; bottom: 0;
+  background: url('/assets/gba/battle_backgrounds/building_scene_composite.png') center/cover no-repeat;
+  filter: brightness(0.95);
+}
+
+/* Oponente (Front) */
+.gba-opponent-wrapper {
+  position: absolute;
+  top: 12%;
+  right: 15%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  z-index: 10;
+}
+
+.gba-platform-opponent {
+  width: 220px;
+  height: 60px;
+  background: url('/assets/gba/battle_backgrounds/building_platform.png') center/contain no-repeat;
+  position: absolute;
+  bottom: 0px;
+  z-index: 1;
+}
+
+.gba-sprite-opponent {
+  width: 130px;
+  height: 130px;
+  object-fit: contain;
+  image-rendering: pixelated;
+  z-index: 2;
+  filter: drop-shadow(0 8px 12px rgba(0, 0, 0, 0.6));
+  animation: gbaFloatOpponent 2.5s ease-in-out infinite alternate;
+}
+
+/* Jugador (Back) */
+.gba-player-wrapper {
+  position: absolute;
+  bottom: 8%;
+  left: 12%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  z-index: 10;
+}
+
+.gba-platform-player {
+  width: 280px;
+  height: 70px;
+  background: url('/assets/gba/battle_backgrounds/building_platform.png') center/contain no-repeat;
+  position: absolute;
+  bottom: -15px;
+  z-index: 1;
+}
+
+.gba-sprite-player {
+  width: 170px;
+  height: 170px;
+  object-fit: contain;
+  image-rendering: pixelated;
+  z-index: 2;
+  filter: drop-shadow(0 10px 15px rgba(0, 0, 0, 0.7));
+  animation: gbaFloatPlayer 2.5s ease-in-out infinite alternate;
+}
+
+/* Barras de Salud GBA */
+.gba-healthbox {
+  background: rgba(15, 23, 42, 0.9);
+  border: 2px solid #38bdf8;
+  border-radius: 8px;
+  padding: 8px 12px;
+  min-width: 200px;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.5);
+  backdrop-filter: blur(4px);
+}
+
+.gba-healthbox-opponent {
+  position: absolute;
+  top: -65px;
+  left: -90px;
+}
+
+.gba-healthbox-player {
+  position: absolute;
+  top: -70px;
+  right: -90px;
+}
+
+.gba-hb-name-row {
+  display: flex;
+  justify-content: space-between;
+  font-weight: 800;
+  font-size: 0.95rem;
+  margin-bottom: 4px;
+}
+
+.gba-poke-level {
+  color: #facc15;
+  font-family: 'JetBrains Mono', monospace;
+}
+
+.gba-hp-bar-track {
+  width: 100%;
+  height: 8px;
+  background: #334155;
+  border-radius: 4px;
+  overflow: hidden;
+  border: 1px solid rgba(255, 255, 255, 0.2);
+}
+
+.gba-hp-bar-fill {
+  height: 100%;
+  transition: width 0.4s ease-out, background 0.3s;
+}
+
+.gba-hp-numbers {
+  text-align: right;
+  font-size: 0.75rem;
+  font-family: 'JetBrains Mono', monospace;
+  color: #94a3b8;
+  margin-top: 3px;
+}
+
+/* Panel Inferior de Acciones GBA */
+.gba-battle-controls {
+  height: 190px;
+  background: #0f172a;
+  border-top: 3px solid #38bdf8;
+  display: flex;
+  padding: 10px 16px;
+  gap: 16px;
+  z-index: 30;
+}
+
+.gba-dialog-log-box {
+  flex: 1;
+  background: #1e293b;
+  border: 2px solid #475569;
+  border-radius: 8px;
+  padding: 12px 16px;
+  display: flex;
+  align-items: center;
+  font-size: 1.1rem;
+  font-weight: 600;
+  color: #f8fafc;
+  box-shadow: inset 0 2px 6px rgba(0, 0, 0, 0.4);
+}
+
+.gba-action-console {
+  flex: 1.5;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.gba-moves-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 8px;
+  height: 110px;
+}
+
+.gba-move-btn {
+  background: #1e293b;
+  border: 2px solid #3b82f6;
+  border-radius: 8px;
+  color: #fff;
+  padding: 8px;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  cursor: pointer;
+  transition: transform 0.1s, border-color 0.2s, background 0.2s;
+  text-align: left;
+}
+
+.gba-move-btn:hover {
+  transform: translateY(-2px);
+  background: #334155;
+  border-color: #60a5fa;
+}
+
+.gba-move-name {
+  font-weight: 800;
+  font-size: 0.95rem;
+}
+
+.gba-move-info {
+  display: flex;
+  justify-content: space-between;
+  font-size: 0.75rem;
+  color: #94a3b8;
+  font-weight: 600;
+}
+
+.gba-bench-team-grid {
+  display: flex;
+  gap: 8px;
+  overflow-x: auto;
+}
+
+.gba-bench-poke-btn {
+  background: #1e293b;
+  border: 1px solid #475569;
+  border-radius: 6px;
+  padding: 4px 10px;
+  color: #e2e8f0;
+  font-size: 0.75rem;
+  cursor: pointer;
+  display: flex;
+  gap: 6px;
+}
+
+.gba-bench-poke-btn:hover {
+  border-color: #38bdf8;
+}
+
+.gba-bench-poke-btn.active-bench {
+  border-color: #22c55e;
+  background: rgba(34, 197, 94, 0.15);
+}
+
+@keyframes gbaFloatPlayer {
+  0% { transform: translateY(0); }
+  100% { transform: translateY(-4px); }
+}
+
+@keyframes gbaFloatOpponent {
+  0% { transform: translateY(0); }
+  100% { transform: translateY(4px); }
+}

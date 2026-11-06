@@ -1,0 +1,6689 @@
+[
+  {
+    "id": 0,
+    "name": "",
+    "trainer_class": 0,
+    "sprite_index": 0,
+    "sprite_folder": "graphics/trainers/trainer_000",
+    "party_size": 0,
+    "ai_flags": "0x0"
+  },
+  {
+    "id": 1,
+    "name": "           ",
+    "trainer_class": 0,
+    "sprite_index": 0,
+    "sprite_folder": "graphics/trainers/trainer_000",
+    "party_size": 160,
+    "ai_flags": "0x1"
+  },
+  {
+    "id": 2,
+    "name": "Andrew",
+    "trainer_class": 9,
+    "sprite_index": 110,
+    "sprite_folder": "graphics/trainers/trainer_110",
+    "party_size": 168,
+    "ai_flags": "0x7"
+  },
+  {
+    "id": 3,
+    "name": "Red",
+    "trainer_class": 13,
+    "sprite_index": 14,
+    "sprite_folder": "graphics/trainers/trainer_014",
+    "party_size": 176,
+    "ai_flags": "0x7"
+  },
+  {
+    "id": 4,
+    "name": "Anne",
+    "trainer_class": 49,
+    "sprite_index": 84,
+    "sprite_folder": "graphics/trainers/trainer_084",
+    "party_size": 184,
+    "ai_flags": "0x7"
+  },
+  {
+    "id": 5,
+    "name": "Komodo",
+    "trainer_class": 22,
+    "sprite_index": 123,
+    "sprite_folder": "graphics/trainers/trainer_123",
+    "party_size": 192,
+    "ai_flags": "0x1"
+  },
+  {
+    "id": 6,
+    "name": "[PK][MN]Maniac",
+    "trainer_class": 20,
+    "sprite_index": 54,
+    "sprite_folder": "graphics/trainers/trainer_054",
+    "party_size": 200,
+    "ai_flags": "0x1"
+  },
+  {
+    "id": 7,
+    "name": "Teacher",
+    "trainer_class": 20,
+    "sprite_index": 33,
+    "sprite_folder": "graphics/trainers/trainer_033",
+    "party_size": 208,
+    "ai_flags": "0x1"
+  },
+  {
+    "id": 8,
+    "name": "Bugsy",
+    "trainer_class": 4,
+    "sprite_index": 7,
+    "sprite_folder": "graphics/trainers/trainer_007",
+    "party_size": 216,
+    "ai_flags": "0x1"
+  },
+  {
+    "id": 9,
+    "name": "Coach",
+    "trainer_class": 20,
+    "sprite_index": 123,
+    "sprite_folder": "graphics/trainers/trainer_123",
+    "party_size": 104,
+    "ai_flags": "0x7"
+  },
+  {
+    "id": 10,
+    "name": "Coach",
+    "trainer_class": 20,
+    "sprite_index": 123,
+    "sprite_folder": "graphics/trainers/trainer_123",
+    "party_size": 168,
+    "ai_flags": "0x7"
+  },
+  {
+    "id": 11,
+    "name": "Coach",
+    "trainer_class": 20,
+    "sprite_index": 123,
+    "sprite_folder": "graphics/trainers/trainer_123",
+    "party_size": 72,
+    "ai_flags": "0x1"
+  },
+  {
+    "id": 12,
+    "name": "Coach",
+    "trainer_class": 20,
+    "sprite_index": 123,
+    "sprite_folder": "graphics/trainers/trainer_123",
+    "party_size": 168,
+    "ai_flags": "0x1"
+  },
+  {
+    "id": 13,
+    "name": "Coach",
+    "trainer_class": 20,
+    "sprite_index": 123,
+    "sprite_folder": "graphics/trainers/trainer_123",
+    "party_size": 8,
+    "ai_flags": "0x1"
+  },
+  {
+    "id": 14,
+    "name": "Gambler",
+    "trainer_class": 5,
+    "sprite_index": 97,
+    "sprite_folder": "graphics/trainers/trainer_097",
+    "party_size": 8,
+    "ai_flags": "0x1"
+  },
+  {
+    "id": 15,
+    "name": "Haley",
+    "trainer_class": 1,
+    "sprite_index": 111,
+    "sprite_folder": "graphics/trainers/trainer_111",
+    "party_size": 88,
+    "ai_flags": "0x7"
+  },
+  {
+    "id": 16,
+    "name": "Sam",
+    "trainer_class": 1,
+    "sprite_index": 98,
+    "sprite_folder": "graphics/trainers/trainer_098",
+    "party_size": 232,
+    "ai_flags": "0x7"
+  },
+  {
+    "id": 17,
+    "name": "Shelly",
+    "trainer_class": 1,
+    "sprite_index": 98,
+    "sprite_folder": "graphics/trainers/trainer_098",
+    "party_size": 24,
+    "ai_flags": "0x7"
+  },
+  {
+    "id": 18,
+    "name": "Cole",
+    "trainer_class": 1,
+    "sprite_index": 110,
+    "sprite_folder": "graphics/trainers/trainer_110",
+    "party_size": 56,
+    "ai_flags": "0x7"
+  },
+  {
+    "id": 19,
+    "name": "Ketchup",
+    "trainer_class": 1,
+    "sprite_index": 105,
+    "sprite_folder": "graphics/trainers/trainer_105",
+    "party_size": 192,
+    "ai_flags": "0x7"
+  },
+  {
+    "id": 20,
+    "name": "Ketchup",
+    "trainer_class": 1,
+    "sprite_index": 105,
+    "sprite_folder": "graphics/trainers/trainer_105",
+    "party_size": 168,
+    "ai_flags": "0x7"
+  },
+  {
+    "id": 21,
+    "name": "Nelle",
+    "trainer_class": 9,
+    "sprite_index": 111,
+    "sprite_folder": "graphics/trainers/trainer_111",
+    "party_size": 204,
+    "ai_flags": "0x7"
+  },
+  {
+    "id": 22,
+    "name": "Thug",
+    "trainer_class": 20,
+    "sprite_index": 21,
+    "sprite_folder": "graphics/trainers/trainer_021",
+    "party_size": 236,
+    "ai_flags": "0x7"
+  },
+  {
+    "id": 23,
+    "name": "Thug",
+    "trainer_class": 3,
+    "sprite_index": 22,
+    "sprite_folder": "graphics/trainers/trainer_022",
+    "party_size": 12,
+    "ai_flags": "0x7"
+  },
+  {
+    "id": 24,
+    "name": "Creator",
+    "trainer_class": 5,
+    "sprite_index": 45,
+    "sprite_folder": "graphics/trainers/trainer_045",
+    "party_size": 88,
+    "ai_flags": "0x7"
+  },
+  {
+    "id": 25,
+    "name": "Kid",
+    "trainer_class": 5,
+    "sprite_index": 29,
+    "sprite_folder": "graphics/trainers/trainer_029",
+    "party_size": 120,
+    "ai_flags": "0x7"
+  },
+  {
+    "id": 26,
+    "name": "Brendan",
+    "trainer_class": 1,
+    "sprite_index": 56,
+    "sprite_folder": "graphics/trainers/trainer_056",
+    "party_size": 184,
+    "ai_flags": "0x7"
+  },
+  {
+    "id": 27,
+    "name": "Coach",
+    "trainer_class": 20,
+    "sprite_index": 123,
+    "sprite_folder": "graphics/trainers/trainer_123",
+    "party_size": 76,
+    "ai_flags": "0x7"
+  },
+  {
+    "id": 28,
+    "name": "Morty",
+    "trainer_class": 4,
+    "sprite_index": 9,
+    "sprite_folder": "graphics/trainers/trainer_009",
+    "party_size": 172,
+    "ai_flags": "0x7"
+  },
+  {
+    "id": 29,
+    "name": "Jasmine",
+    "trainer_class": 4,
+    "sprite_index": 11,
+    "sprite_folder": "graphics/trainers/trainer_011",
+    "party_size": 108,
+    "ai_flags": "0x7"
+  },
+  {
+    "id": 30,
+    "name": "Aide",
+    "trainer_class": 97,
+    "sprite_index": 89,
+    "sprite_folder": "graphics/trainers/trainer_089",
+    "party_size": 136,
+    "ai_flags": "0x7"
+  },
+  {
+    "id": 31,
+    "name": "BrunoRe",
+    "trainer_class": 25,
+    "sprite_index": 30,
+    "sprite_folder": "graphics/trainers/trainer_030",
+    "party_size": 144,
+    "ai_flags": "0x1"
+  },
+  {
+    "id": 32,
+    "name": "Misty",
+    "trainer_class": 8,
+    "sprite_index": 117,
+    "sprite_folder": "graphics/trainers/trainer_117",
+    "party_size": 152,
+    "ai_flags": "0x7"
+  },
+  {
+    "id": 33,
+    "name": "AgathaRe",
+    "trainer_class": 27,
+    "sprite_index": 32,
+    "sprite_folder": "graphics/trainers/trainer_032",
+    "party_size": 160,
+    "ai_flags": "0x1"
+  },
+  {
+    "id": 34,
+    "name": "AgathaRe",
+    "trainer_class": 27,
+    "sprite_index": 33,
+    "sprite_folder": "graphics/trainers/trainer_033",
+    "party_size": 168,
+    "ai_flags": "0x1"
+  },
+  {
+    "id": 35,
+    "name": "Gian",
+    "trainer_class": 5,
+    "sprite_index": 29,
+    "sprite_folder": "graphics/trainers/trainer_029",
+    "party_size": 176,
+    "ai_flags": "0x7"
+  },
+  {
+    "id": 36,
+    "name": "LanceRe",
+    "trainer_class": 10,
+    "sprite_index": 35,
+    "sprite_folder": "graphics/trainers/trainer_035",
+    "party_size": 184,
+    "ai_flags": "0x1"
+  },
+  {
+    "id": 37,
+    "name": "LanceRe",
+    "trainer_class": 10,
+    "sprite_index": 36,
+    "sprite_folder": "graphics/trainers/trainer_036",
+    "party_size": 192,
+    "ai_flags": "0x1"
+  },
+  {
+    "id": 38,
+    "name": "Clair",
+    "trainer_class": 8,
+    "sprite_index": 13,
+    "sprite_folder": "graphics/trainers/trainer_013",
+    "party_size": 200,
+    "ai_flags": "0x7"
+  },
+  {
+    "id": 39,
+    "name": "Lance",
+    "trainer_class": 7,
+    "sprite_index": 115,
+    "sprite_folder": "graphics/trainers/trainer_115",
+    "party_size": 120,
+    "ai_flags": "0x7"
+  },
+  {
+    "id": 40,
+    "name": "Jojo Fan",
+    "trainer_class": 5,
+    "sprite_index": 17,
+    "sprite_folder": "graphics/trainers/trainer_017",
+    "party_size": 168,
+    "ai_flags": "0x7"
+  },
+  {
+    "id": 41,
+    "name": "Ariana",
+    "trainer_class": 2,
+    "sprite_index": 6,
+    "sprite_folder": "graphics/trainers/trainer_006",
+    "party_size": 8,
+    "ai_flags": "0x7"
+  },
+  {
+    "id": 42,
+    "name": "Archer",
+    "trainer_class": 2,
+    "sprite_index": 5,
+    "sprite_folder": "graphics/trainers/trainer_005",
+    "party_size": 104,
+    "ai_flags": "0x7"
+  },
+  {
+    "id": 43,
+    "name": "Falkner",
+    "trainer_class": 4,
+    "sprite_index": 3,
+    "sprite_folder": "graphics/trainers/trainer_003",
+    "party_size": 140,
+    "ai_flags": "0x7"
+  },
+  {
+    "id": 44,
+    "name": "Brendan",
+    "trainer_class": 1,
+    "sprite_index": 56,
+    "sprite_folder": "graphics/trainers/trainer_056",
+    "party_size": 20,
+    "ai_flags": "0x7"
+  },
+  {
+    "id": 45,
+    "name": "Falkner",
+    "trainer_class": 4,
+    "sprite_index": 3,
+    "sprite_folder": "graphics/trainers/trainer_003",
+    "party_size": 104,
+    "ai_flags": "0x7"
+  },
+  {
+    "id": 46,
+    "name": "Archer",
+    "trainer_class": 2,
+    "sprite_index": 5,
+    "sprite_folder": "graphics/trainers/trainer_005",
+    "party_size": 200,
+    "ai_flags": "0x7"
+  },
+  {
+    "id": 47,
+    "name": "Bugsy",
+    "trainer_class": 4,
+    "sprite_index": 7,
+    "sprite_folder": "graphics/trainers/trainer_007",
+    "party_size": 216,
+    "ai_flags": "0x7"
+  },
+  {
+    "id": 48,
+    "name": "Misty",
+    "trainer_class": 8,
+    "sprite_index": 117,
+    "sprite_folder": "graphics/trainers/trainer_117",
+    "party_size": 24,
+    "ai_flags": "0x7"
+  },
+  {
+    "id": 49,
+    "name": "Whitney",
+    "trainer_class": 4,
+    "sprite_index": 8,
+    "sprite_folder": "graphics/trainers/trainer_008",
+    "party_size": 236,
+    "ai_flags": "0x7"
+  },
+  {
+    "id": 50,
+    "name": "Brendan",
+    "trainer_class": 1,
+    "sprite_index": 56,
+    "sprite_folder": "graphics/trainers/trainer_056",
+    "party_size": 152,
+    "ai_flags": "0x7"
+  },
+  {
+    "id": 51,
+    "name": "Lt. Surge",
+    "trainer_class": 8,
+    "sprite_index": 118,
+    "sprite_folder": "graphics/trainers/trainer_118",
+    "party_size": 88,
+    "ai_flags": "0x7"
+  },
+  {
+    "id": 52,
+    "name": "Morty",
+    "trainer_class": 4,
+    "sprite_index": 9,
+    "sprite_folder": "graphics/trainers/trainer_009",
+    "party_size": 232,
+    "ai_flags": "0x7"
+  },
+  {
+    "id": 53,
+    "name": "Archer",
+    "trainer_class": 2,
+    "sprite_index": 5,
+    "sprite_folder": "graphics/trainers/trainer_005",
+    "party_size": 200,
+    "ai_flags": "0x7"
+  },
+  {
+    "id": 54,
+    "name": "Ariana",
+    "trainer_class": 2,
+    "sprite_index": 6,
+    "sprite_folder": "graphics/trainers/trainer_006",
+    "party_size": 248,
+    "ai_flags": "0x7"
+  },
+  {
+    "id": 55,
+    "name": "Brendan",
+    "trainer_class": 1,
+    "sprite_index": 56,
+    "sprite_folder": "graphics/trainers/trainer_056",
+    "party_size": 40,
+    "ai_flags": "0x7"
+  },
+  {
+    "id": 56,
+    "name": "Brock",
+    "trainer_class": 8,
+    "sprite_index": 116,
+    "sprite_folder": "graphics/trainers/trainer_116",
+    "party_size": 184,
+    "ai_flags": "0x7"
+  },
+  {
+    "id": 57,
+    "name": "Brendan",
+    "trainer_class": 1,
+    "sprite_index": 56,
+    "sprite_folder": "graphics/trainers/trainer_056",
+    "party_size": 136,
+    "ai_flags": "0x7"
+  },
+  {
+    "id": 58,
+    "name": "Pryce",
+    "trainer_class": 4,
+    "sprite_index": 12,
+    "sprite_folder": "graphics/trainers/trainer_012",
+    "party_size": 72,
+    "ai_flags": "0x7"
+  },
+  {
+    "id": 59,
+    "name": "Pryce",
+    "trainer_class": 4,
+    "sprite_index": 12,
+    "sprite_folder": "graphics/trainers/trainer_012",
+    "party_size": 168,
+    "ai_flags": "0x7"
+  },
+  {
+    "id": 60,
+    "name": "Pryce",
+    "trainer_class": 4,
+    "sprite_index": 12,
+    "sprite_folder": "graphics/trainers/trainer_012",
+    "party_size": 8,
+    "ai_flags": "0x7"
+  },
+  {
+    "id": 61,
+    "name": "May",
+    "trainer_class": 1,
+    "sprite_index": 57,
+    "sprite_folder": "graphics/trainers/trainer_057",
+    "party_size": 104,
+    "ai_flags": "0x7"
+  },
+  {
+    "id": 62,
+    "name": "Jasmine",
+    "trainer_class": 4,
+    "sprite_index": 11,
+    "sprite_folder": "graphics/trainers/trainer_011",
+    "party_size": 200,
+    "ai_flags": "0x7"
+  },
+  {
+    "id": 63,
+    "name": "Jasmine",
+    "trainer_class": 4,
+    "sprite_index": 11,
+    "sprite_folder": "graphics/trainers/trainer_011",
+    "party_size": 40,
+    "ai_flags": "0x7"
+  },
+  {
+    "id": 64,
+    "name": "Jasmine",
+    "trainer_class": 4,
+    "sprite_index": 11,
+    "sprite_folder": "graphics/trainers/trainer_011",
+    "party_size": 136,
+    "ai_flags": "0x7"
+  },
+  {
+    "id": 65,
+    "name": "Erika",
+    "trainer_class": 8,
+    "sprite_index": 119,
+    "sprite_folder": "graphics/trainers/trainer_119",
+    "party_size": 216,
+    "ai_flags": "0x7"
+  },
+  {
+    "id": 66,
+    "name": "Jojo Fan",
+    "trainer_class": 5,
+    "sprite_index": 17,
+    "sprite_folder": "graphics/trainers/trainer_017",
+    "party_size": 24,
+    "ai_flags": "0x7"
+  },
+  {
+    "id": 67,
+    "name": "Archer",
+    "trainer_class": 2,
+    "sprite_index": 5,
+    "sprite_folder": "graphics/trainers/trainer_005",
+    "party_size": 232,
+    "ai_flags": "0x7"
+  },
+  {
+    "id": 68,
+    "name": "Ariana",
+    "trainer_class": 2,
+    "sprite_index": 6,
+    "sprite_folder": "graphics/trainers/trainer_006",
+    "party_size": 40,
+    "ai_flags": "0x7"
+  },
+  {
+    "id": 69,
+    "name": "Giovanni",
+    "trainer_class": 3,
+    "sprite_index": 108,
+    "sprite_folder": "graphics/trainers/trainer_108",
+    "party_size": 104,
+    "ai_flags": "0x7"
+  },
+  {
+    "id": 70,
+    "name": "Grunt",
+    "trainer_class": 85,
+    "sprite_index": 109,
+    "sprite_folder": "graphics/trainers/trainer_109",
+    "party_size": 200,
+    "ai_flags": "0x1"
+  },
+  {
+    "id": 71,
+    "name": "Grunt",
+    "trainer_class": 85,
+    "sprite_index": 109,
+    "sprite_folder": "graphics/trainers/trainer_109",
+    "party_size": 36,
+    "ai_flags": "0x1"
+  },
+  {
+    "id": 72,
+    "name": "Grunt",
+    "trainer_class": 85,
+    "sprite_index": 109,
+    "sprite_folder": "graphics/trainers/trainer_109",
+    "party_size": 224,
+    "ai_flags": "0x1"
+  },
+  {
+    "id": 73,
+    "name": "Grunt",
+    "trainer_class": 85,
+    "sprite_index": 109,
+    "sprite_folder": "graphics/trainers/trainer_109",
+    "party_size": 44,
+    "ai_flags": "0x1"
+  },
+  {
+    "id": 74,
+    "name": "Clair",
+    "trainer_class": 8,
+    "sprite_index": 13,
+    "sprite_folder": "graphics/trainers/trainer_013",
+    "party_size": 248,
+    "ai_flags": "0x7"
+  },
+  {
+    "id": 75,
+    "name": "Bugsy",
+    "trainer_class": 4,
+    "sprite_index": 7,
+    "sprite_folder": "graphics/trainers/trainer_007",
+    "party_size": 236,
+    "ai_flags": "0x7"
+  },
+  {
+    "id": 76,
+    "name": "Whitney",
+    "trainer_class": 4,
+    "sprite_index": 8,
+    "sprite_folder": "graphics/trainers/trainer_008",
+    "party_size": 12,
+    "ai_flags": "0x7"
+  },
+  {
+    "id": 77,
+    "name": "Lorelei",
+    "trainer_class": 87,
+    "sprite_index": 112,
+    "sprite_folder": "graphics/trainers/trainer_112",
+    "party_size": 24,
+    "ai_flags": "0x7"
+  },
+  {
+    "id": 78,
+    "name": "Lorelei",
+    "trainer_class": 87,
+    "sprite_index": 112,
+    "sprite_folder": "graphics/trainers/trainer_112",
+    "party_size": 120,
+    "ai_flags": "0x7"
+  },
+  {
+    "id": 79,
+    "name": "Pryce",
+    "trainer_class": 4,
+    "sprite_index": 12,
+    "sprite_folder": "graphics/trainers/trainer_012",
+    "party_size": 24,
+    "ai_flags": "0x7"
+  },
+  {
+    "id": 80,
+    "name": "Bruno",
+    "trainer_class": 87,
+    "sprite_index": 113,
+    "sprite_folder": "graphics/trainers/trainer_113",
+    "party_size": 216,
+    "ai_flags": "0x7"
+  },
+  {
+    "id": 81,
+    "name": "Bruno",
+    "trainer_class": 87,
+    "sprite_index": 113,
+    "sprite_folder": "graphics/trainers/trainer_113",
+    "party_size": 56,
+    "ai_flags": "0x7"
+  },
+  {
+    "id": 82,
+    "name": "Samantha",
+    "trainer_class": 9,
+    "sprite_index": 111,
+    "sprite_folder": "graphics/trainers/trainer_111",
+    "party_size": 48,
+    "ai_flags": "0x7"
+  },
+  {
+    "id": 83,
+    "name": "Agatha",
+    "trainer_class": 87,
+    "sprite_index": 114,
+    "sprite_folder": "graphics/trainers/trainer_114",
+    "party_size": 152,
+    "ai_flags": "0x7"
+  },
+  {
+    "id": 84,
+    "name": "Agatha",
+    "trainer_class": 87,
+    "sprite_index": 114,
+    "sprite_folder": "graphics/trainers/trainer_114",
+    "party_size": 248,
+    "ai_flags": "0x7"
+  },
+  {
+    "id": 85,
+    "name": "Nick",
+    "trainer_class": 9,
+    "sprite_index": 110,
+    "sprite_folder": "graphics/trainers/trainer_110",
+    "party_size": 72,
+    "ai_flags": "0x7"
+  },
+  {
+    "id": 86,
+    "name": "Lance",
+    "trainer_class": 10,
+    "sprite_index": 115,
+    "sprite_folder": "graphics/trainers/trainer_115",
+    "party_size": 88,
+    "ai_flags": "0x7"
+  },
+  {
+    "id": 87,
+    "name": "Lance",
+    "trainer_class": 10,
+    "sprite_index": 115,
+    "sprite_folder": "graphics/trainers/trainer_115",
+    "party_size": 184,
+    "ai_flags": "0x7"
+  },
+  {
+    "id": 88,
+    "name": "Barry",
+    "trainer_class": 9,
+    "sprite_index": 110,
+    "sprite_folder": "graphics/trainers/trainer_110",
+    "party_size": 96,
+    "ai_flags": "0x7"
+  },
+  {
+    "id": 89,
+    "name": "Ben",
+    "trainer_class": 57,
+    "sprite_index": 82,
+    "sprite_folder": "graphics/trainers/trainer_082",
+    "party_size": 104,
+    "ai_flags": "0x1"
+  },
+  {
+    "id": 90,
+    "name": "Calvin",
+    "trainer_class": 57,
+    "sprite_index": 82,
+    "sprite_folder": "graphics/trainers/trainer_082",
+    "party_size": 120,
+    "ai_flags": "0x1"
+  },
+  {
+    "id": 91,
+    "name": "Josh",
+    "trainer_class": 57,
+    "sprite_index": 82,
+    "sprite_folder": "graphics/trainers/trainer_082",
+    "party_size": 128,
+    "ai_flags": "0x1"
+  },
+  {
+    "id": 92,
+    "name": "Timmy",
+    "trainer_class": 57,
+    "sprite_index": 82,
+    "sprite_folder": "graphics/trainers/trainer_082",
+    "party_size": 152,
+    "ai_flags": "0x1"
+  },
+  {
+    "id": 93,
+    "name": "Joey",
+    "trainer_class": 57,
+    "sprite_index": 82,
+    "sprite_folder": "graphics/trainers/trainer_082",
+    "party_size": 168,
+    "ai_flags": "0x1"
+  },
+  {
+    "id": 94,
+    "name": "Dan",
+    "trainer_class": 57,
+    "sprite_index": 82,
+    "sprite_folder": "graphics/trainers/trainer_082",
+    "party_size": 184,
+    "ai_flags": "0x1"
+  },
+  {
+    "id": 95,
+    "name": "Chad",
+    "trainer_class": 57,
+    "sprite_index": 82,
+    "sprite_folder": "graphics/trainers/trainer_082",
+    "party_size": 192,
+    "ai_flags": "0x1"
+  },
+  {
+    "id": 96,
+    "name": "Tyler",
+    "trainer_class": 57,
+    "sprite_index": 82,
+    "sprite_folder": "graphics/trainers/trainer_082",
+    "party_size": 208,
+    "ai_flags": "0x1"
+  },
+  {
+    "id": 97,
+    "name": "Eddie",
+    "trainer_class": 57,
+    "sprite_index": 82,
+    "sprite_folder": "graphics/trainers/trainer_082",
+    "party_size": 216,
+    "ai_flags": "0x1"
+  },
+  {
+    "id": 98,
+    "name": "Dillon",
+    "trainer_class": 57,
+    "sprite_index": 82,
+    "sprite_folder": "graphics/trainers/trainer_082",
+    "party_size": 224,
+    "ai_flags": "0x1"
+  },
+  {
+    "id": 99,
+    "name": "Yasu",
+    "trainer_class": 57,
+    "sprite_index": 82,
+    "sprite_folder": "graphics/trainers/trainer_082",
+    "party_size": 240,
+    "ai_flags": "0x1"
+  },
+  {
+    "id": 100,
+    "name": "Dave",
+    "trainer_class": 57,
+    "sprite_index": 82,
+    "sprite_folder": "graphics/trainers/trainer_082",
+    "party_size": 8,
+    "ai_flags": "0x1"
+  },
+  {
+    "id": 101,
+    "name": "Ben",
+    "trainer_class": 57,
+    "sprite_index": 82,
+    "sprite_folder": "graphics/trainers/trainer_082",
+    "party_size": 24,
+    "ai_flags": "0x1"
+  },
+  {
+    "id": 102,
+    "name": "Rick",
+    "trainer_class": 58,
+    "sprite_index": 83,
+    "sprite_folder": "graphics/trainers/trainer_083",
+    "party_size": 40,
+    "ai_flags": "0x1"
+  },
+  {
+    "id": 103,
+    "name": "Doug",
+    "trainer_class": 58,
+    "sprite_index": 83,
+    "sprite_folder": "graphics/trainers/trainer_083",
+    "party_size": 56,
+    "ai_flags": "0x1"
+  },
+  {
+    "id": 104,
+    "name": "Sammy",
+    "trainer_class": 58,
+    "sprite_index": 83,
+    "sprite_folder": "graphics/trainers/trainer_083",
+    "party_size": 80,
+    "ai_flags": "0x7"
+  },
+  {
+    "id": 105,
+    "name": "Colton",
+    "trainer_class": 58,
+    "sprite_index": 83,
+    "sprite_folder": "graphics/trainers/trainer_083",
+    "party_size": 88,
+    "ai_flags": "0x1"
+  },
+  {
+    "id": 106,
+    "name": "Greg",
+    "trainer_class": 58,
+    "sprite_index": 83,
+    "sprite_folder": "graphics/trainers/trainer_083",
+    "party_size": 112,
+    "ai_flags": "0x1"
+  },
+  {
+    "id": 107,
+    "name": "James",
+    "trainer_class": 58,
+    "sprite_index": 83,
+    "sprite_folder": "graphics/trainers/trainer_083",
+    "party_size": 144,
+    "ai_flags": "0x1"
+  },
+  {
+    "id": 108,
+    "name": "Kent",
+    "trainer_class": 58,
+    "sprite_index": 83,
+    "sprite_folder": "graphics/trainers/trainer_083",
+    "party_size": 160,
+    "ai_flags": "0x1"
+  },
+  {
+    "id": 109,
+    "name": "Robby",
+    "trainer_class": 58,
+    "sprite_index": 83,
+    "sprite_folder": "graphics/trainers/trainer_083",
+    "party_size": 176,
+    "ai_flags": "0x1"
+  },
+  {
+    "id": 110,
+    "name": "Cale",
+    "trainer_class": 58,
+    "sprite_index": 83,
+    "sprite_folder": "graphics/trainers/trainer_083",
+    "party_size": 200,
+    "ai_flags": "0x1"
+  },
+  {
+    "id": 111,
+    "name": "Keigo",
+    "trainer_class": 58,
+    "sprite_index": 83,
+    "sprite_folder": "graphics/trainers/trainer_083",
+    "party_size": 232,
+    "ai_flags": "0x1"
+  },
+  {
+    "id": 112,
+    "name": "Elijah",
+    "trainer_class": 58,
+    "sprite_index": 83,
+    "sprite_folder": "graphics/trainers/trainer_083",
+    "party_size": 0,
+    "ai_flags": "0x1"
+  },
+  {
+    "id": 113,
+    "name": "Symes",
+    "trainer_class": 9,
+    "sprite_index": 110,
+    "sprite_folder": "graphics/trainers/trainer_110",
+    "party_size": 8,
+    "ai_flags": "0x1"
+  },
+  {
+    "id": 114,
+    "name": "Brent",
+    "trainer_class": 58,
+    "sprite_index": 83,
+    "sprite_folder": "graphics/trainers/trainer_083",
+    "party_size": 32,
+    "ai_flags": "0x1"
+  },
+  {
+    "id": 115,
+    "name": "Conner",
+    "trainer_class": 58,
+    "sprite_index": 83,
+    "sprite_folder": "graphics/trainers/trainer_083",
+    "party_size": 48,
+    "ai_flags": "0x1"
+  },
+  {
+    "id": 116,
+    "name": "Janice",
+    "trainer_class": 59,
+    "sprite_index": 84,
+    "sprite_folder": "graphics/trainers/trainer_084",
+    "party_size": 72,
+    "ai_flags": "0x1"
+  },
+  {
+    "id": 117,
+    "name": "Sally",
+    "trainer_class": 59,
+    "sprite_index": 84,
+    "sprite_folder": "graphics/trainers/trainer_084",
+    "party_size": 88,
+    "ai_flags": "0x7"
+  },
+  {
+    "id": 118,
+    "name": "Robin",
+    "trainer_class": 59,
+    "sprite_index": 84,
+    "sprite_folder": "graphics/trainers/trainer_084",
+    "party_size": 104,
+    "ai_flags": "0x1"
+  },
+  {
+    "id": 119,
+    "name": "Crissy",
+    "trainer_class": 59,
+    "sprite_index": 84,
+    "sprite_folder": "graphics/trainers/trainer_084",
+    "party_size": 112,
+    "ai_flags": "0x1"
+  },
+  {
+    "id": 120,
+    "name": "Miriam",
+    "trainer_class": 59,
+    "sprite_index": 84,
+    "sprite_folder": "graphics/trainers/trainer_084",
+    "party_size": 136,
+    "ai_flags": "0x1"
+  },
+  {
+    "id": 121,
+    "name": "Iris",
+    "trainer_class": 59,
+    "sprite_index": 84,
+    "sprite_folder": "graphics/trainers/trainer_084",
+    "party_size": 152,
+    "ai_flags": "0x1"
+  },
+  {
+    "id": 122,
+    "name": "Reli",
+    "trainer_class": 59,
+    "sprite_index": 84,
+    "sprite_folder": "graphics/trainers/trainer_084",
+    "party_size": 160,
+    "ai_flags": "0x1"
+  },
+  {
+    "id": 123,
+    "name": "Ali",
+    "trainer_class": 59,
+    "sprite_index": 84,
+    "sprite_folder": "graphics/trainers/trainer_084",
+    "party_size": 176,
+    "ai_flags": "0x1"
+  },
+  {
+    "id": 124,
+    "name": "Runan",
+    "trainer_class": 9,
+    "sprite_index": 110,
+    "sprite_folder": "graphics/trainers/trainer_110",
+    "party_size": 200,
+    "ai_flags": "0x7"
+  },
+  {
+    "id": 125,
+    "name": "Haley",
+    "trainer_class": 59,
+    "sprite_index": 84,
+    "sprite_folder": "graphics/trainers/trainer_084",
+    "party_size": 216,
+    "ai_flags": "0x1"
+  },
+  {
+    "id": 126,
+    "name": "Ann",
+    "trainer_class": 59,
+    "sprite_index": 84,
+    "sprite_folder": "graphics/trainers/trainer_084",
+    "party_size": 240,
+    "ai_flags": "0x1"
+  },
+  {
+    "id": 127,
+    "name": "Dawn",
+    "trainer_class": 59,
+    "sprite_index": 84,
+    "sprite_folder": "graphics/trainers/trainer_084",
+    "party_size": 0,
+    "ai_flags": "0x1"
+  },
+  {
+    "id": 128,
+    "name": "Paige",
+    "trainer_class": 59,
+    "sprite_index": 84,
+    "sprite_folder": "graphics/trainers/trainer_084",
+    "party_size": 16,
+    "ai_flags": "0x1"
+  },
+  {
+    "id": 129,
+    "name": "Andrea",
+    "trainer_class": 59,
+    "sprite_index": 84,
+    "sprite_folder": "graphics/trainers/trainer_084",
+    "party_size": 32,
+    "ai_flags": "0x1"
+  },
+  {
+    "id": 130,
+    "name": "Megan",
+    "trainer_class": 59,
+    "sprite_index": 84,
+    "sprite_folder": "graphics/trainers/trainer_084",
+    "party_size": 56,
+    "ai_flags": "0x1"
+  },
+  {
+    "id": 131,
+    "name": "Julia",
+    "trainer_class": 59,
+    "sprite_index": 84,
+    "sprite_folder": "graphics/trainers/trainer_084",
+    "party_size": 96,
+    "ai_flags": "0x1"
+  },
+  {
+    "id": 132,
+    "name": "Kay",
+    "trainer_class": 59,
+    "sprite_index": 84,
+    "sprite_folder": "graphics/trainers/trainer_084",
+    "party_size": 112,
+    "ai_flags": "0x1"
+  },
+  {
+    "id": 133,
+    "name": "Lisa",
+    "trainer_class": 59,
+    "sprite_index": 84,
+    "sprite_folder": "graphics/trainers/trainer_084",
+    "party_size": 128,
+    "ai_flags": "0x1"
+  },
+  {
+    "id": 134,
+    "name": "Edmond",
+    "trainer_class": 60,
+    "sprite_index": 85,
+    "sprite_folder": "graphics/trainers/trainer_085",
+    "party_size": 144,
+    "ai_flags": "0x1"
+  },
+  {
+    "id": 135,
+    "name": "Trevor",
+    "trainer_class": 60,
+    "sprite_index": 85,
+    "sprite_folder": "graphics/trainers/trainer_085",
+    "party_size": 160,
+    "ai_flags": "0x1"
+  },
+  {
+    "id": 136,
+    "name": "Leonard",
+    "trainer_class": 60,
+    "sprite_index": 85,
+    "sprite_folder": "graphics/trainers/trainer_085",
+    "party_size": 176,
+    "ai_flags": "0x1"
+  },
+  {
+    "id": 137,
+    "name": "Duncan",
+    "trainer_class": 60,
+    "sprite_index": 85,
+    "sprite_folder": "graphics/trainers/trainer_085",
+    "party_size": 184,
+    "ai_flags": "0x1"
+  },
+  {
+    "id": 138,
+    "name": "Huey",
+    "trainer_class": 60,
+    "sprite_index": 85,
+    "sprite_folder": "graphics/trainers/trainer_085",
+    "party_size": 208,
+    "ai_flags": "0x1"
+  },
+  {
+    "id": 139,
+    "name": "Dylan",
+    "trainer_class": 60,
+    "sprite_index": 85,
+    "sprite_folder": "graphics/trainers/trainer_085",
+    "party_size": 224,
+    "ai_flags": "0x1"
+  },
+  {
+    "id": 140,
+    "name": "Phillip",
+    "trainer_class": 60,
+    "sprite_index": 85,
+    "sprite_folder": "graphics/trainers/trainer_085",
+    "party_size": 248,
+    "ai_flags": "0x1"
+  },
+  {
+    "id": 141,
+    "name": "Dwayne",
+    "trainer_class": 60,
+    "sprite_index": 85,
+    "sprite_folder": "graphics/trainers/trainer_085",
+    "party_size": 0,
+    "ai_flags": "0x1"
+  },
+  {
+    "id": 142,
+    "name": "Liam",
+    "trainer_class": 61,
+    "sprite_index": 86,
+    "sprite_folder": "graphics/trainers/trainer_086",
+    "party_size": 16,
+    "ai_flags": "0x1"
+  },
+  {
+    "id": 143,
+    "name": "Shane",
+    "trainer_class": 61,
+    "sprite_index": 86,
+    "sprite_folder": "graphics/trainers/trainer_086",
+    "party_size": 48,
+    "ai_flags": "0x1"
+  },
+  {
+    "id": 144,
+    "name": "Ethan",
+    "trainer_class": 61,
+    "sprite_index": 86,
+    "sprite_folder": "graphics/trainers/trainer_086",
+    "party_size": 64,
+    "ai_flags": "0x1"
+  },
+  {
+    "id": 145,
+    "name": "Ricky",
+    "trainer_class": 61,
+    "sprite_index": 86,
+    "sprite_folder": "graphics/trainers/trainer_086",
+    "party_size": 72,
+    "ai_flags": "0x1"
+  },
+  {
+    "id": 146,
+    "name": "Jeff",
+    "trainer_class": 61,
+    "sprite_index": 86,
+    "sprite_folder": "graphics/trainers/trainer_086",
+    "party_size": 80,
+    "ai_flags": "0x7"
+  },
+  {
+    "id": 147,
+    "name": "Rachel",
+    "trainer_class": 91,
+    "sprite_index": 126,
+    "sprite_folder": "graphics/trainers/trainer_126",
+    "party_size": 96,
+    "ai_flags": "0x7"
+  },
+  {
+    "id": 148,
+    "name": "Chris",
+    "trainer_class": 61,
+    "sprite_index": 86,
+    "sprite_folder": "graphics/trainers/trainer_086",
+    "party_size": 104,
+    "ai_flags": "0x1"
+  },
+  {
+    "id": 149,
+    "name": "Drew",
+    "trainer_class": 61,
+    "sprite_index": 86,
+    "sprite_folder": "graphics/trainers/trainer_086",
+    "party_size": 120,
+    "ai_flags": "0x1"
+  },
+  {
+    "id": 150,
+    "name": "Diana",
+    "trainer_class": 62,
+    "sprite_index": 87,
+    "sprite_folder": "graphics/trainers/trainer_087",
+    "party_size": 152,
+    "ai_flags": "0x1"
+  },
+  {
+    "id": 151,
+    "name": "Nancy",
+    "trainer_class": 62,
+    "sprite_index": 87,
+    "sprite_folder": "graphics/trainers/trainer_087",
+    "party_size": 160,
+    "ai_flags": "0x1"
+  },
+  {
+    "id": 152,
+    "name": "Isabelle",
+    "trainer_class": 62,
+    "sprite_index": 87,
+    "sprite_folder": "graphics/trainers/trainer_087",
+    "party_size": 176,
+    "ai_flags": "0x1"
+  },
+  {
+    "id": 153,
+    "name": "Kelsey",
+    "trainer_class": 62,
+    "sprite_index": 87,
+    "sprite_folder": "graphics/trainers/trainer_087",
+    "party_size": 200,
+    "ai_flags": "0x1"
+  },
+  {
+    "id": 154,
+    "name": "Alicia",
+    "trainer_class": 62,
+    "sprite_index": 87,
+    "sprite_folder": "graphics/trainers/trainer_087",
+    "party_size": 216,
+    "ai_flags": "0x1"
+  },
+  {
+    "id": 155,
+    "name": "Caitlin",
+    "trainer_class": 62,
+    "sprite_index": 87,
+    "sprite_folder": "graphics/trainers/trainer_087",
+    "party_size": 248,
+    "ai_flags": "0x1"
+  },
+  {
+    "id": 156,
+    "name": "Heidi",
+    "trainer_class": 62,
+    "sprite_index": 87,
+    "sprite_folder": "graphics/trainers/trainer_087",
+    "party_size": 0,
+    "ai_flags": "0x1"
+  },
+  {
+    "id": 157,
+    "name": "Carol",
+    "trainer_class": 62,
+    "sprite_index": 87,
+    "sprite_folder": "graphics/trainers/trainer_087",
+    "party_size": 16,
+    "ai_flags": "0x1"
+  },
+  {
+    "id": 158,
+    "name": "Sofia",
+    "trainer_class": 62,
+    "sprite_index": 87,
+    "sprite_folder": "graphics/trainers/trainer_087",
+    "party_size": 32,
+    "ai_flags": "0x1"
+  },
+  {
+    "id": 159,
+    "name": "Martha",
+    "trainer_class": 62,
+    "sprite_index": 87,
+    "sprite_folder": "graphics/trainers/trainer_087",
+    "party_size": 56,
+    "ai_flags": "0x1"
+  },
+  {
+    "id": 160,
+    "name": "Tina",
+    "trainer_class": 62,
+    "sprite_index": 87,
+    "sprite_folder": "graphics/trainers/trainer_087",
+    "party_size": 72,
+    "ai_flags": "0x1"
+  },
+  {
+    "id": 161,
+    "name": "Hannah",
+    "trainer_class": 62,
+    "sprite_index": 87,
+    "sprite_folder": "graphics/trainers/trainer_087",
+    "party_size": 88,
+    "ai_flags": "0x1"
+  },
+  {
+    "id": 162,
+    "name": "Mark",
+    "trainer_class": 63,
+    "sprite_index": 88,
+    "sprite_folder": "graphics/trainers/trainer_088",
+    "party_size": 128,
+    "ai_flags": "0x1"
+  },
+  {
+    "id": 163,
+    "name": "Herman",
+    "trainer_class": 63,
+    "sprite_index": 88,
+    "sprite_folder": "graphics/trainers/trainer_088",
+    "party_size": 144,
+    "ai_flags": "0x1"
+  },
+  {
+    "id": 164,
+    "name": "Cooprt",
+    "trainer_class": 63,
+    "sprite_index": 88,
+    "sprite_folder": "graphics/trainers/trainer_088",
+    "party_size": 160,
+    "ai_flags": "0x1"
+  },
+  {
+    "id": 165,
+    "name": "Steve",
+    "trainer_class": 63,
+    "sprite_index": 88,
+    "sprite_folder": "graphics/trainers/trainer_088",
+    "party_size": 184,
+    "ai_flags": "0x1"
+  },
+  {
+    "id": 166,
+    "name": "Winston",
+    "trainer_class": 63,
+    "sprite_index": 88,
+    "sprite_folder": "graphics/trainers/trainer_088",
+    "party_size": 200,
+    "ai_flags": "0x1"
+  },
+  {
+    "id": 167,
+    "name": "Dawson",
+    "trainer_class": 63,
+    "sprite_index": 88,
+    "sprite_folder": "graphics/trainers/trainer_088",
+    "party_size": 208,
+    "ai_flags": "0x1"
+  },
+  {
+    "id": 168,
+    "name": "Ashton",
+    "trainer_class": 63,
+    "sprite_index": 88,
+    "sprite_folder": "graphics/trainers/trainer_088",
+    "party_size": 232,
+    "ai_flags": "0x1"
+  },
+  {
+    "id": 169,
+    "name": "Jovan",
+    "trainer_class": 64,
+    "sprite_index": 89,
+    "sprite_folder": "graphics/trainers/trainer_089",
+    "party_size": 248,
+    "ai_flags": "0x1"
+  },
+  {
+    "id": 170,
+    "name": "Miguel",
+    "trainer_class": 64,
+    "sprite_index": 89,
+    "sprite_folder": "graphics/trainers/trainer_089",
+    "party_size": 8,
+    "ai_flags": "0x7"
+  },
+  {
+    "id": 171,
+    "name": "Aidan",
+    "trainer_class": 64,
+    "sprite_index": 89,
+    "sprite_folder": "graphics/trainers/trainer_089",
+    "party_size": 32,
+    "ai_flags": "0x1"
+  },
+  {
+    "id": 172,
+    "name": "Glenn",
+    "trainer_class": 64,
+    "sprite_index": 89,
+    "sprite_folder": "graphics/trainers/trainer_089",
+    "party_size": 96,
+    "ai_flags": "0x1"
+  },
+  {
+    "id": 173,
+    "name": "Leslie",
+    "trainer_class": 64,
+    "sprite_index": 89,
+    "sprite_folder": "graphics/trainers/trainer_089",
+    "party_size": 120,
+    "ai_flags": "0x1"
+  },
+  {
+    "id": 174,
+    "name": "Sharon",
+    "trainer_class": 9,
+    "sprite_index": 111,
+    "sprite_folder": "graphics/trainers/trainer_111",
+    "party_size": 136,
+    "ai_flags": "0x7"
+  },
+  {
+    "id": 175,
+    "name": "Janny",
+    "trainer_class": 9,
+    "sprite_index": 111,
+    "sprite_folder": "graphics/trainers/trainer_111",
+    "party_size": 160,
+    "ai_flags": "0x7"
+  },
+  {
+    "id": 176,
+    "name": "Owen",
+    "trainer_class": 48,
+    "sprite_index": 97,
+    "sprite_folder": "graphics/trainers/trainer_097",
+    "party_size": 192,
+    "ai_flags": "0x7"
+  },
+  {
+    "id": 177,
+    "name": "Erik",
+    "trainer_class": 64,
+    "sprite_index": 89,
+    "sprite_folder": "graphics/trainers/trainer_089",
+    "party_size": 208,
+    "ai_flags": "0x1"
+  },
+  {
+    "id": 178,
+    "name": "Aavery",
+    "trainer_class": 64,
+    "sprite_index": 89,
+    "sprite_folder": "graphics/trainers/trainer_089",
+    "party_size": 232,
+    "ai_flags": "0x1"
+  },
+  {
+    "id": 179,
+    "name": "Derek",
+    "trainer_class": 9,
+    "sprite_index": 110,
+    "sprite_folder": "graphics/trainers/trainer_110",
+    "party_size": 8,
+    "ai_flags": "0x1"
+  },
+  {
+    "id": 180,
+    "name": "Zac",
+    "trainer_class": 9,
+    "sprite_index": 110,
+    "sprite_folder": "graphics/trainers/trainer_110",
+    "party_size": 16,
+    "ai_flags": "0x1"
+  },
+  {
+    "id": 181,
+    "name": "Marcos",
+    "trainer_class": 65,
+    "sprite_index": 90,
+    "sprite_folder": "graphics/trainers/trainer_090",
+    "party_size": 32,
+    "ai_flags": "0x1"
+  },
+  {
+    "id": 182,
+    "name": "Franklin",
+    "trainer_class": 65,
+    "sprite_index": 90,
+    "sprite_folder": "graphics/trainers/trainer_090",
+    "party_size": 56,
+    "ai_flags": "0x1"
+  },
+  {
+    "id": 183,
+    "name": "Nob",
+    "trainer_class": 65,
+    "sprite_index": 90,
+    "sprite_folder": "graphics/trainers/trainer_090",
+    "party_size": 72,
+    "ai_flags": "0x1"
+  },
+  {
+    "id": 184,
+    "name": "Wayne",
+    "trainer_class": 65,
+    "sprite_index": 90,
+    "sprite_folder": "graphics/trainers/trainer_090",
+    "party_size": 104,
+    "ai_flags": "0x1"
+  },
+  {
+    "id": 185,
+    "name": "Alan",
+    "trainer_class": 65,
+    "sprite_index": 90,
+    "sprite_folder": "graphics/trainers/trainer_090",
+    "party_size": 112,
+    "ai_flags": "0x1"
+  },
+  {
+    "id": 186,
+    "name": "Brice",
+    "trainer_class": 65,
+    "sprite_index": 90,
+    "sprite_folder": "graphics/trainers/trainer_090",
+    "party_size": 144,
+    "ai_flags": "0x1"
+  },
+  {
+    "id": 187,
+    "name": "Clark",
+    "trainer_class": 65,
+    "sprite_index": 90,
+    "sprite_folder": "graphics/trainers/trainer_090",
+    "party_size": 168,
+    "ai_flags": "0x1"
+  },
+  {
+    "id": 188,
+    "name": "Trent",
+    "trainer_class": 65,
+    "sprite_index": 90,
+    "sprite_folder": "graphics/trainers/trainer_090",
+    "party_size": 200,
+    "ai_flags": "0x1"
+  },
+  {
+    "id": 189,
+    "name": "Dudley",
+    "trainer_class": 65,
+    "sprite_index": 90,
+    "sprite_folder": "graphics/trainers/trainer_090",
+    "party_size": 216,
+    "ai_flags": "0x1"
+  },
+  {
+    "id": 190,
+    "name": "Allen",
+    "trainer_class": 65,
+    "sprite_index": 90,
+    "sprite_folder": "graphics/trainers/trainer_090",
+    "party_size": 8,
+    "ai_flags": "0x1"
+  },
+  {
+    "id": 191,
+    "name": "Eric",
+    "trainer_class": 65,
+    "sprite_index": 90,
+    "sprite_folder": "graphics/trainers/trainer_090",
+    "party_size": 24,
+    "ai_flags": "0x1"
+  },
+  {
+    "id": 192,
+    "name": "Lenny",
+    "trainer_class": 65,
+    "sprite_index": 90,
+    "sprite_folder": "graphics/trainers/trainer_090",
+    "party_size": 40,
+    "ai_flags": "0x1"
+  },
+  {
+    "id": 193,
+    "name": "Oliver",
+    "trainer_class": 65,
+    "sprite_index": 90,
+    "sprite_folder": "graphics/trainers/trainer_090",
+    "party_size": 72,
+    "ai_flags": "0x1"
+  },
+  {
+    "id": 194,
+    "name": "Lucas",
+    "trainer_class": 65,
+    "sprite_index": 90,
+    "sprite_folder": "graphics/trainers/trainer_090",
+    "party_size": 96,
+    "ai_flags": "0x1"
+  },
+  {
+    "id": 195,
+    "name": "Jared",
+    "trainer_class": 66,
+    "sprite_index": 91,
+    "sprite_folder": "graphics/trainers/trainer_091",
+    "party_size": 128,
+    "ai_flags": "0x1"
+  },
+  {
+    "id": 196,
+    "name": "Malik",
+    "trainer_class": 66,
+    "sprite_index": 91,
+    "sprite_folder": "graphics/trainers/trainer_091",
+    "party_size": 176,
+    "ai_flags": "0x1"
+  },
+  {
+    "id": 197,
+    "name": "Ernest",
+    "trainer_class": 66,
+    "sprite_index": 91,
+    "sprite_folder": "graphics/trainers/trainer_091",
+    "party_size": 208,
+    "ai_flags": "0x1"
+  },
+  {
+    "id": 198,
+    "name": "Alex",
+    "trainer_class": 66,
+    "sprite_index": 91,
+    "sprite_folder": "graphics/trainers/trainer_091",
+    "party_size": 32,
+    "ai_flags": "0x1"
+  },
+  {
+    "id": 199,
+    "name": "Lao",
+    "trainer_class": 66,
+    "sprite_index": 91,
+    "sprite_folder": "graphics/trainers/trainer_091",
+    "party_size": 80,
+    "ai_flags": "0x1"
+  },
+  {
+    "id": 200,
+    "name": "Oak",
+    "trainer_class": 32,
+    "sprite_index": 132,
+    "sprite_folder": "graphics/trainers/trainer_132",
+    "party_size": 112,
+    "ai_flags": "0x7"
+  },
+  {
+    "id": 201,
+    "name": "Hideo",
+    "trainer_class": 66,
+    "sprite_index": 91,
+    "sprite_folder": "graphics/trainers/trainer_091",
+    "party_size": 120,
+    "ai_flags": "0x1"
+  },
+  {
+    "id": 202,
+    "name": "Ruben",
+    "trainer_class": 66,
+    "sprite_index": 91,
+    "sprite_folder": "graphics/trainers/trainer_091",
+    "party_size": 128,
+    "ai_flags": "0x1"
+  },
+  {
+    "id": 203,
+    "name": "Billy",
+    "trainer_class": 66,
+    "sprite_index": 91,
+    "sprite_folder": "graphics/trainers/trainer_091",
+    "party_size": 176,
+    "ai_flags": "0x1"
+  },
+  {
+    "id": 204,
+    "name": "Nikolas",
+    "trainer_class": 66,
+    "sprite_index": 91,
+    "sprite_folder": "graphics/trainers/trainer_091",
+    "party_size": 184,
+    "ai_flags": "0x1"
+  },
+  {
+    "id": 205,
+    "name": "Jaxon",
+    "trainer_class": 66,
+    "sprite_index": 91,
+    "sprite_folder": "graphics/trainers/trainer_091",
+    "party_size": 216,
+    "ai_flags": "0x1"
+  },
+  {
+    "id": 206,
+    "name": "William",
+    "trainer_class": 66,
+    "sprite_index": 91,
+    "sprite_folder": "graphics/trainers/trainer_091",
+    "party_size": 248,
+    "ai_flags": "0x1"
+  },
+  {
+    "id": 207,
+    "name": "Lukas",
+    "trainer_class": 66,
+    "sprite_index": 91,
+    "sprite_folder": "graphics/trainers/trainer_091",
+    "party_size": 72,
+    "ai_flags": "0x1"
+  },
+  {
+    "id": 208,
+    "name": "Isaac",
+    "trainer_class": 66,
+    "sprite_index": 91,
+    "sprite_folder": "graphics/trainers/trainer_091",
+    "party_size": 136,
+    "ai_flags": "0x1"
+  },
+  {
+    "id": 209,
+    "name": "Gerald",
+    "trainer_class": 66,
+    "sprite_index": 91,
+    "sprite_folder": "graphics/trainers/trainer_091",
+    "party_size": 184,
+    "ai_flags": "0x1"
+  },
+  {
+    "id": 210,
+    "name": "Oak",
+    "trainer_class": 32,
+    "sprite_index": 132,
+    "sprite_folder": "graphics/trainers/trainer_132",
+    "party_size": 216,
+    "ai_flags": "0x7"
+  },
+  {
+    "id": 211,
+    "name": "",
+    "trainer_class": 67,
+    "sprite_index": 92,
+    "sprite_folder": "graphics/trainers/trainer_092",
+    "party_size": 232,
+    "ai_flags": "0x1"
+  },
+  {
+    "id": 212,
+    "name": "",
+    "trainer_class": 67,
+    "sprite_index": 92,
+    "sprite_folder": "graphics/trainers/trainer_092",
+    "party_size": 240,
+    "ai_flags": "0x1"
+  },
+  {
+    "id": 213,
+    "name": "Quinn",
+    "trainer_class": 67,
+    "sprite_index": 92,
+    "sprite_folder": "graphics/trainers/trainer_092",
+    "party_size": 8,
+    "ai_flags": "0x1"
+  },
+  {
+    "id": 214,
+    "name": "Ramon",
+    "trainer_class": 67,
+    "sprite_index": 92,
+    "sprite_folder": "graphics/trainers/trainer_092",
+    "party_size": 32,
+    "ai_flags": "0x1"
+  },
+  {
+    "id": 215,
+    "name": "Lucy",
+    "trainer_class": 9,
+    "sprite_index": 111,
+    "sprite_folder": "graphics/trainers/trainer_111",
+    "party_size": 40,
+    "ai_flags": "0x1"
+  },
+  {
+    "id": 216,
+    "name": "Arnie",
+    "trainer_class": 67,
+    "sprite_index": 92,
+    "sprite_folder": "graphics/trainers/trainer_092",
+    "party_size": 56,
+    "ai_flags": "0x1"
+  },
+  {
+    "id": 217,
+    "name": "",
+    "trainer_class": 67,
+    "sprite_index": 92,
+    "sprite_folder": "graphics/trainers/trainer_092",
+    "party_size": 72,
+    "ai_flags": "0x1"
+  },
+  {
+    "id": 218,
+    "name": "Simon",
+    "trainer_class": 67,
+    "sprite_index": 92,
+    "sprite_folder": "graphics/trainers/trainer_092",
+    "party_size": 88,
+    "ai_flags": "0x1"
+  },
+  {
+    "id": 219,
+    "name": "Lewis",
+    "trainer_class": 67,
+    "sprite_index": 92,
+    "sprite_folder": "graphics/trainers/trainer_092",
+    "party_size": 96,
+    "ai_flags": "0x1"
+  },
+  {
+    "id": 220,
+    "name": "Baily",
+    "trainer_class": 68,
+    "sprite_index": 93,
+    "sprite_folder": "graphics/trainers/trainer_093",
+    "party_size": 112,
+    "ai_flags": "0x1"
+  },
+  {
+    "id": 221,
+    "name": "Braxton",
+    "trainer_class": 68,
+    "sprite_index": 93,
+    "sprite_folder": "graphics/trainers/trainer_093",
+    "party_size": 128,
+    "ai_flags": "0x1"
+  },
+  {
+    "id": 222,
+    "name": "Bernie",
+    "trainer_class": 68,
+    "sprite_index": 93,
+    "sprite_folder": "graphics/trainers/trainer_093",
+    "party_size": 136,
+    "ai_flags": "0x1"
+  },
+  {
+    "id": 223,
+    "name": "Dale",
+    "trainer_class": 69,
+    "sprite_index": 94,
+    "sprite_folder": "graphics/trainers/trainer_094",
+    "party_size": 160,
+    "ai_flags": "0x1"
+  },
+  {
+    "id": 224,
+    "name": "Barny",
+    "trainer_class": 69,
+    "sprite_index": 94,
+    "sprite_folder": "graphics/trainers/trainer_094",
+    "party_size": 184,
+    "ai_flags": "0x1"
+  },
+  {
+    "id": 225,
+    "name": "Ned",
+    "trainer_class": 69,
+    "sprite_index": 94,
+    "sprite_folder": "graphics/trainers/trainer_094",
+    "party_size": 208,
+    "ai_flags": "0x1"
+  },
+  {
+    "id": 226,
+    "name": "Chip",
+    "trainer_class": 69,
+    "sprite_index": 94,
+    "sprite_folder": "graphics/trainers/trainer_094",
+    "party_size": 232,
+    "ai_flags": "0x1"
+  },
+  {
+    "id": 227,
+    "name": "Hank",
+    "trainer_class": 69,
+    "sprite_index": 94,
+    "sprite_folder": "graphics/trainers/trainer_094",
+    "party_size": 248,
+    "ai_flags": "0x1"
+  },
+  {
+    "id": 228,
+    "name": "Elliot",
+    "trainer_class": 69,
+    "sprite_index": 94,
+    "sprite_folder": "graphics/trainers/trainer_094",
+    "party_size": 0,
+    "ai_flags": "0x1"
+  },
+  {
+    "id": 229,
+    "name": "Ronald",
+    "trainer_class": 69,
+    "sprite_index": 94,
+    "sprite_folder": "graphics/trainers/trainer_094",
+    "party_size": 32,
+    "ai_flags": "0x1"
+  },
+  {
+    "id": 230,
+    "name": "Claude",
+    "trainer_class": 69,
+    "sprite_index": 94,
+    "sprite_folder": "graphics/trainers/trainer_094",
+    "party_size": 64,
+    "ai_flags": "0x1"
+  },
+  {
+    "id": 231,
+    "name": "Wade",
+    "trainer_class": 69,
+    "sprite_index": 94,
+    "sprite_folder": "graphics/trainers/trainer_094",
+    "party_size": 80,
+    "ai_flags": "0x1"
+  },
+  {
+    "id": 232,
+    "name": "Nolan",
+    "trainer_class": 69,
+    "sprite_index": 94,
+    "sprite_folder": "graphics/trainers/trainer_094",
+    "party_size": 128,
+    "ai_flags": "0x1"
+  },
+  {
+    "id": 233,
+    "name": "Andrew",
+    "trainer_class": 69,
+    "sprite_index": 94,
+    "sprite_folder": "graphics/trainers/trainer_094",
+    "party_size": 144,
+    "ai_flags": "0x1"
+  },
+  {
+    "id": 234,
+    "name": "Luis",
+    "trainer_class": 70,
+    "sprite_index": 95,
+    "sprite_folder": "graphics/trainers/trainer_095",
+    "party_size": 160,
+    "ai_flags": "0x1"
+  },
+  {
+    "id": 235,
+    "name": "Richard",
+    "trainer_class": 70,
+    "sprite_index": 95,
+    "sprite_folder": "graphics/trainers/trainer_095",
+    "party_size": 176,
+    "ai_flags": "0x1"
+  },
+  {
+    "id": 236,
+    "name": "Reece",
+    "trainer_class": 70,
+    "sprite_index": 95,
+    "sprite_folder": "graphics/trainers/trainer_095",
+    "party_size": 192,
+    "ai_flags": "0x1"
+  },
+  {
+    "id": 237,
+    "name": "Matthew",
+    "trainer_class": 70,
+    "sprite_index": 95,
+    "sprite_folder": "graphics/trainers/trainer_095",
+    "party_size": 216,
+    "ai_flags": "0x1"
+  },
+  {
+    "id": 238,
+    "name": "Douglas",
+    "trainer_class": 70,
+    "sprite_index": 95,
+    "sprite_folder": "graphics/trainers/trainer_095",
+    "party_size": 232,
+    "ai_flags": "0x1"
+  },
+  {
+    "id": 239,
+    "name": "David",
+    "trainer_class": 70,
+    "sprite_index": 95,
+    "sprite_folder": "graphics/trainers/trainer_095",
+    "party_size": 8,
+    "ai_flags": "0x1"
+  },
+  {
+    "id": 240,
+    "name": "Tony",
+    "trainer_class": 70,
+    "sprite_index": 95,
+    "sprite_folder": "graphics/trainers/trainer_095",
+    "party_size": 32,
+    "ai_flags": "0x1"
+  },
+  {
+    "id": 241,
+    "name": "Axle",
+    "trainer_class": 70,
+    "sprite_index": 95,
+    "sprite_folder": "graphics/trainers/trainer_095",
+    "party_size": 48,
+    "ai_flags": "0x1"
+  },
+  {
+    "id": 242,
+    "name": "Barry",
+    "trainer_class": 70,
+    "sprite_index": 95,
+    "sprite_folder": "graphics/trainers/trainer_095",
+    "party_size": 88,
+    "ai_flags": "0x1"
+  },
+  {
+    "id": 243,
+    "name": "Dean",
+    "trainer_class": 70,
+    "sprite_index": 95,
+    "sprite_folder": "graphics/trainers/trainer_095",
+    "party_size": 104,
+    "ai_flags": "0x1"
+  },
+  {
+    "id": 244,
+    "name": "Darrin",
+    "trainer_class": 70,
+    "sprite_index": 95,
+    "sprite_folder": "graphics/trainers/trainer_095",
+    "party_size": 112,
+    "ai_flags": "0x1"
+  },
+  {
+    "id": 245,
+    "name": "Spencer",
+    "trainer_class": 70,
+    "sprite_index": 95,
+    "sprite_folder": "graphics/trainers/trainer_095",
+    "party_size": 144,
+    "ai_flags": "0x1"
+  },
+  {
+    "id": 246,
+    "name": "Jack",
+    "trainer_class": 70,
+    "sprite_index": 95,
+    "sprite_folder": "graphics/trainers/trainer_095",
+    "party_size": 160,
+    "ai_flags": "0x1"
+  },
+  {
+    "id": 247,
+    "name": "Jerome",
+    "trainer_class": 70,
+    "sprite_index": 95,
+    "sprite_folder": "graphics/trainers/trainer_095",
+    "party_size": 168,
+    "ai_flags": "0x1"
+  },
+  {
+    "id": 248,
+    "name": "Roland",
+    "trainer_class": 70,
+    "sprite_index": 95,
+    "sprite_folder": "graphics/trainers/trainer_095",
+    "party_size": 184,
+    "ai_flags": "0x1"
+  },
+  {
+    "id": 249,
+    "name": "Koji",
+    "trainer_class": 71,
+    "sprite_index": 96,
+    "sprite_folder": "graphics/trainers/trainer_096",
+    "party_size": 208,
+    "ai_flags": "0x1"
+  },
+  {
+    "id": 250,
+    "name": "Luke",
+    "trainer_class": 71,
+    "sprite_index": 96,
+    "sprite_folder": "graphics/trainers/trainer_096",
+    "party_size": 232,
+    "ai_flags": "0x1"
+  },
+  {
+    "id": 251,
+    "name": "Camron",
+    "trainer_class": 71,
+    "sprite_index": 96,
+    "sprite_folder": "graphics/trainers/trainer_096",
+    "party_size": 248,
+    "ai_flags": "0x1"
+  },
+  {
+    "id": 252,
+    "name": "Raul",
+    "trainer_class": 71,
+    "sprite_index": 96,
+    "sprite_folder": "graphics/trainers/trainer_096",
+    "party_size": 8,
+    "ai_flags": "0x1"
+  },
+  {
+    "id": 253,
+    "name": "Isaiah",
+    "trainer_class": 71,
+    "sprite_index": 96,
+    "sprite_folder": "graphics/trainers/trainer_096",
+    "party_size": 24,
+    "ai_flags": "0x1"
+  },
+  {
+    "id": 254,
+    "name": "Zeek",
+    "trainer_class": 71,
+    "sprite_index": 96,
+    "sprite_folder": "graphics/trainers/trainer_096",
+    "party_size": 40,
+    "ai_flags": "0x1"
+  },
+  {
+    "id": 255,
+    "name": "Jamal",
+    "trainer_class": 71,
+    "sprite_index": 96,
+    "sprite_folder": "graphics/trainers/trainer_096",
+    "party_size": 48,
+    "ai_flags": "0x1"
+  },
+  {
+    "id": 256,
+    "name": "Corey",
+    "trainer_class": 71,
+    "sprite_index": 96,
+    "sprite_folder": "graphics/trainers/trainer_096",
+    "party_size": 80,
+    "ai_flags": "0x1"
+  },
+  {
+    "id": 257,
+    "name": "Chase",
+    "trainer_class": 71,
+    "sprite_index": 96,
+    "sprite_folder": "graphics/trainers/trainer_096",
+    "party_size": 96,
+    "ai_flags": "0x1"
+  },
+  {
+    "id": 258,
+    "name": "Hugo",
+    "trainer_class": 72,
+    "sprite_index": 97,
+    "sprite_folder": "graphics/trainers/trainer_097",
+    "party_size": 120,
+    "ai_flags": "0x1"
+  },
+  {
+    "id": 259,
+    "name": "Jasper",
+    "trainer_class": 72,
+    "sprite_index": 97,
+    "sprite_folder": "graphics/trainers/trainer_097",
+    "party_size": 136,
+    "ai_flags": "0x1"
+  },
+  {
+    "id": 260,
+    "name": "Dirk",
+    "trainer_class": 72,
+    "sprite_index": 97,
+    "sprite_folder": "graphics/trainers/trainer_097",
+    "party_size": 152,
+    "ai_flags": "0x1"
+  },
+  {
+    "id": 261,
+    "name": "Darian",
+    "trainer_class": 72,
+    "sprite_index": 97,
+    "sprite_folder": "graphics/trainers/trainer_097",
+    "party_size": 168,
+    "ai_flags": "0x1"
+  },
+  {
+    "id": 262,
+    "name": "Stan",
+    "trainer_class": 72,
+    "sprite_index": 97,
+    "sprite_folder": "graphics/trainers/trainer_097",
+    "party_size": 184,
+    "ai_flags": "0x1"
+  },
+  {
+    "id": 263,
+    "name": "",
+    "trainer_class": 72,
+    "sprite_index": 97,
+    "sprite_folder": "graphics/trainers/trainer_097",
+    "party_size": 208,
+    "ai_flags": "0x1"
+  },
+  {
+    "id": 264,
+    "name": "Rich",
+    "trainer_class": 72,
+    "sprite_index": 97,
+    "sprite_folder": "graphics/trainers/trainer_097",
+    "party_size": 216,
+    "ai_flags": "0x1"
+  },
+  {
+    "id": 265,
+    "name": "Bridget",
+    "trainer_class": 73,
+    "sprite_index": 98,
+    "sprite_folder": "graphics/trainers/trainer_098",
+    "party_size": 232,
+    "ai_flags": "0x1"
+  },
+  {
+    "id": 266,
+    "name": "Tamia",
+    "trainer_class": 73,
+    "sprite_index": 98,
+    "sprite_folder": "graphics/trainers/trainer_098",
+    "party_size": 8,
+    "ai_flags": "0x1"
+  },
+  {
+    "id": 267,
+    "name": "Lori",
+    "trainer_class": 73,
+    "sprite_index": 98,
+    "sprite_folder": "graphics/trainers/trainer_098",
+    "party_size": 24,
+    "ai_flags": "0x1"
+  },
+  {
+    "id": 268,
+    "name": "Lola",
+    "trainer_class": 73,
+    "sprite_index": 98,
+    "sprite_folder": "graphics/trainers/trainer_098",
+    "party_size": 32,
+    "ai_flags": "0x1"
+  },
+  {
+    "id": 269,
+    "name": "Sheila",
+    "trainer_class": 73,
+    "sprite_index": 98,
+    "sprite_folder": "graphics/trainers/trainer_098",
+    "party_size": 56,
+    "ai_flags": "0x1"
+  },
+  {
+    "id": 270,
+    "name": "Tiffany",
+    "trainer_class": 74,
+    "sprite_index": 99,
+    "sprite_folder": "graphics/trainers/trainer_099",
+    "party_size": 72,
+    "ai_flags": "0x1"
+  },
+  {
+    "id": 271,
+    "name": "Nora",
+    "trainer_class": 74,
+    "sprite_index": 99,
+    "sprite_folder": "graphics/trainers/trainer_099",
+    "party_size": 80,
+    "ai_flags": "0x1"
+  },
+  {
+    "id": 272,
+    "name": "Melissa",
+    "trainer_class": 74,
+    "sprite_index": 99,
+    "sprite_folder": "graphics/trainers/trainer_099",
+    "party_size": 104,
+    "ai_flags": "0x1"
+  },
+  {
+    "id": 273,
+    "name": "Grace",
+    "trainer_class": 73,
+    "sprite_index": 98,
+    "sprite_folder": "graphics/trainers/trainer_098",
+    "party_size": 120,
+    "ai_flags": "0x1"
+  },
+  {
+    "id": 274,
+    "name": "Olivia",
+    "trainer_class": 73,
+    "sprite_index": 98,
+    "sprite_folder": "graphics/trainers/trainer_098",
+    "party_size": 136,
+    "ai_flags": "0x1"
+  },
+  {
+    "id": 275,
+    "name": "Lauren",
+    "trainer_class": 73,
+    "sprite_index": 99,
+    "sprite_folder": "graphics/trainers/trainer_099",
+    "party_size": 152,
+    "ai_flags": "0x1"
+  },
+  {
+    "id": 276,
+    "name": "Anya",
+    "trainer_class": 74,
+    "sprite_index": 99,
+    "sprite_folder": "graphics/trainers/trainer_099",
+    "party_size": 176,
+    "ai_flags": "0x1"
+  },
+  {
+    "id": 277,
+    "name": "Alice",
+    "trainer_class": 74,
+    "sprite_index": 99,
+    "sprite_folder": "graphics/trainers/trainer_099",
+    "party_size": 216,
+    "ai_flags": "0x1"
+  },
+  {
+    "id": 278,
+    "name": "Connie",
+    "trainer_class": 74,
+    "sprite_index": 99,
+    "sprite_folder": "graphics/trainers/trainer_099",
+    "party_size": 232,
+    "ai_flags": "0x1"
+  },
+  {
+    "id": 279,
+    "name": "Shirley",
+    "trainer_class": 74,
+    "sprite_index": 99,
+    "sprite_folder": "graphics/trainers/trainer_099",
+    "party_size": 0,
+    "ai_flags": "0x1"
+  },
+  {
+    "id": 280,
+    "name": "Johan",
+    "trainer_class": 75,
+    "sprite_index": 100,
+    "sprite_folder": "graphics/trainers/trainer_100",
+    "party_size": 24,
+    "ai_flags": "0x1"
+  },
+  {
+    "id": 281,
+    "name": "Tyron",
+    "trainer_class": 75,
+    "sprite_index": 100,
+    "sprite_folder": "graphics/trainers/trainer_100",
+    "party_size": 56,
+    "ai_flags": "0x1"
+  },
+  {
+    "id": 282,
+    "name": "Cameron",
+    "trainer_class": 75,
+    "sprite_index": 100,
+    "sprite_folder": "graphics/trainers/trainer_100",
+    "party_size": 72,
+    "ai_flags": "0x1"
+  },
+  {
+    "id": 283,
+    "name": "Preston",
+    "trainer_class": 75,
+    "sprite_index": 100,
+    "sprite_folder": "graphics/trainers/trainer_100",
+    "party_size": 96,
+    "ai_flags": "0x1"
+  },
+  {
+    "id": 284,
+    "name": "Randall",
+    "trainer_class": 76,
+    "sprite_index": 101,
+    "sprite_folder": "graphics/trainers/trainer_101",
+    "party_size": 104,
+    "ai_flags": "0x1"
+  },
+  {
+    "id": 285,
+    "name": "Luca",
+    "trainer_class": 76,
+    "sprite_index": 101,
+    "sprite_folder": "graphics/trainers/trainer_101",
+    "party_size": 128,
+    "ai_flags": "0x1"
+  },
+  {
+    "id": 286,
+    "name": "Dalton",
+    "trainer_class": 77,
+    "sprite_index": 102,
+    "sprite_folder": "graphics/trainers/trainer_102",
+    "party_size": 144,
+    "ai_flags": "0x1"
+  },
+  {
+    "id": 287,
+    "name": "Nelson",
+    "trainer_class": 77,
+    "sprite_index": 102,
+    "sprite_folder": "graphics/trainers/trainer_102",
+    "party_size": 160,
+    "ai_flags": "0x1"
+  },
+  {
+    "id": 288,
+    "name": "Kirk",
+    "trainer_class": 77,
+    "sprite_index": 102,
+    "sprite_folder": "graphics/trainers/trainer_102",
+    "party_size": 192,
+    "ai_flags": "0x1"
+  },
+  {
+    "id": 289,
+    "name": "Shawn",
+    "trainer_class": 77,
+    "sprite_index": 102,
+    "sprite_folder": "graphics/trainers/trainer_102",
+    "party_size": 224,
+    "ai_flags": "0x1"
+  },
+  {
+    "id": 290,
+    "name": "Gregory",
+    "trainer_class": 77,
+    "sprite_index": 102,
+    "sprite_folder": "graphics/trainers/trainer_102",
+    "party_size": 240,
+    "ai_flags": "0x1"
+  },
+  {
+    "id": 291,
+    "name": "Edward",
+    "trainer_class": 77,
+    "sprite_index": 102,
+    "sprite_folder": "graphics/trainers/trainer_102",
+    "party_size": 0,
+    "ai_flags": "0x1"
+  },
+  {
+    "id": 292,
+    "name": "Kayden",
+    "trainer_class": 77,
+    "sprite_index": 102,
+    "sprite_folder": "graphics/trainers/trainer_102",
+    "party_size": 64,
+    "ai_flags": "0x1"
+  },
+  {
+    "id": 293,
+    "name": "Nate",
+    "trainer_class": 77,
+    "sprite_index": 102,
+    "sprite_folder": "graphics/trainers/trainer_102",
+    "party_size": 72,
+    "ai_flags": "0x1"
+  },
+  {
+    "id": 294,
+    "name": "Phil",
+    "trainer_class": 78,
+    "sprite_index": 103,
+    "sprite_folder": "graphics/trainers/trainer_103",
+    "party_size": 88,
+    "ai_flags": "0x1"
+  },
+  {
+    "id": 295,
+    "name": "Edgar",
+    "trainer_class": 78,
+    "sprite_index": 103,
+    "sprite_folder": "graphics/trainers/trainer_103",
+    "party_size": 104,
+    "ai_flags": "0x1"
+  },
+  {
+    "id": 296,
+    "name": "Jason",
+    "trainer_class": 78,
+    "sprite_index": 103,
+    "sprite_folder": "graphics/trainers/trainer_103",
+    "party_size": 128,
+    "ai_flags": "0x1"
+  },
+  {
+    "id": 297,
+    "name": "Cole",
+    "trainer_class": 78,
+    "sprite_index": 103,
+    "sprite_folder": "graphics/trainers/trainer_103",
+    "party_size": 136,
+    "ai_flags": "0x1"
+  },
+  {
+    "id": 298,
+    "name": "Vincent",
+    "trainer_class": 78,
+    "sprite_index": 103,
+    "sprite_folder": "graphics/trainers/trainer_103",
+    "party_size": 152,
+    "ai_flags": "0x1"
+  },
+  {
+    "id": 299,
+    "name": "John",
+    "trainer_class": 78,
+    "sprite_index": 103,
+    "sprite_folder": "graphics/trainers/trainer_103",
+    "party_size": 168,
+    "ai_flags": "0x1"
+  },
+  {
+    "id": 300,
+    "name": "Sebastian",
+    "trainer_class": 79,
+    "sprite_index": 104,
+    "sprite_folder": "graphics/trainers/trainer_104",
+    "party_size": 200,
+    "ai_flags": "0x1"
+  },
+  {
+    "id": 301,
+    "name": "Perry",
+    "trainer_class": 79,
+    "sprite_index": 104,
+    "sprite_folder": "graphics/trainers/trainer_104",
+    "party_size": 216,
+    "ai_flags": "0x1"
+  },
+  {
+    "id": 302,
+    "name": "Robert",
+    "trainer_class": 79,
+    "sprite_index": 104,
+    "sprite_folder": "graphics/trainers/trainer_104",
+    "party_size": 0,
+    "ai_flags": "0x1"
+  },
+  {
+    "id": 303,
+    "name": "Donald",
+    "trainer_class": 79,
+    "sprite_index": 104,
+    "sprite_folder": "graphics/trainers/trainer_104",
+    "party_size": 32,
+    "ai_flags": "0x1"
+  },
+  {
+    "id": 304,
+    "name": "Benny",
+    "trainer_class": 79,
+    "sprite_index": 104,
+    "sprite_folder": "graphics/trainers/trainer_104",
+    "party_size": 40,
+    "ai_flags": "0x1"
+  },
+  {
+    "id": 305,
+    "name": "Edwin",
+    "trainer_class": 79,
+    "sprite_index": 104,
+    "sprite_folder": "graphics/trainers/trainer_104",
+    "party_size": 56,
+    "ai_flags": "0x1"
+  },
+  {
+    "id": 306,
+    "name": "Chester",
+    "trainer_class": 79,
+    "sprite_index": 104,
+    "sprite_folder": "graphics/trainers/trainer_104",
+    "party_size": 88,
+    "ai_flags": "0x1"
+  },
+  {
+    "id": 307,
+    "name": "Wilton",
+    "trainer_class": 9,
+    "sprite_index": 110,
+    "sprite_folder": "graphics/trainers/trainer_110",
+    "party_size": 112,
+    "ai_flags": "0x7"
+  },
+  {
+    "id": 308,
+    "name": "Ramiro",
+    "trainer_class": 33,
+    "sprite_index": 45,
+    "sprite_folder": "graphics/trainers/trainer_045",
+    "party_size": 128,
+    "ai_flags": "0x7"
+  },
+  {
+    "id": 309,
+    "name": "Jacob",
+    "trainer_class": 79,
+    "sprite_index": 104,
+    "sprite_folder": "graphics/trainers/trainer_104",
+    "party_size": 136,
+    "ai_flags": "0x1"
+  },
+  {
+    "id": 310,
+    "name": "Roger",
+    "trainer_class": 79,
+    "sprite_index": 104,
+    "sprite_folder": "graphics/trainers/trainer_104",
+    "party_size": 168,
+    "ai_flags": "0x1"
+  },
+  {
+    "id": 311,
+    "name": "Reed",
+    "trainer_class": 79,
+    "sprite_index": 104,
+    "sprite_folder": "graphics/trainers/trainer_104",
+    "party_size": 192,
+    "ai_flags": "0x1"
+  },
+  {
+    "id": 312,
+    "name": "Keith",
+    "trainer_class": 79,
+    "sprite_index": 104,
+    "sprite_folder": "graphics/trainers/trainer_104",
+    "party_size": 224,
+    "ai_flags": "0x1"
+  },
+  {
+    "id": 313,
+    "name": "Carter",
+    "trainer_class": 79,
+    "sprite_index": 104,
+    "sprite_folder": "graphics/trainers/trainer_104",
+    "party_size": 240,
+    "ai_flags": "0x1"
+  },
+  {
+    "id": 314,
+    "name": "Mitch",
+    "trainer_class": 79,
+    "sprite_index": 104,
+    "sprite_folder": "graphics/trainers/trainer_104",
+    "party_size": 8,
+    "ai_flags": "0x1"
+  },
+  {
+    "id": 315,
+    "name": "Beck",
+    "trainer_class": 79,
+    "sprite_index": 104,
+    "sprite_folder": "graphics/trainers/trainer_104",
+    "party_size": 40,
+    "ai_flags": "0x1"
+  },
+  {
+    "id": 316,
+    "name": "Marlon",
+    "trainer_class": 79,
+    "sprite_index": 104,
+    "sprite_folder": "graphics/trainers/trainer_104",
+    "party_size": 56,
+    "ai_flags": "0x1"
+  },
+  {
+    "id": 317,
+    "name": "Chuck",
+    "trainer_class": 4,
+    "sprite_index": 10,
+    "sprite_folder": "graphics/trainers/trainer_010",
+    "party_size": 144,
+    "ai_flags": "0x7"
+  },
+  {
+    "id": 318,
+    "name": "Mike",
+    "trainer_class": 80,
+    "sprite_index": 105,
+    "sprite_folder": "graphics/trainers/trainer_105",
+    "party_size": 96,
+    "ai_flags": "0x1"
+  },
+  {
+    "id": 319,
+    "name": "Hideki",
+    "trainer_class": 80,
+    "sprite_index": 105,
+    "sprite_folder": "graphics/trainers/trainer_105",
+    "party_size": 120,
+    "ai_flags": "0x1"
+  },
+  {
+    "id": 320,
+    "name": "Aaron",
+    "trainer_class": 80,
+    "sprite_index": 105,
+    "sprite_folder": "graphics/trainers/trainer_105",
+    "party_size": 136,
+    "ai_flags": "0x1"
+  },
+  {
+    "id": 321,
+    "name": "Hitoshi",
+    "trainer_class": 80,
+    "sprite_index": 105,
+    "sprite_folder": "graphics/trainers/trainer_105",
+    "party_size": 144,
+    "ai_flags": "0x1"
+  },
+  {
+    "id": 322,
+    "name": "Atsushi",
+    "trainer_class": 80,
+    "sprite_index": 105,
+    "sprite_folder": "graphics/trainers/trainer_105",
+    "party_size": 168,
+    "ai_flags": "0x1"
+  },
+  {
+    "id": 323,
+    "name": "Kiyo",
+    "trainer_class": 80,
+    "sprite_index": 105,
+    "sprite_folder": "graphics/trainers/trainer_105",
+    "party_size": 184,
+    "ai_flags": "0x1"
+  },
+  {
+    "id": 324,
+    "name": "Takashi",
+    "trainer_class": 80,
+    "sprite_index": 105,
+    "sprite_folder": "graphics/trainers/trainer_105",
+    "party_size": 192,
+    "ai_flags": "0x1"
+  },
+  {
+    "id": 325,
+    "name": "Daisuke",
+    "trainer_class": 80,
+    "sprite_index": 105,
+    "sprite_folder": "graphics/trainers/trainer_105",
+    "party_size": 216,
+    "ai_flags": "0x1"
+  },
+  {
+    "id": 326,
+    "name": "Terry",
+    "trainer_class": 81,
+    "sprite_index": 106,
+    "sprite_folder": "graphics/trainers/trainer_106",
+    "party_size": 240,
+    "ai_flags": "0x7"
+  },
+  {
+    "id": 327,
+    "name": "Terry",
+    "trainer_class": 81,
+    "sprite_index": 106,
+    "sprite_folder": "graphics/trainers/trainer_106",
+    "party_size": 248,
+    "ai_flags": "0x7"
+  },
+  {
+    "id": 328,
+    "name": "Terry",
+    "trainer_class": 81,
+    "sprite_index": 106,
+    "sprite_folder": "graphics/trainers/trainer_106",
+    "party_size": 0,
+    "ai_flags": "0x7"
+  },
+  {
+    "id": 329,
+    "name": "Terry",
+    "trainer_class": 81,
+    "sprite_index": 106,
+    "sprite_folder": "graphics/trainers/trainer_106",
+    "party_size": 8,
+    "ai_flags": "0x7"
+  },
+  {
+    "id": 330,
+    "name": "Terry",
+    "trainer_class": 81,
+    "sprite_index": 106,
+    "sprite_folder": "graphics/trainers/trainer_106",
+    "party_size": 40,
+    "ai_flags": "0x7"
+  },
+  {
+    "id": 331,
+    "name": "Terry",
+    "trainer_class": 81,
+    "sprite_index": 106,
+    "sprite_folder": "graphics/trainers/trainer_106",
+    "party_size": 72,
+    "ai_flags": "0x7"
+  },
+  {
+    "id": 332,
+    "name": "Terry",
+    "trainer_class": 89,
+    "sprite_index": 106,
+    "sprite_folder": "graphics/trainers/trainer_106",
+    "party_size": 104,
+    "ai_flags": "0x7"
+  },
+  {
+    "id": 333,
+    "name": "Terry",
+    "trainer_class": 89,
+    "sprite_index": 106,
+    "sprite_folder": "graphics/trainers/trainer_106",
+    "party_size": 168,
+    "ai_flags": "0x7"
+  },
+  {
+    "id": 334,
+    "name": "Terry",
+    "trainer_class": 89,
+    "sprite_index": 106,
+    "sprite_folder": "graphics/trainers/trainer_106",
+    "party_size": 232,
+    "ai_flags": "0x7"
+  },
+  {
+    "id": 335,
+    "name": "Ted",
+    "trainer_class": 82,
+    "sprite_index": 107,
+    "sprite_folder": "graphics/trainers/trainer_107",
+    "party_size": 40,
+    "ai_flags": "0x1"
+  },
+  {
+    "id": 336,
+    "name": "Connor",
+    "trainer_class": 82,
+    "sprite_index": 107,
+    "sprite_folder": "graphics/trainers/trainer_107",
+    "party_size": 56,
+    "ai_flags": "0x1"
+  },
+  {
+    "id": 337,
+    "name": "Jerry",
+    "trainer_class": 82,
+    "sprite_index": 107,
+    "sprite_folder": "graphics/trainers/trainer_107",
+    "party_size": 120,
+    "ai_flags": "0x1"
+  },
+  {
+    "id": 338,
+    "name": "Jose",
+    "trainer_class": 82,
+    "sprite_index": 107,
+    "sprite_folder": "graphics/trainers/trainer_107",
+    "party_size": 144,
+    "ai_flags": "0x1"
+  },
+  {
+    "id": 339,
+    "name": "Rodney",
+    "trainer_class": 82,
+    "sprite_index": 107,
+    "sprite_folder": "graphics/trainers/trainer_107",
+    "party_size": 176,
+    "ai_flags": "0x1"
+  },
+  {
+    "id": 340,
+    "name": "Beau",
+    "trainer_class": 82,
+    "sprite_index": 107,
+    "sprite_folder": "graphics/trainers/trainer_107",
+    "party_size": 184,
+    "ai_flags": "0x1"
+  },
+  {
+    "id": 341,
+    "name": "Taylor",
+    "trainer_class": 82,
+    "sprite_index": 107,
+    "sprite_folder": "graphics/trainers/trainer_107",
+    "party_size": 248,
+    "ai_flags": "0x1"
+  },
+  {
+    "id": 342,
+    "name": "Joshua",
+    "trainer_class": 82,
+    "sprite_index": 107,
+    "sprite_folder": "graphics/trainers/trainer_107",
+    "party_size": 72,
+    "ai_flags": "0x1"
+  },
+  {
+    "id": 343,
+    "name": "Parkker",
+    "trainer_class": 82,
+    "sprite_index": 107,
+    "sprite_folder": "graphics/trainers/trainer_107",
+    "party_size": 88,
+    "ai_flags": "0x1"
+  },
+  {
+    "id": 344,
+    "name": "Ed",
+    "trainer_class": 82,
+    "sprite_index": 107,
+    "sprite_folder": "graphics/trainers/trainer_107",
+    "party_size": 104,
+    "ai_flags": "0x1"
+  },
+  {
+    "id": 345,
+    "name": "Travis",
+    "trainer_class": 82,
+    "sprite_index": 107,
+    "sprite_folder": "graphics/trainers/trainer_107",
+    "party_size": 152,
+    "ai_flags": "0x1"
+  },
+  {
+    "id": 346,
+    "name": "Braydon",
+    "trainer_class": 82,
+    "sprite_index": 107,
+    "sprite_folder": "graphics/trainers/trainer_107",
+    "party_size": 168,
+    "ai_flags": "0x1"
+  },
+  {
+    "id": 347,
+    "name": "Ivan",
+    "trainer_class": 82,
+    "sprite_index": 107,
+    "sprite_folder": "graphics/trainers/trainer_107",
+    "party_size": 192,
+    "ai_flags": "0x1"
+  },
+  {
+    "id": 348,
+    "name": "Giovanni",
+    "trainer_class": 83,
+    "sprite_index": 108,
+    "sprite_folder": "graphics/trainers/trainer_108",
+    "party_size": 16,
+    "ai_flags": "0x7"
+  },
+  {
+    "id": 349,
+    "name": "Giovanni",
+    "trainer_class": 83,
+    "sprite_index": 108,
+    "sprite_folder": "graphics/trainers/trainer_108",
+    "party_size": 120,
+    "ai_flags": "0x7"
+  },
+  {
+    "id": 350,
+    "name": "Giovanni",
+    "trainer_class": 84,
+    "sprite_index": 108,
+    "sprite_folder": "graphics/trainers/trainer_108",
+    "party_size": 8,
+    "ai_flags": "0x7"
+  },
+  {
+    "id": 351,
+    "name": "Grunt",
+    "trainer_class": 85,
+    "sprite_index": 109,
+    "sprite_folder": "graphics/trainers/trainer_109",
+    "party_size": 88,
+    "ai_flags": "0x1"
+  },
+  {
+    "id": 352,
+    "name": "Grunt",
+    "trainer_class": 85,
+    "sprite_index": 109,
+    "sprite_folder": "graphics/trainers/trainer_109",
+    "party_size": 104,
+    "ai_flags": "0x1"
+  },
+  {
+    "id": 353,
+    "name": "Grunt",
+    "trainer_class": 85,
+    "sprite_index": 109,
+    "sprite_folder": "graphics/trainers/trainer_109",
+    "party_size": 128,
+    "ai_flags": "0x1"
+  },
+  {
+    "id": 354,
+    "name": "Grunt",
+    "trainer_class": 85,
+    "sprite_index": 109,
+    "sprite_folder": "graphics/trainers/trainer_109",
+    "party_size": 144,
+    "ai_flags": "0x1"
+  },
+  {
+    "id": 355,
+    "name": "Grunt",
+    "trainer_class": 85,
+    "sprite_index": 109,
+    "sprite_folder": "graphics/trainers/trainer_109",
+    "party_size": 160,
+    "ai_flags": "0x7"
+  },
+  {
+    "id": 356,
+    "name": "Grunt",
+    "trainer_class": 85,
+    "sprite_index": 109,
+    "sprite_folder": "graphics/trainers/trainer_109",
+    "party_size": 176,
+    "ai_flags": "0x7"
+  },
+  {
+    "id": 357,
+    "name": "Grunt",
+    "trainer_class": 85,
+    "sprite_index": 109,
+    "sprite_folder": "graphics/trainers/trainer_109",
+    "party_size": 192,
+    "ai_flags": "0x1"
+  },
+  {
+    "id": 358,
+    "name": "Grunt",
+    "trainer_class": 85,
+    "sprite_index": 109,
+    "sprite_folder": "graphics/trainers/trainer_109",
+    "party_size": 208,
+    "ai_flags": "0x1"
+  },
+  {
+    "id": 359,
+    "name": "Grunt",
+    "trainer_class": 85,
+    "sprite_index": 109,
+    "sprite_folder": "graphics/trainers/trainer_109",
+    "party_size": 224,
+    "ai_flags": "0x1"
+  },
+  {
+    "id": 360,
+    "name": "Grunt",
+    "trainer_class": 85,
+    "sprite_index": 109,
+    "sprite_folder": "graphics/trainers/trainer_109",
+    "party_size": 240,
+    "ai_flags": "0x1"
+  },
+  {
+    "id": 361,
+    "name": "Grunt",
+    "trainer_class": 85,
+    "sprite_index": 109,
+    "sprite_folder": "graphics/trainers/trainer_109",
+    "party_size": 32,
+    "ai_flags": "0x1"
+  },
+  {
+    "id": 362,
+    "name": "Grunt",
+    "trainer_class": 85,
+    "sprite_index": 109,
+    "sprite_folder": "graphics/trainers/trainer_109",
+    "party_size": 64,
+    "ai_flags": "0x1"
+  },
+  {
+    "id": 363,
+    "name": "Grunt",
+    "trainer_class": 85,
+    "sprite_index": 109,
+    "sprite_folder": "graphics/trainers/trainer_109",
+    "party_size": 96,
+    "ai_flags": "0x1"
+  },
+  {
+    "id": 364,
+    "name": "Grunt",
+    "trainer_class": 85,
+    "sprite_index": 109,
+    "sprite_folder": "graphics/trainers/trainer_109",
+    "party_size": 176,
+    "ai_flags": "0x1"
+  },
+  {
+    "id": 365,
+    "name": "Grunt",
+    "trainer_class": 85,
+    "sprite_index": 109,
+    "sprite_folder": "graphics/trainers/trainer_109",
+    "party_size": 200,
+    "ai_flags": "0x1"
+  },
+  {
+    "id": 366,
+    "name": "Grunt",
+    "trainer_class": 85,
+    "sprite_index": 109,
+    "sprite_folder": "graphics/trainers/trainer_109",
+    "party_size": 216,
+    "ai_flags": "0x1"
+  },
+  {
+    "id": 367,
+    "name": "Grunt",
+    "trainer_class": 85,
+    "sprite_index": 109,
+    "sprite_folder": "graphics/trainers/trainer_109",
+    "party_size": 240,
+    "ai_flags": "0x1"
+  },
+  {
+    "id": 368,
+    "name": "Grunt",
+    "trainer_class": 85,
+    "sprite_index": 109,
+    "sprite_folder": "graphics/trainers/trainer_109",
+    "party_size": 8,
+    "ai_flags": "0x1"
+  },
+  {
+    "id": 369,
+    "name": "Grunt",
+    "trainer_class": 85,
+    "sprite_index": 109,
+    "sprite_folder": "graphics/trainers/trainer_109",
+    "party_size": 24,
+    "ai_flags": "0x1"
+  },
+  {
+    "id": 370,
+    "name": "Grunt",
+    "trainer_class": 85,
+    "sprite_index": 109,
+    "sprite_folder": "graphics/trainers/trainer_109",
+    "party_size": 48,
+    "ai_flags": "0x1"
+  },
+  {
+    "id": 371,
+    "name": "Grunt",
+    "trainer_class": 85,
+    "sprite_index": 109,
+    "sprite_folder": "graphics/trainers/trainer_109",
+    "party_size": 64,
+    "ai_flags": "0x1"
+  },
+  {
+    "id": 372,
+    "name": "Grunt",
+    "trainer_class": 85,
+    "sprite_index": 109,
+    "sprite_folder": "graphics/trainers/trainer_109",
+    "party_size": 96,
+    "ai_flags": "0x1"
+  },
+  {
+    "id": 373,
+    "name": "Grunt",
+    "trainer_class": 85,
+    "sprite_index": 109,
+    "sprite_folder": "graphics/trainers/trainer_109",
+    "party_size": 112,
+    "ai_flags": "0x1"
+  },
+  {
+    "id": 374,
+    "name": "Grunt",
+    "trainer_class": 85,
+    "sprite_index": 109,
+    "sprite_folder": "graphics/trainers/trainer_109",
+    "party_size": 128,
+    "ai_flags": "0x1"
+  },
+  {
+    "id": 375,
+    "name": "Grunt",
+    "trainer_class": 85,
+    "sprite_index": 109,
+    "sprite_folder": "graphics/trainers/trainer_109",
+    "party_size": 168,
+    "ai_flags": "0x1"
+  },
+  {
+    "id": 376,
+    "name": "Grunt",
+    "trainer_class": 85,
+    "sprite_index": 109,
+    "sprite_folder": "graphics/trainers/trainer_109",
+    "party_size": 192,
+    "ai_flags": "0x1"
+  },
+  {
+    "id": 377,
+    "name": "Grunt",
+    "trainer_class": 85,
+    "sprite_index": 109,
+    "sprite_folder": "graphics/trainers/trainer_109",
+    "party_size": 208,
+    "ai_flags": "0x1"
+  },
+  {
+    "id": 378,
+    "name": "Grunt",
+    "trainer_class": 85,
+    "sprite_index": 109,
+    "sprite_folder": "graphics/trainers/trainer_109",
+    "party_size": 232,
+    "ai_flags": "0x1"
+  },
+  {
+    "id": 379,
+    "name": "Grunt",
+    "trainer_class": 85,
+    "sprite_index": 109,
+    "sprite_folder": "graphics/trainers/trainer_109",
+    "party_size": 240,
+    "ai_flags": "0x1"
+  },
+  {
+    "id": 380,
+    "name": "Grunt",
+    "trainer_class": 85,
+    "sprite_index": 109,
+    "sprite_folder": "graphics/trainers/trainer_109",
+    "party_size": 248,
+    "ai_flags": "0x1"
+  },
+  {
+    "id": 381,
+    "name": "Grunt",
+    "trainer_class": 85,
+    "sprite_index": 109,
+    "sprite_folder": "graphics/trainers/trainer_109",
+    "party_size": 8,
+    "ai_flags": "0x1"
+  },
+  {
+    "id": 382,
+    "name": "Grunt",
+    "trainer_class": 85,
+    "sprite_index": 109,
+    "sprite_folder": "graphics/trainers/trainer_109",
+    "party_size": 32,
+    "ai_flags": "0x1"
+  },
+  {
+    "id": 383,
+    "name": "Grunt",
+    "trainer_class": 85,
+    "sprite_index": 109,
+    "sprite_folder": "graphics/trainers/trainer_109",
+    "party_size": 96,
+    "ai_flags": "0x1"
+  },
+  {
+    "id": 384,
+    "name": "Grunt",
+    "trainer_class": 85,
+    "sprite_index": 109,
+    "sprite_folder": "graphics/trainers/trainer_109",
+    "party_size": 112,
+    "ai_flags": "0x1"
+  },
+  {
+    "id": 385,
+    "name": "Grunt",
+    "trainer_class": 85,
+    "sprite_index": 109,
+    "sprite_folder": "graphics/trainers/trainer_109",
+    "party_size": 128,
+    "ai_flags": "0x1"
+  },
+  {
+    "id": 386,
+    "name": "Grunt",
+    "trainer_class": 85,
+    "sprite_index": 109,
+    "sprite_folder": "graphics/trainers/trainer_109",
+    "party_size": 160,
+    "ai_flags": "0x1"
+  },
+  {
+    "id": 387,
+    "name": "Grunt",
+    "trainer_class": 85,
+    "sprite_index": 109,
+    "sprite_folder": "graphics/trainers/trainer_109",
+    "party_size": 184,
+    "ai_flags": "0x1"
+  },
+  {
+    "id": 388,
+    "name": "Grunt",
+    "trainer_class": 85,
+    "sprite_index": 109,
+    "sprite_folder": "graphics/trainers/trainer_109",
+    "party_size": 208,
+    "ai_flags": "0x1"
+  },
+  {
+    "id": 389,
+    "name": "Grunt",
+    "trainer_class": 85,
+    "sprite_index": 109,
+    "sprite_folder": "graphics/trainers/trainer_109",
+    "party_size": 232,
+    "ai_flags": "0x1"
+  },
+  {
+    "id": 390,
+    "name": "Grunt",
+    "trainer_class": 85,
+    "sprite_index": 109,
+    "sprite_folder": "graphics/trainers/trainer_109",
+    "party_size": 240,
+    "ai_flags": "0x1"
+  },
+  {
+    "id": 391,
+    "name": "Grunt",
+    "trainer_class": 85,
+    "sprite_index": 109,
+    "sprite_folder": "graphics/trainers/trainer_109",
+    "party_size": 24,
+    "ai_flags": "0x1"
+  },
+  {
+    "id": 392,
+    "name": "Samuel",
+    "trainer_class": 86,
+    "sprite_index": 110,
+    "sprite_folder": "graphics/trainers/trainer_110",
+    "party_size": 48,
+    "ai_flags": "0x7"
+  },
+  {
+    "id": 393,
+    "name": "George",
+    "trainer_class": 86,
+    "sprite_index": 110,
+    "sprite_folder": "graphics/trainers/trainer_110",
+    "party_size": 128,
+    "ai_flags": "0x7"
+  },
+  {
+    "id": 394,
+    "name": "Colby",
+    "trainer_class": 86,
+    "sprite_index": 110,
+    "sprite_folder": "graphics/trainers/trainer_110",
+    "party_size": 208,
+    "ai_flags": "0x7"
+  },
+  {
+    "id": 395,
+    "name": "Paul",
+    "trainer_class": 86,
+    "sprite_index": 110,
+    "sprite_folder": "graphics/trainers/trainer_110",
+    "party_size": 32,
+    "ai_flags": "0x7"
+  },
+  {
+    "id": 396,
+    "name": "Rolando",
+    "trainer_class": 86,
+    "sprite_index": 110,
+    "sprite_folder": "graphics/trainers/trainer_110",
+    "party_size": 112,
+    "ai_flags": "0x7"
+  },
+  {
+    "id": 397,
+    "name": "Gilbert",
+    "trainer_class": 86,
+    "sprite_index": 110,
+    "sprite_folder": "graphics/trainers/trainer_110",
+    "party_size": 192,
+    "ai_flags": "0x7"
+  },
+  {
+    "id": 398,
+    "name": "Owen",
+    "trainer_class": 86,
+    "sprite_index": 110,
+    "sprite_folder": "graphics/trainers/trainer_110",
+    "party_size": 16,
+    "ai_flags": "0x7"
+  },
+  {
+    "id": 399,
+    "name": "Berke",
+    "trainer_class": 86,
+    "sprite_index": 110,
+    "sprite_folder": "graphics/trainers/trainer_110",
+    "party_size": 96,
+    "ai_flags": "0x7"
+  },
+  {
+    "id": 400,
+    "name": "Yuji",
+    "trainer_class": 86,
+    "sprite_index": 110,
+    "sprite_folder": "graphics/trainers/trainer_110",
+    "party_size": 176,
+    "ai_flags": "0x7"
+  },
+  {
+    "id": 401,
+    "name": "Warren",
+    "trainer_class": 86,
+    "sprite_index": 110,
+    "sprite_folder": "graphics/trainers/trainer_110",
+    "party_size": 0,
+    "ai_flags": "0x7"
+  },
+  {
+    "id": 402,
+    "name": "Mary",
+    "trainer_class": 86,
+    "sprite_index": 111,
+    "sprite_folder": "graphics/trainers/trainer_111",
+    "party_size": 80,
+    "ai_flags": "0x7"
+  },
+  {
+    "id": 403,
+    "name": "Caroline",
+    "trainer_class": 86,
+    "sprite_index": 111,
+    "sprite_folder": "graphics/trainers/trainer_111",
+    "party_size": 160,
+    "ai_flags": "0x7"
+  },
+  {
+    "id": 404,
+    "name": "Alexa",
+    "trainer_class": 86,
+    "sprite_index": 111,
+    "sprite_folder": "graphics/trainers/trainer_111",
+    "party_size": 240,
+    "ai_flags": "0x7"
+  },
+  {
+    "id": 405,
+    "name": "Shannon",
+    "trainer_class": 86,
+    "sprite_index": 111,
+    "sprite_folder": "graphics/trainers/trainer_111",
+    "party_size": 64,
+    "ai_flags": "0x7"
+  },
+  {
+    "id": 406,
+    "name": "Naomi",
+    "trainer_class": 86,
+    "sprite_index": 111,
+    "sprite_folder": "graphics/trainers/trainer_111",
+    "party_size": 144,
+    "ai_flags": "0x7"
+  },
+  {
+    "id": 407,
+    "name": "Brooke",
+    "trainer_class": 86,
+    "sprite_index": 111,
+    "sprite_folder": "graphics/trainers/trainer_111",
+    "party_size": 224,
+    "ai_flags": "0x7"
+  },
+  {
+    "id": 408,
+    "name": "Austina",
+    "trainer_class": 86,
+    "sprite_index": 111,
+    "sprite_folder": "graphics/trainers/trainer_111",
+    "party_size": 48,
+    "ai_flags": "0x7"
+  },
+  {
+    "id": 409,
+    "name": "Julie",
+    "trainer_class": 86,
+    "sprite_index": 111,
+    "sprite_folder": "graphics/trainers/trainer_111",
+    "party_size": 128,
+    "ai_flags": "0x7"
+  },
+  {
+    "id": 410,
+    "name": "Lorelei",
+    "trainer_class": 87,
+    "sprite_index": 112,
+    "sprite_folder": "graphics/trainers/trainer_112",
+    "party_size": 208,
+    "ai_flags": "0x7"
+  },
+  {
+    "id": 411,
+    "name": "Bruno",
+    "trainer_class": 87,
+    "sprite_index": 113,
+    "sprite_folder": "graphics/trainers/trainer_113",
+    "party_size": 32,
+    "ai_flags": "0x7"
+  },
+  {
+    "id": 412,
+    "name": "Agatha",
+    "trainer_class": 87,
+    "sprite_index": 114,
+    "sprite_folder": "graphics/trainers/trainer_114",
+    "party_size": 112,
+    "ai_flags": "0x7"
+  },
+  {
+    "id": 413,
+    "name": "Lance",
+    "trainer_class": 87,
+    "sprite_index": 115,
+    "sprite_folder": "graphics/trainers/trainer_115",
+    "party_size": 192,
+    "ai_flags": "0x7"
+  },
+  {
+    "id": 414,
+    "name": "Brock",
+    "trainer_class": 84,
+    "sprite_index": 116,
+    "sprite_folder": "graphics/trainers/trainer_116",
+    "party_size": 32,
+    "ai_flags": "0x7"
+  },
+  {
+    "id": 415,
+    "name": "Misty",
+    "trainer_class": 84,
+    "sprite_index": 117,
+    "sprite_folder": "graphics/trainers/trainer_117",
+    "party_size": 160,
+    "ai_flags": "0x7"
+  },
+  {
+    "id": 416,
+    "name": "Lt. Surge",
+    "trainer_class": 84,
+    "sprite_index": 118,
+    "sprite_folder": "graphics/trainers/trainer_118",
+    "party_size": 8,
+    "ai_flags": "0x7"
+  },
+  {
+    "id": 417,
+    "name": "Erika",
+    "trainer_class": 84,
+    "sprite_index": 119,
+    "sprite_folder": "graphics/trainers/trainer_119",
+    "party_size": 156,
+    "ai_flags": "0x7"
+  },
+  {
+    "id": 418,
+    "name": "Koga",
+    "trainer_class": 84,
+    "sprite_index": 120,
+    "sprite_folder": "graphics/trainers/trainer_120",
+    "party_size": 40,
+    "ai_flags": "0x7"
+  },
+  {
+    "id": 419,
+    "name": "Blaine",
+    "trainer_class": 84,
+    "sprite_index": 121,
+    "sprite_folder": "graphics/trainers/trainer_121",
+    "party_size": 232,
+    "ai_flags": "0x7"
+  },
+  {
+    "id": 420,
+    "name": "Sabrina",
+    "trainer_class": 84,
+    "sprite_index": 122,
+    "sprite_folder": "graphics/trainers/trainer_122",
+    "party_size": 88,
+    "ai_flags": "0x7"
+  },
+  {
+    "id": 421,
+    "name": "Thomas",
+    "trainer_class": 88,
+    "sprite_index": 123,
+    "sprite_folder": "graphics/trainers/trainer_123",
+    "party_size": 112,
+    "ai_flags": "0x1"
+  },
+  {
+    "id": 422,
+    "name": "Arthur",
+    "trainer_class": 88,
+    "sprite_index": 123,
+    "sprite_folder": "graphics/trainers/trainer_123",
+    "party_size": 128,
+    "ai_flags": "0x1"
+  },
+  {
+    "id": 423,
+    "name": "Tucker",
+    "trainer_class": 88,
+    "sprite_index": 123,
+    "sprite_folder": "graphics/trainers/trainer_123",
+    "party_size": 144,
+    "ai_flags": "0x1"
+  },
+  {
+    "id": 424,
+    "name": "Norton",
+    "trainer_class": 88,
+    "sprite_index": 123,
+    "sprite_folder": "graphics/trainers/trainer_123",
+    "party_size": 152,
+    "ai_flags": "0x1"
+  },
+  {
+    "id": 425,
+    "name": "Walter",
+    "trainer_class": 88,
+    "sprite_index": 123,
+    "sprite_folder": "graphics/trainers/trainer_123",
+    "party_size": 160,
+    "ai_flags": "0x1"
+  },
+  {
+    "id": 426,
+    "name": "Terry",
+    "trainer_class": 89,
+    "sprite_index": 106,
+    "sprite_folder": "graphics/trainers/trainer_106",
+    "party_size": 176,
+    "ai_flags": "0x7"
+  },
+  {
+    "id": 427,
+    "name": "Terry",
+    "trainer_class": 89,
+    "sprite_index": 106,
+    "sprite_folder": "graphics/trainers/trainer_106",
+    "party_size": 208,
+    "ai_flags": "0x7"
+  },
+  {
+    "id": 428,
+    "name": "Terry",
+    "trainer_class": 89,
+    "sprite_index": 106,
+    "sprite_folder": "graphics/trainers/trainer_106",
+    "party_size": 240,
+    "ai_flags": "0x7"
+  },
+  {
+    "id": 429,
+    "name": "Terry",
+    "trainer_class": 89,
+    "sprite_index": 124,
+    "sprite_folder": "graphics/trainers/trainer_124",
+    "party_size": 16,
+    "ai_flags": "0x7"
+  },
+  {
+    "id": 430,
+    "name": "Terry",
+    "trainer_class": 89,
+    "sprite_index": 124,
+    "sprite_folder": "graphics/trainers/trainer_124",
+    "party_size": 56,
+    "ai_flags": "0x7"
+  },
+  {
+    "id": 431,
+    "name": "Terry",
+    "trainer_class": 89,
+    "sprite_index": 124,
+    "sprite_folder": "graphics/trainers/trainer_124",
+    "party_size": 96,
+    "ai_flags": "0x7"
+  },
+  {
+    "id": 432,
+    "name": "Terry",
+    "trainer_class": 89,
+    "sprite_index": 106,
+    "sprite_folder": "graphics/trainers/trainer_106",
+    "party_size": 56,
+    "ai_flags": "0x7"
+  },
+  {
+    "id": 433,
+    "name": "Terry",
+    "trainer_class": 89,
+    "sprite_index": 106,
+    "sprite_folder": "graphics/trainers/trainer_106",
+    "party_size": 136,
+    "ai_flags": "0x7"
+  },
+  {
+    "id": 434,
+    "name": "Terry",
+    "trainer_class": 89,
+    "sprite_index": 106,
+    "sprite_folder": "graphics/trainers/trainer_106",
+    "party_size": 216,
+    "ai_flags": "0x7"
+  },
+  {
+    "id": 435,
+    "name": "Terry",
+    "trainer_class": 89,
+    "sprite_index": 106,
+    "sprite_folder": "graphics/trainers/trainer_106",
+    "party_size": 0,
+    "ai_flags": "0x7"
+  },
+  {
+    "id": 436,
+    "name": "Terry",
+    "trainer_class": 89,
+    "sprite_index": 106,
+    "sprite_folder": "graphics/trainers/trainer_106",
+    "party_size": 96,
+    "ai_flags": "0x7"
+  },
+  {
+    "id": 437,
+    "name": "Terry",
+    "trainer_class": 89,
+    "sprite_index": 106,
+    "sprite_folder": "graphics/trainers/trainer_106",
+    "party_size": 192,
+    "ai_flags": "0x7"
+  },
+  {
+    "id": 438,
+    "name": "Terry",
+    "trainer_class": 90,
+    "sprite_index": 106,
+    "sprite_folder": "graphics/trainers/trainer_106",
+    "party_size": 32,
+    "ai_flags": "0x7"
+  },
+  {
+    "id": 439,
+    "name": "Terry",
+    "trainer_class": 90,
+    "sprite_index": 106,
+    "sprite_folder": "graphics/trainers/trainer_106",
+    "party_size": 128,
+    "ai_flags": "0x7"
+  },
+  {
+    "id": 440,
+    "name": "Terry",
+    "trainer_class": 90,
+    "sprite_index": 106,
+    "sprite_folder": "graphics/trainers/trainer_106",
+    "party_size": 224,
+    "ai_flags": "0x7"
+  },
+  {
+    "id": 441,
+    "name": "Patricia",
+    "trainer_class": 91,
+    "sprite_index": 126,
+    "sprite_folder": "graphics/trainers/trainer_126",
+    "party_size": 64,
+    "ai_flags": "0x1"
+  },
+  {
+    "id": 442,
+    "name": "Carly",
+    "trainer_class": 91,
+    "sprite_index": 126,
+    "sprite_folder": "graphics/trainers/trainer_126",
+    "party_size": 72,
+    "ai_flags": "0x1"
+  },
+  {
+    "id": 443,
+    "name": "Hope",
+    "trainer_class": 91,
+    "sprite_index": 126,
+    "sprite_folder": "graphics/trainers/trainer_126",
+    "party_size": 80,
+    "ai_flags": "0x1"
+  },
+  {
+    "id": 444,
+    "name": "Paula",
+    "trainer_class": 91,
+    "sprite_index": 126,
+    "sprite_folder": "graphics/trainers/trainer_126",
+    "party_size": 88,
+    "ai_flags": "0x1"
+  },
+  {
+    "id": 445,
+    "name": "Laurel",
+    "trainer_class": 91,
+    "sprite_index": 126,
+    "sprite_folder": "graphics/trainers/trainer_126",
+    "party_size": 96,
+    "ai_flags": "0x1"
+  },
+  {
+    "id": 446,
+    "name": "Jody",
+    "trainer_class": 91,
+    "sprite_index": 126,
+    "sprite_folder": "graphics/trainers/trainer_126",
+    "party_size": 112,
+    "ai_flags": "0x1"
+  },
+  {
+    "id": 447,
+    "name": "Tammy",
+    "trainer_class": 91,
+    "sprite_index": 126,
+    "sprite_folder": "graphics/trainers/trainer_126",
+    "party_size": 120,
+    "ai_flags": "0x1"
+  },
+  {
+    "id": 448,
+    "name": "Ruth",
+    "trainer_class": 91,
+    "sprite_index": 126,
+    "sprite_folder": "graphics/trainers/trainer_126",
+    "party_size": 128,
+    "ai_flags": "0x1"
+  },
+  {
+    "id": 449,
+    "name": "Karina",
+    "trainer_class": 91,
+    "sprite_index": 126,
+    "sprite_folder": "graphics/trainers/trainer_126",
+    "party_size": 136,
+    "ai_flags": "0x1"
+  },
+  {
+    "id": 450,
+    "name": "Janae",
+    "trainer_class": 91,
+    "sprite_index": 126,
+    "sprite_folder": "graphics/trainers/trainer_126",
+    "party_size": 144,
+    "ai_flags": "0x1"
+  },
+  {
+    "id": 451,
+    "name": "Angelica",
+    "trainer_class": 91,
+    "sprite_index": 126,
+    "sprite_folder": "graphics/trainers/trainer_126",
+    "party_size": 152,
+    "ai_flags": "0x1"
+  },
+  {
+    "id": 452,
+    "name": "Emilia",
+    "trainer_class": 91,
+    "sprite_index": 126,
+    "sprite_folder": "graphics/trainers/trainer_126",
+    "party_size": 176,
+    "ai_flags": "0x1"
+  },
+  {
+    "id": 453,
+    "name": "Jennifer",
+    "trainer_class": 91,
+    "sprite_index": 126,
+    "sprite_folder": "graphics/trainers/trainer_126",
+    "party_size": 184,
+    "ai_flags": "0x1"
+  },
+  {
+    "id": 454,
+    "name": "Max",
+    "trainer_class": 67,
+    "sprite_index": 92,
+    "sprite_folder": "graphics/trainers/trainer_092",
+    "party_size": 192,
+    "ai_flags": "0x1"
+  },
+  {
+    "id": 455,
+    "name": "Anson",
+    "trainer_class": 67,
+    "sprite_index": 92,
+    "sprite_folder": "graphics/trainers/trainer_092",
+    "party_size": 200,
+    "ai_flags": "0x1"
+  },
+  {
+    "id": 456,
+    "name": "",
+    "trainer_class": 91,
+    "sprite_index": 126,
+    "sprite_folder": "graphics/trainers/trainer_126",
+    "party_size": 208,
+    "ai_flags": "0x1"
+  },
+  {
+    "id": 457,
+    "name": "",
+    "trainer_class": 91,
+    "sprite_index": 126,
+    "sprite_folder": "graphics/trainers/trainer_126",
+    "party_size": 216,
+    "ai_flags": "0x1"
+  },
+  {
+    "id": 458,
+    "name": "",
+    "trainer_class": 91,
+    "sprite_index": 126,
+    "sprite_folder": "graphics/trainers/trainer_126",
+    "party_size": 224,
+    "ai_flags": "0x1"
+  },
+  {
+    "id": 459,
+    "name": "",
+    "trainer_class": 91,
+    "sprite_index": 126,
+    "sprite_folder": "graphics/trainers/trainer_126",
+    "party_size": 232,
+    "ai_flags": "0x1"
+  },
+  {
+    "id": 460,
+    "name": "",
+    "trainer_class": 91,
+    "sprite_index": 126,
+    "sprite_folder": "graphics/trainers/trainer_126",
+    "party_size": 0,
+    "ai_flags": "0x1"
+  },
+  {
+    "id": 461,
+    "name": "",
+    "trainer_class": 91,
+    "sprite_index": 126,
+    "sprite_folder": "graphics/trainers/trainer_126",
+    "party_size": 8,
+    "ai_flags": "0x1"
+  },
+  {
+    "id": 462,
+    "name": "Amanda",
+    "trainer_class": 91,
+    "sprite_index": 126,
+    "sprite_folder": "graphics/trainers/trainer_126",
+    "party_size": 16,
+    "ai_flags": "0x1"
+  },
+  {
+    "id": 463,
+    "name": "Stacy",
+    "trainer_class": 91,
+    "sprite_index": 126,
+    "sprite_folder": "graphics/trainers/trainer_126",
+    "party_size": 32,
+    "ai_flags": "0x1"
+  },
+  {
+    "id": 464,
+    "name": "Tasha",
+    "trainer_class": 91,
+    "sprite_index": 126,
+    "sprite_folder": "graphics/trainers/trainer_126",
+    "party_size": 40,
+    "ai_flags": "0x1"
+  },
+  {
+    "id": 465,
+    "name": "Jeremy",
+    "trainer_class": 65,
+    "sprite_index": 90,
+    "sprite_folder": "graphics/trainers/trainer_090",
+    "party_size": 64,
+    "ai_flags": "0x1"
+  },
+  {
+    "id": 466,
+    "name": "Alma",
+    "trainer_class": 62,
+    "sprite_index": 87,
+    "sprite_folder": "graphics/trainers/trainer_087",
+    "party_size": 80,
+    "ai_flags": "0x1"
+  },
+  {
+    "id": 467,
+    "name": "Susie",
+    "trainer_class": 62,
+    "sprite_index": 87,
+    "sprite_folder": "graphics/trainers/trainer_087",
+    "party_size": 104,
+    "ai_flags": "0x1"
+  },
+  {
+    "id": 468,
+    "name": "Valerie",
+    "trainer_class": 62,
+    "sprite_index": 87,
+    "sprite_folder": "graphics/trainers/trainer_087",
+    "party_size": 144,
+    "ai_flags": "0x1"
+  },
+  {
+    "id": 469,
+    "name": "Gwen",
+    "trainer_class": 62,
+    "sprite_index": 87,
+    "sprite_folder": "graphics/trainers/trainer_087",
+    "party_size": 160,
+    "ai_flags": "0x1"
+  },
+  {
+    "id": 470,
+    "name": "Virgil",
+    "trainer_class": 66,
+    "sprite_index": 91,
+    "sprite_folder": "graphics/trainers/trainer_091",
+    "party_size": 192,
+    "ai_flags": "0x1"
+  },
+  {
+    "id": 471,
+    "name": "Flint",
+    "trainer_class": 61,
+    "sprite_index": 86,
+    "sprite_folder": "graphics/trainers/trainer_086",
+    "party_size": 240,
+    "ai_flags": "0x1"
+  },
+  {
+    "id": 472,
+    "name": "Missy",
+    "trainer_class": 62,
+    "sprite_index": 87,
+    "sprite_folder": "graphics/trainers/trainer_087",
+    "party_size": 0,
+    "ai_flags": "0x1"
+  },
+  {
+    "id": 473,
+    "name": "Irene",
+    "trainer_class": 62,
+    "sprite_index": 87,
+    "sprite_folder": "graphics/trainers/trainer_087",
+    "party_size": 16,
+    "ai_flags": "0x1"
+  },
+  {
+    "id": 474,
+    "name": "Dana",
+    "trainer_class": 62,
+    "sprite_index": 87,
+    "sprite_folder": "graphics/trainers/trainer_087",
+    "party_size": 40,
+    "ai_flags": "0x1"
+  },
+  {
+    "id": 475,
+    "name": "Ariana",
+    "trainer_class": 62,
+    "sprite_index": 87,
+    "sprite_folder": "graphics/trainers/trainer_087",
+    "party_size": 64,
+    "ai_flags": "0x1"
+  },
+  {
+    "id": 476,
+    "name": "Leah",
+    "trainer_class": 62,
+    "sprite_index": 87,
+    "sprite_folder": "graphics/trainers/trainer_087",
+    "party_size": 96,
+    "ai_flags": "0x1"
+  },
+  {
+    "id": 477,
+    "name": "Justin",
+    "trainer_class": 61,
+    "sprite_index": 86,
+    "sprite_folder": "graphics/trainers/trainer_086",
+    "party_size": 112,
+    "ai_flags": "0x1"
+  },
+  {
+    "id": 478,
+    "name": "Yazmin",
+    "trainer_class": 62,
+    "sprite_index": 87,
+    "sprite_folder": "graphics/trainers/trainer_087",
+    "party_size": 128,
+    "ai_flags": "0x1"
+  },
+  {
+    "id": 479,
+    "name": "Kindra",
+    "trainer_class": 62,
+    "sprite_index": 87,
+    "sprite_folder": "graphics/trainers/trainer_087",
+    "party_size": 152,
+    "ai_flags": "0x1"
+  },
+  {
+    "id": 480,
+    "name": "Becky",
+    "trainer_class": 62,
+    "sprite_index": 87,
+    "sprite_folder": "graphics/trainers/trainer_087",
+    "party_size": 176,
+    "ai_flags": "0x1"
+  },
+  {
+    "id": 481,
+    "name": "Celia",
+    "trainer_class": 62,
+    "sprite_index": 87,
+    "sprite_folder": "graphics/trainers/trainer_087",
+    "party_size": 192,
+    "ai_flags": "0x1"
+  },
+  {
+    "id": 482,
+    "name": "Brooks",
+    "trainer_class": 88,
+    "sprite_index": 123,
+    "sprite_folder": "graphics/trainers/trainer_123",
+    "party_size": 200,
+    "ai_flags": "0x1"
+  },
+  {
+    "id": 483,
+    "name": "Lamar",
+    "trainer_class": 88,
+    "sprite_index": 123,
+    "sprite_folder": "graphics/trainers/trainer_123",
+    "party_size": 208,
+    "ai_flags": "0x1"
+  },
+  {
+    "id": 484,
+    "name": "Eli & Anne",
+    "trainer_class": 92,
+    "sprite_index": 127,
+    "sprite_folder": "graphics/trainers/trainer_127",
+    "party_size": 224,
+    "ai_flags": "0x1"
+  },
+  {
+    "id": 485,
+    "name": "Ray & Tyra",
+    "trainer_class": 93,
+    "sprite_index": 128,
+    "sprite_folder": "graphics/trainers/trainer_128",
+    "party_size": 240,
+    "ai_flags": "0x7"
+  },
+  {
+    "id": 486,
+    "name": "Gia & Jes",
+    "trainer_class": 94,
+    "sprite_index": 129,
+    "sprite_folder": "graphics/trainers/trainer_129",
+    "party_size": 16,
+    "ai_flags": "0x1"
+  },
+  {
+    "id": 487,
+    "name": "Kiri & Jan",
+    "trainer_class": 92,
+    "sprite_index": 127,
+    "sprite_folder": "graphics/trainers/trainer_127",
+    "party_size": 32,
+    "ai_flags": "0x1"
+  },
+  {
+    "id": 488,
+    "name": "Ron & Mya",
+    "trainer_class": 95,
+    "sprite_index": 130,
+    "sprite_folder": "graphics/trainers/trainer_130",
+    "party_size": 48,
+    "ai_flags": "0x1"
+  },
+  {
+    "id": 489,
+    "name": "Lea & Jed",
+    "trainer_class": 94,
+    "sprite_index": 129,
+    "sprite_folder": "graphics/trainers/trainer_129",
+    "party_size": 64,
+    "ai_flags": "0x1"
+  },
+  {
+    "id": 490,
+    "name": "Lia & Luc",
+    "trainer_class": 96,
+    "sprite_index": 131,
+    "sprite_folder": "graphics/trainers/trainer_131",
+    "party_size": 80,
+    "ai_flags": "0x1"
+  },
+  {
+    "id": 491,
+    "name": "Lil & Ian",
+    "trainer_class": 96,
+    "sprite_index": 131,
+    "sprite_folder": "graphics/trainers/trainer_131",
+    "party_size": 96,
+    "ai_flags": "0x1"
+  },
+  {
+    "id": 492,
+    "name": "",
+    "trainer_class": 58,
+    "sprite_index": 83,
+    "sprite_folder": "graphics/trainers/trainer_083",
+    "party_size": 112,
+    "ai_flags": "0x1"
+  },
+  {
+    "id": 493,
+    "name": "",
+    "trainer_class": 58,
+    "sprite_index": 83,
+    "sprite_folder": "graphics/trainers/trainer_083",
+    "party_size": 120,
+    "ai_flags": "0x1"
+  },
+  {
+    "id": 494,
+    "name": "",
+    "trainer_class": 58,
+    "sprite_index": 83,
+    "sprite_folder": "graphics/trainers/trainer_083",
+    "party_size": 128,
+    "ai_flags": "0x1"
+  },
+  {
+    "id": 495,
+    "name": "",
+    "trainer_class": 58,
+    "sprite_index": 83,
+    "sprite_folder": "graphics/trainers/trainer_083",
+    "party_size": 136,
+    "ai_flags": "0x1"
+  },
+  {
+    "id": 496,
+    "name": "",
+    "trainer_class": 58,
+    "sprite_index": 83,
+    "sprite_folder": "graphics/trainers/trainer_083",
+    "party_size": 144,
+    "ai_flags": "0x1"
+  },
+  {
+    "id": 497,
+    "name": "",
+    "trainer_class": 58,
+    "sprite_index": 83,
+    "sprite_folder": "graphics/trainers/trainer_083",
+    "party_size": 152,
+    "ai_flags": "0x1"
+  },
+  {
+    "id": 498,
+    "name": "Ben",
+    "trainer_class": 57,
+    "sprite_index": 82,
+    "sprite_folder": "graphics/trainers/trainer_082",
+    "party_size": 160,
+    "ai_flags": "0x1"
+  },
+  {
+    "id": 499,
+    "name": "Ben",
+    "trainer_class": 57,
+    "sprite_index": 82,
+    "sprite_folder": "graphics/trainers/trainer_082",
+    "party_size": 176,
+    "ai_flags": "0x1"
+  },
+  {
+    "id": 500,
+    "name": "Chad",
+    "trainer_class": 57,
+    "sprite_index": 82,
+    "sprite_folder": "graphics/trainers/trainer_082",
+    "party_size": 192,
+    "ai_flags": "0x1"
+  },
+  {
+    "id": 501,
+    "name": "Reli",
+    "trainer_class": 59,
+    "sprite_index": 84,
+    "sprite_folder": "graphics/trainers/trainer_084",
+    "party_size": 208,
+    "ai_flags": "0x1"
+  },
+  {
+    "id": 502,
+    "name": "Reli",
+    "trainer_class": 59,
+    "sprite_index": 84,
+    "sprite_folder": "graphics/trainers/trainer_084",
+    "party_size": 224,
+    "ai_flags": "0x1"
+  },
+  {
+    "id": 503,
+    "name": "Timmy",
+    "trainer_class": 57,
+    "sprite_index": 82,
+    "sprite_folder": "graphics/trainers/trainer_082",
+    "party_size": 240,
+    "ai_flags": "0x1"
+  },
+  {
+    "id": 504,
+    "name": "Timmy",
+    "trainer_class": 57,
+    "sprite_index": 82,
+    "sprite_folder": "graphics/trainers/trainer_082",
+    "party_size": 8,
+    "ai_flags": "0x1"
+  },
+  {
+    "id": 505,
+    "name": "Timmy",
+    "trainer_class": 57,
+    "sprite_index": 82,
+    "sprite_folder": "graphics/trainers/trainer_082",
+    "party_size": 32,
+    "ai_flags": "0x1"
+  },
+  {
+    "id": 506,
+    "name": "Chad",
+    "trainer_class": 57,
+    "sprite_index": 82,
+    "sprite_folder": "graphics/trainers/trainer_082",
+    "party_size": 56,
+    "ai_flags": "0x1"
+  },
+  {
+    "id": 507,
+    "name": "Janice",
+    "trainer_class": 59,
+    "sprite_index": 84,
+    "sprite_folder": "graphics/trainers/trainer_084",
+    "party_size": 72,
+    "ai_flags": "0x1"
+  },
+  {
+    "id": 508,
+    "name": "Janice",
+    "trainer_class": 59,
+    "sprite_index": 84,
+    "sprite_folder": "graphics/trainers/trainer_084",
+    "party_size": 88,
+    "ai_flags": "0x1"
+  },
+  {
+    "id": 509,
+    "name": "Chad",
+    "trainer_class": 57,
+    "sprite_index": 82,
+    "sprite_folder": "graphics/trainers/trainer_082",
+    "party_size": 104,
+    "ai_flags": "0x1"
+  },
+  {
+    "id": 510,
+    "name": "Franklin",
+    "trainer_class": 65,
+    "sprite_index": 90,
+    "sprite_folder": "graphics/trainers/trainer_090",
+    "party_size": 120,
+    "ai_flags": "0x1"
+  },
+  {
+    "id": 511,
+    "name": "Prof. Oak",
+    "trainer_class": 97,
+    "sprite_index": 132,
+    "sprite_folder": "graphics/trainers/trainer_132",
+    "party_size": 136,
+    "ai_flags": "0x1"
+  },
+  {
+    "id": 512,
+    "name": "Brendan",
+    "trainer_class": 98,
+    "sprite_index": 133,
+    "sprite_folder": "graphics/trainers/trainer_133",
+    "party_size": 144,
+    "ai_flags": "0x1"
+  },
+  {
+    "id": 513,
+    "name": "May",
+    "trainer_class": 98,
+    "sprite_index": 134,
+    "sprite_folder": "graphics/trainers/trainer_134",
+    "party_size": 152,
+    "ai_flags": "0x1"
+  },
+  {
+    "id": 514,
+    "name": "Red",
+    "trainer_class": 98,
+    "sprite_index": 135,
+    "sprite_folder": "graphics/trainers/trainer_135",
+    "party_size": 160,
+    "ai_flags": "0x1"
+  },
+  {
+    "id": 515,
+    "name": "Leaf",
+    "trainer_class": 98,
+    "sprite_index": 136,
+    "sprite_folder": "graphics/trainers/trainer_136",
+    "party_size": 168,
+    "ai_flags": "0x1"
+  },
+  {
+    "id": 516,
+    "name": "Grunt",
+    "trainer_class": 85,
+    "sprite_index": 137,
+    "sprite_folder": "graphics/trainers/trainer_137",
+    "party_size": 176,
+    "ai_flags": "0x1"
+  },
+  {
+    "id": 517,
+    "name": "Jaclyn",
+    "trainer_class": 75,
+    "sprite_index": 138,
+    "sprite_folder": "graphics/trainers/trainer_138",
+    "party_size": 192,
+    "ai_flags": "0x1"
+  },
+  {
+    "id": 518,
+    "name": "Sharon",
+    "trainer_class": 99,
+    "sprite_index": 139,
+    "sprite_folder": "graphics/trainers/trainer_139",
+    "party_size": 240,
+    "ai_flags": "0x1"
+  },
+  {
+    "id": 519,
+    "name": "Amira",
+    "trainer_class": 100,
+    "sprite_index": 140,
+    "sprite_folder": "graphics/trainers/trainer_140",
+    "party_size": 0,
+    "ai_flags": "0x1"
+  },
+  {
+    "id": 520,
+    "name": "Alize",
+    "trainer_class": 101,
+    "sprite_index": 141,
+    "sprite_folder": "graphics/trainers/trainer_141",
+    "party_size": 24,
+    "ai_flags": "0x1"
+  },
+  {
+    "id": 521,
+    "name": "Nicolas",
+    "trainer_class": 102,
+    "sprite_index": 142,
+    "sprite_folder": "graphics/trainers/trainer_142",
+    "party_size": 48,
+    "ai_flags": "0x7"
+  },
+  {
+    "id": 522,
+    "name": "Madeline",
+    "trainer_class": 102,
+    "sprite_index": 143,
+    "sprite_folder": "graphics/trainers/trainer_143",
+    "party_size": 80,
+    "ai_flags": "0x7"
+  },
+  {
+    "id": 523,
+    "name": "Nikki",
+    "trainer_class": 103,
+    "sprite_index": 144,
+    "sprite_folder": "graphics/trainers/trainer_144",
+    "party_size": 112,
+    "ai_flags": "0x1"
+  },
+  {
+    "id": 524,
+    "name": "Stanly",
+    "trainer_class": 104,
+    "sprite_index": 145,
+    "sprite_folder": "graphics/trainers/trainer_145",
+    "party_size": 128,
+    "ai_flags": "0x1"
+  },
+  {
+    "id": 525,
+    "name": "Jacki",
+    "trainer_class": 105,
+    "sprite_index": 146,
+    "sprite_folder": "graphics/trainers/trainer_146",
+    "party_size": 152,
+    "ai_flags": "0x1"
+  },
+  {
+    "id": 526,
+    "name": "Daisy",
+    "trainer_class": 106,
+    "sprite_index": 147,
+    "sprite_folder": "graphics/trainers/trainer_147",
+    "party_size": 168,
+    "ai_flags": "0x1"
+  },
+  {
+    "id": 527,
+    "name": "Goon",
+    "trainer_class": 66,
+    "sprite_index": 91,
+    "sprite_folder": "graphics/trainers/trainer_091",
+    "party_size": 184,
+    "ai_flags": "0x1"
+  },
+  {
+    "id": 528,
+    "name": "Goon",
+    "trainer_class": 66,
+    "sprite_index": 91,
+    "sprite_folder": "graphics/trainers/trainer_091",
+    "party_size": 216,
+    "ai_flags": "0x1"
+  },
+  {
+    "id": 529,
+    "name": "Goon",
+    "trainer_class": 66,
+    "sprite_index": 91,
+    "sprite_folder": "graphics/trainers/trainer_091",
+    "party_size": 232,
+    "ai_flags": "0x1"
+  },
+  {
+    "id": 530,
+    "name": "",
+    "trainer_class": 66,
+    "sprite_index": 91,
+    "sprite_folder": "graphics/trainers/trainer_091",
+    "party_size": 240,
+    "ai_flags": "0x1"
+  },
+  {
+    "id": 531,
+    "name": "Anthony",
+    "trainer_class": 58,
+    "sprite_index": 83,
+    "sprite_folder": "graphics/trainers/trainer_083",
+    "party_size": 248,
+    "ai_flags": "0x1"
+  },
+  {
+    "id": 532,
+    "name": "Charlie",
+    "trainer_class": 58,
+    "sprite_index": 83,
+    "sprite_folder": "graphics/trainers/trainer_083",
+    "party_size": 8,
+    "ai_flags": "0x1"
+  },
+  {
+    "id": 533,
+    "name": "Eli & Anne",
+    "trainer_class": 92,
+    "sprite_index": 127,
+    "sprite_folder": "graphics/trainers/trainer_127",
+    "party_size": 32,
+    "ai_flags": "0x1"
+  },
+  {
+    "id": 534,
+    "name": "Johnson",
+    "trainer_class": 57,
+    "sprite_index": 82,
+    "sprite_folder": "graphics/trainers/trainer_082",
+    "party_size": 48,
+    "ai_flags": "0x1"
+  },
+  {
+    "id": 535,
+    "name": "Ricardo",
+    "trainer_class": 66,
+    "sprite_index": 91,
+    "sprite_folder": "graphics/trainers/trainer_091",
+    "party_size": 72,
+    "ai_flags": "0x1"
+  },
+  {
+    "id": 536,
+    "name": "Jaren",
+    "trainer_class": 66,
+    "sprite_index": 91,
+    "sprite_folder": "graphics/trainers/trainer_091",
+    "party_size": 120,
+    "ai_flags": "0x1"
+  },
+  {
+    "id": 537,
+    "name": "Grunt",
+    "trainer_class": 85,
+    "sprite_index": 109,
+    "sprite_folder": "graphics/trainers/trainer_109",
+    "party_size": 136,
+    "ai_flags": "0x1"
+  },
+  {
+    "id": 538,
+    "name": "Grunt",
+    "trainer_class": 85,
+    "sprite_index": 109,
+    "sprite_folder": "graphics/trainers/trainer_109",
+    "party_size": 152,
+    "ai_flags": "0x1"
+  },
+  {
+    "id": 539,
+    "name": "Grunt",
+    "trainer_class": 85,
+    "sprite_index": 109,
+    "sprite_folder": "graphics/trainers/trainer_109",
+    "party_size": 184,
+    "ai_flags": "0x1"
+  },
+  {
+    "id": 540,
+    "name": "Grunt",
+    "trainer_class": 85,
+    "sprite_index": 109,
+    "sprite_folder": "graphics/trainers/trainer_109",
+    "party_size": 208,
+    "ai_flags": "0x1"
+  },
+  {
+    "id": 541,
+    "name": "Grunt",
+    "trainer_class": 85,
+    "sprite_index": 109,
+    "sprite_folder": "graphics/trainers/trainer_109",
+    "party_size": 232,
+    "ai_flags": "0x1"
+  },
+  {
+    "id": 542,
+    "name": "Grunt",
+    "trainer_class": 85,
+    "sprite_index": 109,
+    "sprite_folder": "graphics/trainers/trainer_109",
+    "party_size": 0,
+    "ai_flags": "0x1"
+  },
+  {
+    "id": 543,
+    "name": "Admin",
+    "trainer_class": 85,
+    "sprite_index": 137,
+    "sprite_folder": "graphics/trainers/trainer_137",
+    "party_size": 16,
+    "ai_flags": "0x7"
+  },
+  {
+    "id": 544,
+    "name": "Admin",
+    "trainer_class": 85,
+    "sprite_index": 109,
+    "sprite_folder": "graphics/trainers/trainer_109",
+    "party_size": 64,
+    "ai_flags": "0x7"
+  },
+  {
+    "id": 545,
+    "name": "Gideon",
+    "trainer_class": 82,
+    "sprite_index": 107,
+    "sprite_folder": "graphics/trainers/trainer_107",
+    "party_size": 112,
+    "ai_flags": "0x1"
+  },
+  {
+    "id": 546,
+    "name": "Amara",
+    "trainer_class": 74,
+    "sprite_index": 99,
+    "sprite_folder": "graphics/trainers/trainer_099",
+    "party_size": 192,
+    "ai_flags": "0x1"
+  },
+  {
+    "id": 547,
+    "name": "Maria",
+    "trainer_class": 74,
+    "sprite_index": 99,
+    "sprite_folder": "graphics/trainers/trainer_099",
+    "party_size": 216,
+    "ai_flags": "0x1"
+  },
+  {
+    "id": 548,
+    "name": "Abigail",
+    "trainer_class": 74,
+    "sprite_index": 99,
+    "sprite_folder": "graphics/trainers/trainer_099",
+    "party_size": 232,
+    "ai_flags": "0x1"
+  },
+  {
+    "id": 549,
+    "name": "Finn",
+    "trainer_class": 70,
+    "sprite_index": 95,
+    "sprite_folder": "graphics/trainers/trainer_095",
+    "party_size": 0,
+    "ai_flags": "0x1"
+  },
+  {
+    "id": 550,
+    "name": "Garrett",
+    "trainer_class": 70,
+    "sprite_index": 95,
+    "sprite_folder": "graphics/trainers/trainer_095",
+    "party_size": 8,
+    "ai_flags": "0x1"
+  },
+  {
+    "id": 551,
+    "name": "Tommy",
+    "trainer_class": 69,
+    "sprite_index": 94,
+    "sprite_folder": "graphics/trainers/trainer_094",
+    "party_size": 32,
+    "ai_flags": "0x1"
+  },
+  {
+    "id": 552,
+    "name": "Tanya",
+    "trainer_class": 99,
+    "sprite_index": 139,
+    "sprite_folder": "graphics/trainers/trainer_139",
+    "party_size": 72,
+    "ai_flags": "0x1"
+  },
+  {
+    "id": 553,
+    "name": "Shea",
+    "trainer_class": 80,
+    "sprite_index": 105,
+    "sprite_folder": "graphics/trainers/trainer_105",
+    "party_size": 88,
+    "ai_flags": "0x1"
+  },
+  {
+    "id": 554,
+    "name": "Hugh",
+    "trainer_class": 80,
+    "sprite_index": 105,
+    "sprite_folder": "graphics/trainers/trainer_105",
+    "party_size": 104,
+    "ai_flags": "0x1"
+  },
+  {
+    "id": 555,
+    "name": "Bryce",
+    "trainer_class": 61,
+    "sprite_index": 86,
+    "sprite_folder": "graphics/trainers/trainer_086",
+    "party_size": 120,
+    "ai_flags": "0x1"
+  },
+  {
+    "id": 556,
+    "name": "Claire",
+    "trainer_class": 62,
+    "sprite_index": 87,
+    "sprite_folder": "graphics/trainers/trainer_087",
+    "party_size": 144,
+    "ai_flags": "0x1"
+  },
+  {
+    "id": 557,
+    "name": "Mik & Kia",
+    "trainer_class": 95,
+    "sprite_index": 130,
+    "sprite_folder": "graphics/trainers/trainer_130",
+    "party_size": 176,
+    "ai_flags": "0x1"
+  },
+  {
+    "id": 558,
+    "name": "Violet",
+    "trainer_class": 103,
+    "sprite_index": 144,
+    "sprite_folder": "graphics/trainers/trainer_144",
+    "party_size": 192,
+    "ai_flags": "0x1"
+  },
+  {
+    "id": 559,
+    "name": "Alexis",
+    "trainer_class": 100,
+    "sprite_index": 140,
+    "sprite_folder": "graphics/trainers/trainer_140",
+    "party_size": 216,
+    "ai_flags": "0x1"
+  },
+  {
+    "id": 560,
+    "name": "Joy & Meg",
+    "trainer_class": 92,
+    "sprite_index": 127,
+    "sprite_folder": "graphics/trainers/trainer_127",
+    "party_size": 248,
+    "ai_flags": "0x1"
+  },
+  {
+    "id": 561,
+    "name": "Tisha",
+    "trainer_class": 74,
+    "sprite_index": 99,
+    "sprite_folder": "graphics/trainers/trainer_099",
+    "party_size": 8,
+    "ai_flags": "0x1"
+  },
+  {
+    "id": 562,
+    "name": "Celina",
+    "trainer_class": 106,
+    "sprite_index": 147,
+    "sprite_folder": "graphics/trainers/trainer_147",
+    "party_size": 16,
+    "ai_flags": "0x1"
+  },
+  {
+    "id": 563,
+    "name": "Rayna",
+    "trainer_class": 106,
+    "sprite_index": 147,
+    "sprite_folder": "graphics/trainers/trainer_147",
+    "party_size": 32,
+    "ai_flags": "0x1"
+  },
+  {
+    "id": 564,
+    "name": "Gillian",
+    "trainer_class": 105,
+    "sprite_index": 146,
+    "sprite_folder": "graphics/trainers/trainer_146",
+    "party_size": 48,
+    "ai_flags": "0x1"
+  },
+  {
+    "id": 565,
+    "name": "Destin",
+    "trainer_class": 57,
+    "sprite_index": 82,
+    "sprite_folder": "graphics/trainers/trainer_082",
+    "party_size": 72,
+    "ai_flags": "0x1"
+  },
+  {
+    "id": 566,
+    "name": "Toby",
+    "trainer_class": 70,
+    "sprite_index": 95,
+    "sprite_folder": "graphics/trainers/trainer_095",
+    "party_size": 88,
+    "ai_flags": "0x1"
+  },
+  {
+    "id": 567,
+    "name": "Grunt",
+    "trainer_class": 85,
+    "sprite_index": 109,
+    "sprite_folder": "graphics/trainers/trainer_109",
+    "party_size": 112,
+    "ai_flags": "0x1"
+  },
+  {
+    "id": 568,
+    "name": "Grunt",
+    "trainer_class": 85,
+    "sprite_index": 109,
+    "sprite_folder": "graphics/trainers/trainer_109",
+    "party_size": 136,
+    "ai_flags": "0x1"
+  },
+  {
+    "id": 569,
+    "name": "Grunt",
+    "trainer_class": 85,
+    "sprite_index": 137,
+    "sprite_folder": "graphics/trainers/trainer_137",
+    "party_size": 168,
+    "ai_flags": "0x1"
+  },
+  {
+    "id": 570,
+    "name": "Milo",
+    "trainer_class": 79,
+    "sprite_index": 104,
+    "sprite_folder": "graphics/trainers/trainer_104",
+    "party_size": 192,
+    "ai_flags": "0x1"
+  },
+  {
+    "id": 571,
+    "name": "Chaz",
+    "trainer_class": 79,
+    "sprite_index": 104,
+    "sprite_folder": "graphics/trainers/trainer_104",
+    "party_size": 208,
+    "ai_flags": "0x1"
+  },
+  {
+    "id": 572,
+    "name": "Harold",
+    "trainer_class": 79,
+    "sprite_index": 104,
+    "sprite_folder": "graphics/trainers/trainer_104",
+    "party_size": 224,
+    "ai_flags": "0x1"
+  },
+  {
+    "id": 573,
+    "name": "Tylor",
+    "trainer_class": 69,
+    "sprite_index": 94,
+    "sprite_folder": "graphics/trainers/trainer_094",
+    "party_size": 240,
+    "ai_flags": "0x1"
+  },
+  {
+    "id": 574,
+    "name": "Mymo",
+    "trainer_class": 70,
+    "sprite_index": 95,
+    "sprite_folder": "graphics/trainers/trainer_095",
+    "party_size": 0,
+    "ai_flags": "0x1"
+  },
+  {
+    "id": 575,
+    "name": "Nicole",
+    "trainer_class": 74,
+    "sprite_index": 99,
+    "sprite_folder": "graphics/trainers/trainer_099",
+    "party_size": 16,
+    "ai_flags": "0x1"
+  },
+  {
+    "id": 576,
+    "name": "Ava & Geb",
+    "trainer_class": 96,
+    "sprite_index": 131,
+    "sprite_folder": "graphics/trainers/trainer_131",
+    "party_size": 24,
+    "ai_flags": "0x1"
+  },
+  {
+    "id": 577,
+    "name": "Rose",
+    "trainer_class": 103,
+    "sprite_index": 144,
+    "sprite_folder": "graphics/trainers/trainer_144",
+    "party_size": 40,
+    "ai_flags": "0x1"
+  },
+  {
+    "id": 578,
+    "name": "Samir",
+    "trainer_class": 70,
+    "sprite_index": 95,
+    "sprite_folder": "graphics/trainers/trainer_095",
+    "party_size": 56,
+    "ai_flags": "0x1"
+  },
+  {
+    "id": 579,
+    "name": "Denise",
+    "trainer_class": 74,
+    "sprite_index": 99,
+    "sprite_folder": "graphics/trainers/trainer_099",
+    "party_size": 64,
+    "ai_flags": "0x1"
+  },
+  {
+    "id": 580,
+    "name": "Miu & Mia",
+    "trainer_class": 92,
+    "sprite_index": 127,
+    "sprite_folder": "graphics/trainers/trainer_127",
+    "party_size": 80,
+    "ai_flags": "0x1"
+  },
+  {
+    "id": 581,
+    "name": "Earl",
+    "trainer_class": 65,
+    "sprite_index": 90,
+    "sprite_folder": "graphics/trainers/trainer_090",
+    "party_size": 96,
+    "ai_flags": "0x1"
+  },
+  {
+    "id": 582,
+    "name": "Foster",
+    "trainer_class": 104,
+    "sprite_index": 145,
+    "sprite_folder": "graphics/trainers/trainer_145",
+    "party_size": 112,
+    "ai_flags": "0x1"
+  },
+  {
+    "id": 583,
+    "name": "Larry",
+    "trainer_class": 104,
+    "sprite_index": 145,
+    "sprite_folder": "graphics/trainers/trainer_145",
+    "party_size": 120,
+    "ai_flags": "0x1"
+  },
+  {
+    "id": 584,
+    "name": "Daryl",
+    "trainer_class": 65,
+    "sprite_index": 90,
+    "sprite_folder": "graphics/trainers/trainer_090",
+    "party_size": 136,
+    "ai_flags": "0x1"
+  },
+  {
+    "id": 585,
+    "name": "Hector",
+    "trainer_class": 63,
+    "sprite_index": 88,
+    "sprite_folder": "graphics/trainers/trainer_088",
+    "party_size": 144,
+    "ai_flags": "0x1"
+  },
+  {
+    "id": 586,
+    "name": "Dario",
+    "trainer_class": 75,
+    "sprite_index": 100,
+    "sprite_folder": "graphics/trainers/trainer_100",
+    "party_size": 160,
+    "ai_flags": "0x1"
+  },
+  {
+    "id": 587,
+    "name": "Rodette",
+    "trainer_class": 75,
+    "sprite_index": 138,
+    "sprite_folder": "graphics/trainers/trainer_138",
+    "party_size": 176,
+    "ai_flags": "0x1"
+  },
+  {
+    "id": 588,
+    "name": "Miah",
+    "trainer_class": 103,
+    "sprite_index": 144,
+    "sprite_folder": "graphics/trainers/trainer_144",
+    "party_size": 224,
+    "ai_flags": "0x1"
+  },
+  {
+    "id": 589,
+    "name": "Eve & Jon",
+    "trainer_class": 94,
+    "sprite_index": 129,
+    "sprite_folder": "graphics/trainers/trainer_129",
+    "party_size": 240,
+    "ai_flags": "0x1"
+  },
+  {
+    "id": 590,
+    "name": "Mason",
+    "trainer_class": 77,
+    "sprite_index": 102,
+    "sprite_folder": "graphics/trainers/trainer_102",
+    "party_size": 0,
+    "ai_flags": "0x1"
+  },
+  {
+    "id": 591,
+    "name": "Cyndy",
+    "trainer_class": 99,
+    "sprite_index": 139,
+    "sprite_folder": "graphics/trainers/trainer_139",
+    "party_size": 64,
+    "ai_flags": "0x1"
+  },
+  {
+    "id": 592,
+    "name": "Jocelyn",
+    "trainer_class": 99,
+    "sprite_index": 139,
+    "sprite_folder": "graphics/trainers/trainer_139",
+    "party_size": 88,
+    "ai_flags": "0x1"
+  },
+  {
+    "id": 593,
+    "name": "Evan",
+    "trainer_class": 78,
+    "sprite_index": 103,
+    "sprite_folder": "graphics/trainers/trainer_103",
+    "party_size": 104,
+    "ai_flags": "0x1"
+  },
+  {
+    "id": 594,
+    "name": "Mark",
+    "trainer_class": 63,
+    "sprite_index": 88,
+    "sprite_folder": "graphics/trainers/trainer_088",
+    "party_size": 128,
+    "ai_flags": "0x1"
+  },
+  {
+    "id": 595,
+    "name": "Logan",
+    "trainer_class": 48,
+    "sprite_index": 142,
+    "sprite_folder": "graphics/trainers/trainer_142",
+    "party_size": 144,
+    "ai_flags": "0x7"
+  },
+  {
+    "id": 596,
+    "name": "Jackson",
+    "trainer_class": 102,
+    "sprite_index": 142,
+    "sprite_folder": "graphics/trainers/trainer_142",
+    "party_size": 176,
+    "ai_flags": "0x7"
+  },
+  {
+    "id": 597,
+    "name": "Beth",
+    "trainer_class": 46,
+    "sprite_index": 143,
+    "sprite_folder": "graphics/trainers/trainer_143",
+    "party_size": 224,
+    "ai_flags": "0x7"
+  },
+  {
+    "id": 598,
+    "name": "Katelyn",
+    "trainer_class": 102,
+    "sprite_index": 143,
+    "sprite_folder": "graphics/trainers/trainer_143",
+    "party_size": 248,
+    "ai_flags": "0x7"
+  },
+  {
+    "id": 599,
+    "name": "Leroy",
+    "trainer_class": 86,
+    "sprite_index": 110,
+    "sprite_folder": "graphics/trainers/trainer_110",
+    "party_size": 8,
+    "ai_flags": "0x7"
+  },
+  {
+    "id": 600,
+    "name": "Michelle",
+    "trainer_class": 86,
+    "sprite_index": 111,
+    "sprite_folder": "graphics/trainers/trainer_111",
+    "party_size": 88,
+    "ai_flags": "0x7"
+  },
+  {
+    "id": 601,
+    "name": "Lex & Nya",
+    "trainer_class": 93,
+    "sprite_index": 128,
+    "sprite_folder": "graphics/trainers/trainer_128",
+    "party_size": 168,
+    "ai_flags": "0x7"
+  },
+  {
+    "id": 602,
+    "name": "Brandon",
+    "trainer_class": 104,
+    "sprite_index": 145,
+    "sprite_folder": "graphics/trainers/trainer_145",
+    "party_size": 200,
+    "ai_flags": "0x1"
+  },
+  {
+    "id": 603,
+    "name": "Benjamin",
+    "trainer_class": 104,
+    "sprite_index": 145,
+    "sprite_folder": "graphics/trainers/trainer_145",
+    "party_size": 208,
+    "ai_flags": "0x1"
+  },
+  {
+    "id": 604,
+    "name": "Edna",
+    "trainer_class": 106,
+    "sprite_index": 147,
+    "sprite_folder": "graphics/trainers/trainer_147",
+    "party_size": 0,
+    "ai_flags": "0x1"
+  },
+  {
+    "id": 605,
+    "name": "Clifford",
+    "trainer_class": 88,
+    "sprite_index": 123,
+    "sprite_folder": "graphics/trainers/trainer_123",
+    "party_size": 16,
+    "ai_flags": "0x1"
+  },
+  {
+    "id": 606,
+    "name": "Selphy",
+    "trainer_class": 105,
+    "sprite_index": 146,
+    "sprite_folder": "graphics/trainers/trainer_146",
+    "party_size": 32,
+    "ai_flags": "0x1"
+  },
+  {
+    "id": 607,
+    "name": "Lawson",
+    "trainer_class": 104,
+    "sprite_index": 145,
+    "sprite_folder": "graphics/trainers/trainer_145",
+    "party_size": 64,
+    "ai_flags": "0x1"
+  },
+  {
+    "id": 608,
+    "name": "Laura",
+    "trainer_class": 75,
+    "sprite_index": 138,
+    "sprite_folder": "graphics/trainers/trainer_138",
+    "party_size": 88,
+    "ai_flags": "0x1"
+  },
+  {
+    "id": 609,
+    "name": "Bethany",
+    "trainer_class": 101,
+    "sprite_index": 141,
+    "sprite_folder": "graphics/trainers/trainer_141",
+    "party_size": 112,
+    "ai_flags": "0x1"
+  },
+  {
+    "id": 610,
+    "name": "Allison",
+    "trainer_class": 101,
+    "sprite_index": 141,
+    "sprite_folder": "graphics/trainers/trainer_141",
+    "party_size": 120,
+    "ai_flags": "0x1"
+  },
+  {
+    "id": 611,
+    "name": "Garret",
+    "trainer_class": 58,
+    "sprite_index": 83,
+    "sprite_folder": "graphics/trainers/trainer_083",
+    "party_size": 144,
+    "ai_flags": "0x1"
+  },
+  {
+    "id": 612,
+    "name": "Jonah",
+    "trainer_class": 58,
+    "sprite_index": 83,
+    "sprite_folder": "graphics/trainers/trainer_083",
+    "party_size": 152,
+    "ai_flags": "0x1"
+  },
+  {
+    "id": 613,
+    "name": "Vance",
+    "trainer_class": 58,
+    "sprite_index": 83,
+    "sprite_folder": "graphics/trainers/trainer_083",
+    "party_size": 184,
+    "ai_flags": "0x1"
+  },
+  {
+    "id": 614,
+    "name": "Nash",
+    "trainer_class": 57,
+    "sprite_index": 82,
+    "sprite_folder": "graphics/trainers/trainer_082",
+    "party_size": 200,
+    "ai_flags": "0x1"
+  },
+  {
+    "id": 615,
+    "name": "Cordell",
+    "trainer_class": 57,
+    "sprite_index": 82,
+    "sprite_folder": "graphics/trainers/trainer_082",
+    "party_size": 224,
+    "ai_flags": "0x1"
+  },
+  {
+    "id": 616,
+    "name": "Dalia",
+    "trainer_class": 59,
+    "sprite_index": 84,
+    "sprite_folder": "graphics/trainers/trainer_084",
+    "party_size": 240,
+    "ai_flags": "0x1"
+  },
+  {
+    "id": 617,
+    "name": "Joana",
+    "trainer_class": 59,
+    "sprite_index": 84,
+    "sprite_folder": "graphics/trainers/trainer_084",
+    "party_size": 16,
+    "ai_flags": "0x1"
+  },
+  {
+    "id": 618,
+    "name": "Riley",
+    "trainer_class": 61,
+    "sprite_index": 86,
+    "sprite_folder": "graphics/trainers/trainer_086",
+    "party_size": 24,
+    "ai_flags": "0x1"
+  },
+  {
+    "id": 619,
+    "name": "Marcy",
+    "trainer_class": 62,
+    "sprite_index": 87,
+    "sprite_folder": "graphics/trainers/trainer_087",
+    "party_size": 40,
+    "ai_flags": "0x1"
+  },
+  {
+    "id": 620,
+    "name": "Layton",
+    "trainer_class": 104,
+    "sprite_index": 145,
+    "sprite_folder": "graphics/trainers/trainer_145",
+    "party_size": 64,
+    "ai_flags": "0x1"
+  },
+  {
+    "id": 621,
+    "name": "Kelsey",
+    "trainer_class": 62,
+    "sprite_index": 87,
+    "sprite_folder": "graphics/trainers/trainer_087",
+    "party_size": 88,
+    "ai_flags": "0x1"
+  },
+  {
+    "id": 622,
+    "name": "Kelsey",
+    "trainer_class": 62,
+    "sprite_index": 87,
+    "sprite_folder": "graphics/trainers/trainer_087",
+    "party_size": 104,
+    "ai_flags": "0x1"
+  },
+  {
+    "id": 623,
+    "name": "Kelsey",
+    "trainer_class": 62,
+    "sprite_index": 87,
+    "sprite_folder": "graphics/trainers/trainer_087",
+    "party_size": 120,
+    "ai_flags": "0x1"
+  },
+  {
+    "id": 624,
+    "name": "Ricky",
+    "trainer_class": 61,
+    "sprite_index": 86,
+    "sprite_folder": "graphics/trainers/trainer_086",
+    "party_size": 136,
+    "ai_flags": "0x1"
+  },
+  {
+    "id": 625,
+    "name": "Ricky",
+    "trainer_class": 61,
+    "sprite_index": 86,
+    "sprite_folder": "graphics/trainers/trainer_086",
+    "party_size": 144,
+    "ai_flags": "0x1"
+  },
+  {
+    "id": 626,
+    "name": "Ricky",
+    "trainer_class": 61,
+    "sprite_index": 86,
+    "sprite_folder": "graphics/trainers/trainer_086",
+    "party_size": 152,
+    "ai_flags": "0x1"
+  },
+  {
+    "id": 627,
+    "name": "Jeff",
+    "trainer_class": 61,
+    "sprite_index": 86,
+    "sprite_folder": "graphics/trainers/trainer_086",
+    "party_size": 160,
+    "ai_flags": "0x1"
+  },
+  {
+    "id": 628,
+    "name": "Jeff",
+    "trainer_class": 61,
+    "sprite_index": 86,
+    "sprite_folder": "graphics/trainers/trainer_086",
+    "party_size": 176,
+    "ai_flags": "0x1"
+  },
+  {
+    "id": 629,
+    "name": "Jeff",
+    "trainer_class": 61,
+    "sprite_index": 86,
+    "sprite_folder": "graphics/trainers/trainer_086",
+    "party_size": 192,
+    "ai_flags": "0x1"
+  },
+  {
+    "id": 630,
+    "name": "Isabelle",
+    "trainer_class": 62,
+    "sprite_index": 87,
+    "sprite_folder": "graphics/trainers/trainer_087",
+    "party_size": 208,
+    "ai_flags": "0x1"
+  },
+  {
+    "id": 631,
+    "name": "Isabelle",
+    "trainer_class": 62,
+    "sprite_index": 87,
+    "sprite_folder": "graphics/trainers/trainer_087",
+    "party_size": 232,
+    "ai_flags": "0x1"
+  },
+  {
+    "id": 632,
+    "name": "Isabelle",
+    "trainer_class": 62,
+    "sprite_index": 87,
+    "sprite_folder": "graphics/trainers/trainer_087",
+    "party_size": 0,
+    "ai_flags": "0x1"
+  },
+  {
+    "id": 633,
+    "name": "Yasu",
+    "trainer_class": 57,
+    "sprite_index": 82,
+    "sprite_folder": "graphics/trainers/trainer_082",
+    "party_size": 24,
+    "ai_flags": "0x1"
+  },
+  {
+    "id": 634,
+    "name": "Yasu",
+    "trainer_class": 57,
+    "sprite_index": 82,
+    "sprite_folder": "graphics/trainers/trainer_082",
+    "party_size": 48,
+    "ai_flags": "0x1"
+  },
+  {
+    "id": 635,
+    "name": "Bernie",
+    "trainer_class": 68,
+    "sprite_index": 93,
+    "sprite_folder": "graphics/trainers/trainer_093",
+    "party_size": 72,
+    "ai_flags": "0x1"
+  },
+  {
+    "id": 636,
+    "name": "Darian",
+    "trainer_class": 72,
+    "sprite_index": 97,
+    "sprite_folder": "graphics/trainers/trainer_097",
+    "party_size": 96,
+    "ai_flags": "0x1"
+  },
+  {
+    "id": 637,
+    "name": "Chris",
+    "trainer_class": 61,
+    "sprite_index": 86,
+    "sprite_folder": "graphics/trainers/trainer_086",
+    "party_size": 112,
+    "ai_flags": "0x1"
+  },
+  {
+    "id": 638,
+    "name": "Chris",
+    "trainer_class": 61,
+    "sprite_index": 86,
+    "sprite_folder": "graphics/trainers/trainer_086",
+    "party_size": 128,
+    "ai_flags": "0x1"
+  },
+  {
+    "id": 639,
+    "name": "Chris",
+    "trainer_class": 61,
+    "sprite_index": 86,
+    "sprite_folder": "graphics/trainers/trainer_086",
+    "party_size": 144,
+    "ai_flags": "0x1"
+  },
+  {
+    "id": 640,
+    "name": "Alicia",
+    "trainer_class": 62,
+    "sprite_index": 87,
+    "sprite_folder": "graphics/trainers/trainer_087",
+    "party_size": 160,
+    "ai_flags": "0x1"
+  },
+  {
+    "id": 641,
+    "name": "Alicia",
+    "trainer_class": 62,
+    "sprite_index": 87,
+    "sprite_folder": "graphics/trainers/trainer_087",
+    "party_size": 168,
+    "ai_flags": "0x1"
+  },
+  {
+    "id": 642,
+    "name": "Alicia",
+    "trainer_class": 62,
+    "sprite_index": 87,
+    "sprite_folder": "graphics/trainers/trainer_087",
+    "party_size": 176,
+    "ai_flags": "0x1"
+  },
+  {
+    "id": 643,
+    "name": "Jeremy",
+    "trainer_class": 65,
+    "sprite_index": 90,
+    "sprite_folder": "graphics/trainers/trainer_090",
+    "party_size": 184,
+    "ai_flags": "0x1"
+  },
+  {
+    "id": 644,
+    "name": "Mark",
+    "trainer_class": 63,
+    "sprite_index": 88,
+    "sprite_folder": "graphics/trainers/trainer_088",
+    "party_size": 200,
+    "ai_flags": "0x1"
+  },
+  {
+    "id": 645,
+    "name": "Herman",
+    "trainer_class": 63,
+    "sprite_index": 88,
+    "sprite_folder": "graphics/trainers/trainer_088",
+    "party_size": 216,
+    "ai_flags": "0x1"
+  },
+  {
+    "id": 646,
+    "name": "Herman",
+    "trainer_class": 63,
+    "sprite_index": 88,
+    "sprite_folder": "graphics/trainers/trainer_088",
+    "party_size": 232,
+    "ai_flags": "0x1"
+  },
+  {
+    "id": 647,
+    "name": "Trent",
+    "trainer_class": 65,
+    "sprite_index": 90,
+    "sprite_folder": "graphics/trainers/trainer_090",
+    "party_size": 248,
+    "ai_flags": "0x1"
+  },
+  {
+    "id": 648,
+    "name": "Megan",
+    "trainer_class": 59,
+    "sprite_index": 84,
+    "sprite_folder": "graphics/trainers/trainer_084",
+    "party_size": 8,
+    "ai_flags": "0x1"
+  },
+  {
+    "id": 649,
+    "name": "Megan",
+    "trainer_class": 59,
+    "sprite_index": 84,
+    "sprite_folder": "graphics/trainers/trainer_084",
+    "party_size": 48,
+    "ai_flags": "0x1"
+  },
+  {
+    "id": 650,
+    "name": "Glenn",
+    "trainer_class": 64,
+    "sprite_index": 89,
+    "sprite_folder": "graphics/trainers/trainer_089",
+    "party_size": 88,
+    "ai_flags": "0x1"
+  },
+  {
+    "id": 651,
+    "name": "Rich",
+    "trainer_class": 72,
+    "sprite_index": 97,
+    "sprite_folder": "graphics/trainers/trainer_097",
+    "party_size": 112,
+    "ai_flags": "0x1"
+  },
+  {
+    "id": 652,
+    "name": "Jaren",
+    "trainer_class": 66,
+    "sprite_index": 91,
+    "sprite_folder": "graphics/trainers/trainer_091",
+    "party_size": 128,
+    "ai_flags": "0x1"
+  },
+  {
+    "id": 653,
+    "name": "Elliot",
+    "trainer_class": 69,
+    "sprite_index": 94,
+    "sprite_folder": "graphics/trainers/trainer_094",
+    "party_size": 144,
+    "ai_flags": "0x1"
+  },
+  {
+    "id": 654,
+    "name": "Luca",
+    "trainer_class": 76,
+    "sprite_index": 101,
+    "sprite_folder": "graphics/trainers/trainer_101",
+    "party_size": 176,
+    "ai_flags": "0x1"
+  },
+  {
+    "id": 655,
+    "name": "Sheila",
+    "trainer_class": 73,
+    "sprite_index": 98,
+    "sprite_folder": "graphics/trainers/trainer_098",
+    "party_size": 192,
+    "ai_flags": "0x1"
+  },
+  {
+    "id": 656,
+    "name": "Robert",
+    "trainer_class": 79,
+    "sprite_index": 104,
+    "sprite_folder": "graphics/trainers/trainer_104",
+    "party_size": 208,
+    "ai_flags": "0x1"
+  },
+  {
+    "id": 657,
+    "name": "Robert",
+    "trainer_class": 79,
+    "sprite_index": 104,
+    "sprite_folder": "graphics/trainers/trainer_104",
+    "party_size": 240,
+    "ai_flags": "0x1"
+  },
+  {
+    "id": 658,
+    "name": "Susie",
+    "trainer_class": 62,
+    "sprite_index": 87,
+    "sprite_folder": "graphics/trainers/trainer_087",
+    "party_size": 16,
+    "ai_flags": "0x1"
+  },
+  {
+    "id": 659,
+    "name": "Susie",
+    "trainer_class": 62,
+    "sprite_index": 87,
+    "sprite_folder": "graphics/trainers/trainer_087",
+    "party_size": 56,
+    "ai_flags": "0x1"
+  },
+  {
+    "id": 660,
+    "name": "Susie",
+    "trainer_class": 62,
+    "sprite_index": 87,
+    "sprite_folder": "graphics/trainers/trainer_087",
+    "party_size": 96,
+    "ai_flags": "0x1"
+  },
+  {
+    "id": 661,
+    "name": "Lukas",
+    "trainer_class": 66,
+    "sprite_index": 91,
+    "sprite_folder": "graphics/trainers/trainer_091",
+    "party_size": 136,
+    "ai_flags": "0x1"
+  },
+  {
+    "id": 662,
+    "name": "Benny",
+    "trainer_class": 79,
+    "sprite_index": 104,
+    "sprite_folder": "graphics/trainers/trainer_104",
+    "party_size": 168,
+    "ai_flags": "0x1"
+  },
+  {
+    "id": 663,
+    "name": "Benny",
+    "trainer_class": 79,
+    "sprite_index": 104,
+    "sprite_folder": "graphics/trainers/trainer_104",
+    "party_size": 184,
+    "ai_flags": "0x1"
+  },
+  {
+    "id": 664,
+    "name": "Marlon",
+    "trainer_class": 79,
+    "sprite_index": 104,
+    "sprite_folder": "graphics/trainers/trainer_104",
+    "party_size": 200,
+    "ai_flags": "0x1"
+  },
+  {
+    "id": 665,
+    "name": "Marlon",
+    "trainer_class": 79,
+    "sprite_index": 104,
+    "sprite_folder": "graphics/trainers/trainer_104",
+    "party_size": 224,
+    "ai_flags": "0x1"
+  },
+  {
+    "id": 666,
+    "name": "Grace",
+    "trainer_class": 73,
+    "sprite_index": 98,
+    "sprite_folder": "graphics/trainers/trainer_098",
+    "party_size": 248,
+    "ai_flags": "0x1"
+  },
+  {
+    "id": 667,
+    "name": "Chester",
+    "trainer_class": 79,
+    "sprite_index": 104,
+    "sprite_folder": "graphics/trainers/trainer_104",
+    "party_size": 8,
+    "ai_flags": "0x1"
+  },
+  {
+    "id": 668,
+    "name": "Chester",
+    "trainer_class": 79,
+    "sprite_index": 104,
+    "sprite_folder": "graphics/trainers/trainer_104",
+    "party_size": 32,
+    "ai_flags": "0x1"
+  },
+  {
+    "id": 669,
+    "name": "Becky",
+    "trainer_class": 62,
+    "sprite_index": 87,
+    "sprite_folder": "graphics/trainers/trainer_087",
+    "party_size": 56,
+    "ai_flags": "0x1"
+  },
+  {
+    "id": 670,
+    "name": "Becky",
+    "trainer_class": 62,
+    "sprite_index": 87,
+    "sprite_folder": "graphics/trainers/trainer_087",
+    "party_size": 72,
+    "ai_flags": "0x1"
+  },
+  {
+    "id": 671,
+    "name": "Becky",
+    "trainer_class": 62,
+    "sprite_index": 87,
+    "sprite_folder": "graphics/trainers/trainer_087",
+    "party_size": 88,
+    "ai_flags": "0x1"
+  },
+  {
+    "id": 672,
+    "name": "Ron & Mya",
+    "trainer_class": 95,
+    "sprite_index": 130,
+    "sprite_folder": "graphics/trainers/trainer_130",
+    "party_size": 104,
+    "ai_flags": "0x1"
+  },
+  {
+    "id": 673,
+    "name": "Ron & Mya",
+    "trainer_class": 95,
+    "sprite_index": 130,
+    "sprite_folder": "graphics/trainers/trainer_130",
+    "party_size": 120,
+    "ai_flags": "0x1"
+  },
+  {
+    "id": 674,
+    "name": "Ron & Mya",
+    "trainer_class": 95,
+    "sprite_index": 130,
+    "sprite_folder": "graphics/trainers/trainer_130",
+    "party_size": 136,
+    "ai_flags": "0x1"
+  },
+  {
+    "id": 675,
+    "name": "Ruben",
+    "trainer_class": 66,
+    "sprite_index": 91,
+    "sprite_folder": "graphics/trainers/trainer_091",
+    "party_size": 152,
+    "ai_flags": "0x1"
+  },
+  {
+    "id": 676,
+    "name": "Camron",
+    "trainer_class": 71,
+    "sprite_index": 96,
+    "sprite_folder": "graphics/trainers/trainer_096",
+    "party_size": 176,
+    "ai_flags": "0x1"
+  },
+  {
+    "id": 677,
+    "name": "Jaxon",
+    "trainer_class": 66,
+    "sprite_index": 91,
+    "sprite_folder": "graphics/trainers/trainer_091",
+    "party_size": 192,
+    "ai_flags": "0x1"
+  },
+  {
+    "id": 678,
+    "name": "Isaiah",
+    "trainer_class": 71,
+    "sprite_index": 96,
+    "sprite_folder": "graphics/trainers/trainer_096",
+    "party_size": 208,
+    "ai_flags": "0x1"
+  },
+  {
+    "id": 679,
+    "name": "Corey",
+    "trainer_class": 71,
+    "sprite_index": 96,
+    "sprite_folder": "graphics/trainers/trainer_096",
+    "party_size": 224,
+    "ai_flags": "0x1"
+  },
+  {
+    "id": 680,
+    "name": "Jacob",
+    "trainer_class": 79,
+    "sprite_index": 104,
+    "sprite_folder": "graphics/trainers/trainer_104",
+    "party_size": 240,
+    "ai_flags": "0x1"
+  },
+  {
+    "id": 681,
+    "name": "Jacob",
+    "trainer_class": 79,
+    "sprite_index": 104,
+    "sprite_folder": "graphics/trainers/trainer_104",
+    "party_size": 16,
+    "ai_flags": "0x1"
+  },
+  {
+    "id": 682,
+    "name": "Alice",
+    "trainer_class": 74,
+    "sprite_index": 99,
+    "sprite_folder": "graphics/trainers/trainer_099",
+    "party_size": 48,
+    "ai_flags": "0x1"
+  },
+  {
+    "id": 683,
+    "name": "Darrin",
+    "trainer_class": 70,
+    "sprite_index": 95,
+    "sprite_folder": "graphics/trainers/trainer_095",
+    "party_size": 64,
+    "ai_flags": "0x1"
+  },
+  {
+    "id": 684,
+    "name": "Missy",
+    "trainer_class": 62,
+    "sprite_index": 87,
+    "sprite_folder": "graphics/trainers/trainer_087",
+    "party_size": 96,
+    "ai_flags": "0x1"
+  },
+  {
+    "id": 685,
+    "name": "Missy",
+    "trainer_class": 62,
+    "sprite_index": 87,
+    "sprite_folder": "graphics/trainers/trainer_087",
+    "party_size": 112,
+    "ai_flags": "0x1"
+  },
+  {
+    "id": 686,
+    "name": "Wade",
+    "trainer_class": 69,
+    "sprite_index": 94,
+    "sprite_folder": "graphics/trainers/trainer_094",
+    "party_size": 128,
+    "ai_flags": "0x1"
+  },
+  {
+    "id": 687,
+    "name": "Jack",
+    "trainer_class": 70,
+    "sprite_index": 95,
+    "sprite_folder": "graphics/trainers/trainer_095",
+    "party_size": 176,
+    "ai_flags": "0x1"
+  },
+  {
+    "id": 688,
+    "name": "Lil & Ian",
+    "trainer_class": 96,
+    "sprite_index": 131,
+    "sprite_folder": "graphics/trainers/trainer_131",
+    "party_size": 184,
+    "ai_flags": "0x1"
+  },
+  {
+    "id": 689,
+    "name": "Lil & Ian",
+    "trainer_class": 96,
+    "sprite_index": 131,
+    "sprite_folder": "graphics/trainers/trainer_131",
+    "party_size": 200,
+    "ai_flags": "0x1"
+  },
+  {
+    "id": 690,
+    "name": "Finn",
+    "trainer_class": 70,
+    "sprite_index": 95,
+    "sprite_folder": "graphics/trainers/trainer_095",
+    "party_size": 216,
+    "ai_flags": "0x1"
+  },
+  {
+    "id": 691,
+    "name": "Sharon",
+    "trainer_class": 99,
+    "sprite_index": 139,
+    "sprite_folder": "graphics/trainers/trainer_139",
+    "party_size": 224,
+    "ai_flags": "0x1"
+  },
+  {
+    "id": 692,
+    "name": "Sharon",
+    "trainer_class": 99,
+    "sprite_index": 139,
+    "sprite_folder": "graphics/trainers/trainer_139",
+    "party_size": 240,
+    "ai_flags": "0x1"
+  },
+  {
+    "id": 693,
+    "name": "Tanya",
+    "trainer_class": 99,
+    "sprite_index": 139,
+    "sprite_folder": "graphics/trainers/trainer_139",
+    "party_size": 0,
+    "ai_flags": "0x1"
+  },
+  {
+    "id": 694,
+    "name": "Tanya",
+    "trainer_class": 99,
+    "sprite_index": 139,
+    "sprite_folder": "graphics/trainers/trainer_139",
+    "party_size": 16,
+    "ai_flags": "0x1"
+  },
+  {
+    "id": 695,
+    "name": "Shea",
+    "trainer_class": 80,
+    "sprite_index": 105,
+    "sprite_folder": "graphics/trainers/trainer_105",
+    "party_size": 32,
+    "ai_flags": "0x1"
+  },
+  {
+    "id": 696,
+    "name": "Shea",
+    "trainer_class": 80,
+    "sprite_index": 105,
+    "sprite_folder": "graphics/trainers/trainer_105",
+    "party_size": 48,
+    "ai_flags": "0x1"
+  },
+  {
+    "id": 697,
+    "name": "Hugh",
+    "trainer_class": 80,
+    "sprite_index": 105,
+    "sprite_folder": "graphics/trainers/trainer_105",
+    "party_size": 64,
+    "ai_flags": "0x1"
+  },
+  {
+    "id": 698,
+    "name": "Hugh",
+    "trainer_class": 80,
+    "sprite_index": 105,
+    "sprite_folder": "graphics/trainers/trainer_105",
+    "party_size": 80,
+    "ai_flags": "0x1"
+  },
+  {
+    "id": 699,
+    "name": "Mik & Kia",
+    "trainer_class": 95,
+    "sprite_index": 130,
+    "sprite_folder": "graphics/trainers/trainer_130",
+    "party_size": 96,
+    "ai_flags": "0x1"
+  },
+  {
+    "id": 700,
+    "name": "Mik & Kia",
+    "trainer_class": 95,
+    "sprite_index": 130,
+    "sprite_folder": "graphics/trainers/trainer_130",
+    "party_size": 112,
+    "ai_flags": "0x1"
+  },
+  {
+    "id": 701,
+    "name": "Amira",
+    "trainer_class": 100,
+    "sprite_index": 140,
+    "sprite_folder": "graphics/trainers/trainer_140",
+    "party_size": 128,
+    "ai_flags": "0x1"
+  },
+  {
+    "id": 702,
+    "name": "Joy & Meg",
+    "trainer_class": 92,
+    "sprite_index": 127,
+    "sprite_folder": "graphics/trainers/trainer_127",
+    "party_size": 152,
+    "ai_flags": "0x1"
+  },
+  {
+    "id": 703,
+    "name": "Rayna",
+    "trainer_class": 106,
+    "sprite_index": 147,
+    "sprite_folder": "graphics/trainers/trainer_147",
+    "party_size": 168,
+    "ai_flags": "0x1"
+  },
+  {
+    "id": 704,
+    "name": "Destin",
+    "trainer_class": 57,
+    "sprite_index": 82,
+    "sprite_folder": "graphics/trainers/trainer_082",
+    "party_size": 184,
+    "ai_flags": "0x1"
+  },
+  {
+    "id": 705,
+    "name": "Alize",
+    "trainer_class": 101,
+    "sprite_index": 141,
+    "sprite_folder": "graphics/trainers/trainer_141",
+    "party_size": 200,
+    "ai_flags": "0x1"
+  },
+  {
+    "id": 706,
+    "name": "Gia & Jes",
+    "trainer_class": 94,
+    "sprite_index": 129,
+    "sprite_folder": "graphics/trainers/trainer_129",
+    "party_size": 224,
+    "ai_flags": "0x1"
+  },
+  {
+    "id": 707,
+    "name": "Gia & Jes",
+    "trainer_class": 94,
+    "sprite_index": 129,
+    "sprite_folder": "graphics/trainers/trainer_129",
+    "party_size": 240,
+    "ai_flags": "0x1"
+  },
+  {
+    "id": 708,
+    "name": "Milo",
+    "trainer_class": 79,
+    "sprite_index": 104,
+    "sprite_folder": "graphics/trainers/trainer_104",
+    "party_size": 0,
+    "ai_flags": "0x1"
+  },
+  {
+    "id": 709,
+    "name": "Chaz",
+    "trainer_class": 79,
+    "sprite_index": 104,
+    "sprite_folder": "graphics/trainers/trainer_104",
+    "party_size": 16,
+    "ai_flags": "0x1"
+  },
+  {
+    "id": 710,
+    "name": "Harold",
+    "trainer_class": 79,
+    "sprite_index": 104,
+    "sprite_folder": "graphics/trainers/trainer_104",
+    "party_size": 32,
+    "ai_flags": "0x1"
+  },
+  {
+    "id": 711,
+    "name": "Nicole",
+    "trainer_class": 74,
+    "sprite_index": 99,
+    "sprite_folder": "graphics/trainers/trainer_099",
+    "party_size": 48,
+    "ai_flags": "0x1"
+  },
+  {
+    "id": 712,
+    "name": "Jaclyn",
+    "trainer_class": 75,
+    "sprite_index": 138,
+    "sprite_folder": "graphics/trainers/trainer_138",
+    "party_size": 56,
+    "ai_flags": "0x1"
+  },
+  {
+    "id": 713,
+    "name": "Samir",
+    "trainer_class": 70,
+    "sprite_index": 95,
+    "sprite_folder": "graphics/trainers/trainer_095",
+    "party_size": 104,
+    "ai_flags": "0x1"
+  },
+  {
+    "id": 714,
+    "name": "Earl",
+    "trainer_class": 65,
+    "sprite_index": 90,
+    "sprite_folder": "graphics/trainers/trainer_090",
+    "party_size": 112,
+    "ai_flags": "0x1"
+  },
+  {
+    "id": 715,
+    "name": "Larry",
+    "trainer_class": 104,
+    "sprite_index": 145,
+    "sprite_folder": "graphics/trainers/trainer_145",
+    "party_size": 128,
+    "ai_flags": "0x1"
+  },
+  {
+    "id": 716,
+    "name": "Hector",
+    "trainer_class": 63,
+    "sprite_index": 88,
+    "sprite_folder": "graphics/trainers/trainer_088",
+    "party_size": 144,
+    "ai_flags": "0x1"
+  },
+  {
+    "id": 717,
+    "name": "Dario",
+    "trainer_class": 75,
+    "sprite_index": 100,
+    "sprite_folder": "graphics/trainers/trainer_100",
+    "party_size": 160,
+    "ai_flags": "0x1"
+  },
+  {
+    "id": 718,
+    "name": "Rodette",
+    "trainer_class": 75,
+    "sprite_index": 138,
+    "sprite_folder": "graphics/trainers/trainer_138",
+    "party_size": 176,
+    "ai_flags": "0x1"
+  },
+  {
+    "id": 719,
+    "name": "Mason",
+    "trainer_class": 77,
+    "sprite_index": 102,
+    "sprite_folder": "graphics/trainers/trainer_102",
+    "party_size": 224,
+    "ai_flags": "0x1"
+  },
+  {
+    "id": 720,
+    "name": "Nicolas",
+    "trainer_class": 102,
+    "sprite_index": 142,
+    "sprite_folder": "graphics/trainers/trainer_142",
+    "party_size": 0,
+    "ai_flags": "0x7"
+  },
+  {
+    "id": 721,
+    "name": "Madeline",
+    "trainer_class": 102,
+    "sprite_index": 143,
+    "sprite_folder": "graphics/trainers/trainer_143",
+    "party_size": 32,
+    "ai_flags": "0x7"
+  },
+  {
+    "id": 722,
+    "name": "Cyndy",
+    "trainer_class": 99,
+    "sprite_index": 139,
+    "sprite_folder": "graphics/trainers/trainer_139",
+    "party_size": 64,
+    "ai_flags": "0x1"
+  },
+  {
+    "id": 723,
+    "name": "Evan",
+    "trainer_class": 78,
+    "sprite_index": 103,
+    "sprite_folder": "graphics/trainers/trainer_103",
+    "party_size": 88,
+    "ai_flags": "0x1"
+  },
+  {
+    "id": 724,
+    "name": "Jackson",
+    "trainer_class": 102,
+    "sprite_index": 142,
+    "sprite_folder": "graphics/trainers/trainer_142",
+    "party_size": 112,
+    "ai_flags": "0x7"
+  },
+  {
+    "id": 725,
+    "name": "Katelyn",
+    "trainer_class": 102,
+    "sprite_index": 143,
+    "sprite_folder": "graphics/trainers/trainer_143",
+    "party_size": 160,
+    "ai_flags": "0x7"
+  },
+  {
+    "id": 726,
+    "name": "Leroy",
+    "trainer_class": 86,
+    "sprite_index": 110,
+    "sprite_folder": "graphics/trainers/trainer_110",
+    "party_size": 176,
+    "ai_flags": "0x7"
+  },
+  {
+    "id": 727,
+    "name": "Michelle",
+    "trainer_class": 86,
+    "sprite_index": 111,
+    "sprite_folder": "graphics/trainers/trainer_111",
+    "party_size": 0,
+    "ai_flags": "0x7"
+  },
+  {
+    "id": 728,
+    "name": "Lex & Nya",
+    "trainer_class": 93,
+    "sprite_index": 128,
+    "sprite_folder": "graphics/trainers/trainer_128",
+    "party_size": 80,
+    "ai_flags": "0x7"
+  },
+  {
+    "id": 729,
+    "name": "Colton",
+    "trainer_class": 58,
+    "sprite_index": 83,
+    "sprite_folder": "graphics/trainers/trainer_083",
+    "party_size": 112,
+    "ai_flags": "0x1"
+  },
+  {
+    "id": 730,
+    "name": "Colton",
+    "trainer_class": 58,
+    "sprite_index": 83,
+    "sprite_folder": "graphics/trainers/trainer_083",
+    "party_size": 136,
+    "ai_flags": "0x1"
+  },
+  {
+    "id": 731,
+    "name": "Colton",
+    "trainer_class": 58,
+    "sprite_index": 83,
+    "sprite_folder": "graphics/trainers/trainer_083",
+    "party_size": 160,
+    "ai_flags": "0x1"
+  },
+  {
+    "id": 732,
+    "name": "Matthew",
+    "trainer_class": 70,
+    "sprite_index": 95,
+    "sprite_folder": "graphics/trainers/trainer_095",
+    "party_size": 184,
+    "ai_flags": "0x1"
+  },
+  {
+    "id": 733,
+    "name": "Tony",
+    "trainer_class": 70,
+    "sprite_index": 95,
+    "sprite_folder": "graphics/trainers/trainer_095",
+    "party_size": 200,
+    "ai_flags": "0x1"
+  },
+  {
+    "id": 734,
+    "name": "Melissa",
+    "trainer_class": 74,
+    "sprite_index": 99,
+    "sprite_folder": "graphics/trainers/trainer_099",
+    "party_size": 216,
+    "ai_flags": "0x1"
+  },
+  {
+    "id": 735,
+    "name": "Lorelei",
+    "trainer_class": 87,
+    "sprite_index": 112,
+    "sprite_folder": "graphics/trainers/trainer_112",
+    "party_size": 232,
+    "ai_flags": "0x7"
+  },
+  {
+    "id": 736,
+    "name": "Bruno",
+    "trainer_class": 87,
+    "sprite_index": 113,
+    "sprite_folder": "graphics/trainers/trainer_113",
+    "party_size": 56,
+    "ai_flags": "0x7"
+  },
+  {
+    "id": 737,
+    "name": "Agatha",
+    "trainer_class": 87,
+    "sprite_index": 114,
+    "sprite_folder": "graphics/trainers/trainer_114",
+    "party_size": 136,
+    "ai_flags": "0x7"
+  },
+  {
+    "id": 738,
+    "name": "Lance",
+    "trainer_class": 87,
+    "sprite_index": 115,
+    "sprite_folder": "graphics/trainers/trainer_115",
+    "party_size": 216,
+    "ai_flags": "0x7"
+  },
+  {
+    "id": 739,
+    "name": "Terry",
+    "trainer_class": 90,
+    "sprite_index": 125,
+    "sprite_folder": "graphics/trainers/trainer_125",
+    "party_size": 40,
+    "ai_flags": "0x7"
+  },
+  {
+    "id": 740,
+    "name": "Terry",
+    "trainer_class": 90,
+    "sprite_index": 125,
+    "sprite_folder": "graphics/trainers/trainer_125",
+    "party_size": 136,
+    "ai_flags": "0x7"
+  },
+  {
+    "id": 741,
+    "name": "Terry",
+    "trainer_class": 90,
+    "sprite_index": 125,
+    "sprite_folder": "graphics/trainers/trainer_125",
+    "party_size": 232,
+    "ai_flags": "0x7"
+  },
+  {
+    "id": 742,
+    "name": "Paxton",
+    "trainer_class": 71,
+    "sprite_index": 96,
+    "sprite_folder": "graphics/trainers/trainer_096",
+    "party_size": 72,
+    "ai_flags": "0x1"
+  }
+]

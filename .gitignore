@@ -12,3 +12,7 @@ backend/.env
 *.pyc
 __pycache__/
 
+
+# Archivos de ROM grandes
+red/*.gba
+backend/staticfiles/

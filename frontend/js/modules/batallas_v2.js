@@ -2538,65 +2538,111 @@ class BatallaModule {
     const myNick = (this.userNickname || 'Entrenador').trim();
     const myPlayer = (room.jugadores || []).find(p => (p.apodo || '').toLowerCase() === myNick.toLowerCase());
     const rivalPlayer = (room.jugadores || []).find(p => (p.apodo || '').toLowerCase() !== myNick.toLowerCase());
-    const isHost = myPlayer ? !!myPlayer.es_anfitrion : (room.anfitrion_nombre === myNick);
 
-    // Empaquetar el equipo del jugador actual
-    const packedTeam = this.packTeamForShowdown(myPlayer ? myPlayer.equipo_pokemon : []);
+    const bs = room.battle_state || {};
+    const p1 = bs.p1 || {};
+    const p2 = bs.p2 || {};
 
-    // Parámetros para el frame de combate puro Showdown
-    const queryParams = new URLSearchParams({
-      user: myNick,
-      rival: rivalPlayer ? rivalPlayer.apodo : '',
-      room: room.codigo || '',
-      host: isHost ? '1' : '0'
-    });
+    const isP1 = (p1.apodo || '').toLowerCase().trim() === myNick.toLowerCase();
+    const mySide = isP1 ? p1 : p2;
+    const oppSide = isP1 ? p2 : p1;
 
-    const showdownClientUrl = `/showdown/battle-frame.html?${queryParams.toString()}`;
+    const myActivePoke = (mySide.team && mySide.team[mySide.activeIndex || 0]) || (myPlayer?.equipo_pokemon?.[0]) || { name: 'Bulbasaur', currentHp: 100, maxHp: 100, moves: [] };
+    const oppActivePoke = (oppSide.team && oppSide.team[oppSide.activeIndex || 0]) || (rivalPlayer?.equipo_pokemon?.[0]) || { name: 'Charmander', currentHp: 100, maxHp: 100, moves: [] };
+
+    const myHpPercent = Math.max(0, Math.min(100, Math.round(((myActivePoke.currentHp || 100) / (myActivePoke.maxHp || 100)) * 100)));
+    const oppHpPercent = Math.max(0, Math.min(100, Math.round(((oppActivePoke.currentHp || 100) / (oppActivePoke.maxHp || 100)) * 100)));
+
+    const mySprite = window.GBABattleEngine ? window.GBABattleEngine.getSpriteUrl(myActivePoke.name, true) : '/assets/gba/pokemon/species_0001/back.png';
+    const oppSprite = window.GBABattleEngine ? window.GBABattleEngine.getSpriteUrl(oppActivePoke.name, false) : '/assets/gba/pokemon/species_0004/front.png';
+
+    const moves = myActivePoke.moves || myActivePoke.movimientos || [
+      { name: 'Tackle', power: 40, type: 'NORMAL', pp: 35, currentPp: 35 },
+      { name: 'Growl', power: 0, type: 'NORMAL', pp: 40, currentPp: 40 }
+    ];
+
+    const teamList = mySide.team || myPlayer?.equipo_pokemon || [];
 
     container.innerHTML = `
-      <div class="stadium-battle-wrapper battle-combat-wrapper" style="height: 100vh; display: flex; flex-direction: column; overflow: hidden; background: #07090e;">
-        <!-- BARRA SUPERIOR DE COMBATE STADIUM -->
-        <header class="lobby-header-bar" style="padding: 10px 20px; background: rgba(10, 16, 30, 0.95); border-bottom: 1px solid rgba(56, 189, 248, 0.25); flex-shrink: 0;">
-          <div class="lobby-header-left">
-            <div class="lobby-pokeball-brand"></div>
-            <h2 class="lobby-brand-title" style="font-size: 1.15rem;">Arena Stadium — Combate Oficial Showdown</h2>
-            <div class="lobby-status-pill" style="background: rgba(34, 197, 94, 0.2); border-color: rgba(34, 197, 94, 0.5); color: #4ade80; font-size: 0.76rem;">
-              ● BATALLA ACTIVA
-            </div>
+      <div class="gba-battle-screen">
+        <header class="gba-battle-header">
+          <div class="gba-header-brand">
+            <span class="gba-badge">GBA RED</span>
+            <span class="gba-room-code">SALA: ${room.codigo}</span>
+            <span class="gba-turn-pill">TURNO ${bs.turn || 1}</span>
           </div>
-
-          <div class="lobby-header-right">
-            <div class="room-code-tag" style="padding: 4px 10px; font-size: 0.8rem;">
-              <span class="room-label">SALA:</span>
-              <span class="room-code-val">${room.codigo}</span>
-            </div>
-            <button class="battle-exit-btn" onclick="BatallaModule.leaveRoom()" style="padding: 6px 14px; font-size: 0.78rem;">
-              <span class="exit-icon">✕</span>
-              <span>Salir</span>
-            </button>
-          </div>
+          <button class="gba-btn-exit" onclick="BatallaModule.leaveRoom()">Salir de Sala</button>
         </header>
 
-        <!-- CONTENEDOR IFRAME DE BATALLA PURA SHOWDOWN -->
-        <main style="flex: 1; width: 100%; position: relative; background: #000;">
-          <iframe 
-            id="showdownBattleFrame"
-            src="${showdownClientUrl}" 
-            style="width: 100%; height: 100%; border: none; display: block;"
-            allow="fullscreen; autoplay"
-          ></iframe>
+        <main class="gba-battle-arena-stage">
+          <!-- Fondo oficial GBA -->
+          <div class="gba-arena-background"></div>
+
+          <!-- Oponente -->
+          <div class="gba-opponent-wrapper">
+            <div class="gba-healthbox gba-healthbox-opponent">
+              <div class="gba-hb-name-row">
+                <span class="gba-poke-name">${this.escapeHtml(oppActivePoke.name || 'Rival')}</span>
+                <span class="gba-poke-level">Nv${oppActivePoke.level || 50}</span>
+              </div>
+              <div class="gba-hp-bar-track">
+                <div class="gba-hp-bar-fill" style="width: ${oppHpPercent}%; background: ${oppHpPercent > 50 ? '#22c55e' : (oppHpPercent > 20 ? '#eab308' : '#ef4444')};"></div>
+              </div>
+            </div>
+            <div class="gba-platform-opponent"></div>
+            <img src="${oppSprite}" class="gba-sprite-opponent" alt="${oppActivePoke.name}">
+          </div>
+
+          <!-- Jugador -->
+          <div class="gba-player-wrapper">
+            <div class="gba-platform-player"></div>
+            <img src="${mySprite}" class="gba-sprite-player" alt="${myActivePoke.name}">
+            <div class="gba-healthbox gba-healthbox-player">
+              <div class="gba-hb-name-row">
+                <span class="gba-poke-name">${this.escapeHtml(myActivePoke.name || 'Mi Pokémon')}</span>
+                <span class="gba-poke-level">Nv${myActivePoke.level || 50}</span>
+              </div>
+              <div class="gba-hp-bar-track">
+                <div class="gba-hp-bar-fill" style="width: ${myHpPercent}%; background: ${myHpPercent > 50 ? '#22c55e' : (myHpPercent > 20 ? '#eab308' : '#ef4444')};"></div>
+              </div>
+              <div class="gba-hp-numbers">${myActivePoke.currentHp || 100} / ${myActivePoke.maxHp || 100}</div>
+            </div>
+          </div>
         </main>
+
+        <!-- Panel de Control GBA Showdown-Style -->
+        <footer class="gba-battle-controls">
+          <div class="gba-dialog-log-box" id="gbaDialogBox">
+            <div class="gba-log-text">
+              ${(bs.logs && bs.logs.length > 0) ? this.escapeHtml(bs.logs[bs.logs.length - 1]) : `¿Qué debería hacer ${this.escapeHtml(myActivePoke.name)}?`}
+            </div>
+          </div>
+
+          <div class="gba-action-console">
+            <div class="gba-moves-grid">
+              ${moves.slice(0, 4).map((m, idx) => `
+                <button class="gba-move-btn type-${(m.type || m.type_name || 'NORMAL').toLowerCase()}" onclick="BatallaModule.selectCombatMove(${idx})">
+                  <div class="gba-move-name">${this.escapeHtml(m.name || m.nombre)}</div>
+                  <div class="gba-move-info">
+                    <span>${m.type || m.type_name || 'NORMAL'}</span>
+                    <span>PP ${m.currentPp ?? m.pp ?? 20}/${m.pp ?? 20}</span>
+                  </div>
+                </button>
+              `).join('')}
+            </div>
+
+            <div class="gba-bench-team-grid">
+              ${teamList.map((tp, idx) => `
+                <button class="gba-bench-poke-btn ${idx === (mySide.activeIndex || 0) ? 'active-bench' : ''}" onclick="BatallaModule.selectCombatSwitch(${idx})">
+                  <span class="gba-bench-name">${this.escapeHtml(tp.name)}</span>
+                  <span class="gba-bench-hp">${tp.currentHp ?? 100}/${tp.maxHp ?? 100} HP</span>
+                </button>
+              `).join('')}
+            </div>
+          </div>
+        </footer>
       </div>
     `;
-
-    // Enlazar escucha de eventos desde el iframe puro y sincronizar al cargar
-    this.setupPureBattleBridge();
-    const frameEl = document.getElementById('showdownBattleFrame');
-    if (frameEl) {
-      frameEl.addEventListener('load', () => {
-        setTimeout(() => this.syncStateToBattleFrame(), 200);
-      });
-    }
   }
 
   static setupPureBattleBridge() {

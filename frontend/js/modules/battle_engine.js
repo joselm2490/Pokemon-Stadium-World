@@ -1,37 +1,137 @@
 // ====================================================================
-// MOTOR DE COMBATE POR TURNOS OFICIAL POKÉMON STADIUM / SHOWDOWN
-// Sincronizado en tiempo real para 2 jugadores en Supabase / LocalStorage
+// MOTOR DE COMBATE OFICIAL GBA RED (Radical Red / CFRU)
+// Cero Showdown - 100% Datos y Reglas Matemáticas de la ROM red
 // ====================================================================
 
-class StadiumBattleEngine {
-  // Traducir nombre de tipo en español a inglés para consultar el TypeChart de Showdown
-  static TYPE_TO_EN = {
-    'Acero': 'Steel', 'Agua': 'Water', 'Bicho': 'Bug', 'Dragón': 'Dragon',
-    'Eléctrico': 'Electric', 'Fantasma': 'Ghost', 'Fuego': 'Fire', 'Hada': 'Fairy',
-    'Hielo': 'Ice', 'Lucha': 'Fighting', 'Normal': 'Normal', 'Planta': 'Grass',
-    'Psíquico': 'Psychic', 'Roca': 'Rock', 'Siniestro': 'Dark', 'Tierra': 'Ground',
-    'Veneno': 'Poison', 'Volador': 'Flying', 'Estelar': 'Stellar'
-  };
+class GBABattleEngine {
+  static typeChart = null;
+  static movesData = null;
+  static speciesMapping = null;
 
-  static getTypeEffectiveness(moveType, targetTypes) {
-    if (!window.SHOWDOWN_TYPECHART) return 1.0;
-    const moveEn = this.TYPE_TO_EN[moveType] || moveType;
-    let multiplier = 1.0;
-
-    for (const t of (targetTypes || [])) {
-      const targetEn = (this.TYPE_TO_EN[t] || t).toLowerCase();
-      const chartEntry = window.SHOWDOWN_TYPECHART[targetEn];
-      if (chartEntry && chartEntry.damageTaken && chartEntry.damageTaken[moveEn] !== undefined) {
-        const dt = chartEntry.damageTaken[moveEn];
-        if (dt === 1) multiplier *= 2.0;       // Super eficaz
-        else if (dt === 2) multiplier *= 0.5;  // No muy eficaz
-        else if (dt === 3) multiplier *= 0.0;  // Inmune
+  static async init() {
+    if (this.typeChart && this.movesData) return;
+    try {
+      const [tcRes, movesRes, specRes] = await Promise.all([
+        fetch('/assets/gba/data/type_chart.json'),
+        fetch('/assets/gba/data/battle_moves.json'),
+        fetch('/assets/gba/data/species_mapping.json')
+      ]);
+      
+      const tcList = await tcRes.json();
+      this.typeChart = {};
+      for (const entry of tcList) {
+        if (!this.typeChart[entry.attacker]) this.typeChart[entry.attacker] = {};
+        this.typeChart[entry.attacker][entry.defender] = entry.multiplier;
       }
+
+      this.movesData = await movesRes.json();
+      this.speciesMapping = await specRes.json();
+      console.log('⚔️ GBABattleEngine: Datos oficiales cargados.');
+    } catch (e) {
+      console.error('Error inicializando GBABattleEngine:', e);
     }
-    return multiplier;
   }
 
-  // Inicializar estado de combate completo para la sala
+  static getSpriteUrl(pokemonName, isBack = false) {
+    if (!pokemonName) return '/assets/gba/pokemon/species_0001/front.png';
+    const key = pokemonName.toLowerCase().trim();
+    let numStr = '0001';
+    if (this.speciesMapping && this.speciesMapping[key]) {
+      numStr = this.speciesMapping[key];
+    }
+    const side = isBack ? 'back.png' : 'front.png';
+    return `/assets/gba/pokemon/species_${numStr}/${side}`;
+  }
+
+  static getTypeEffectiveness(atkType, defTypes) {
+    if (!this.typeChart) return 1.0;
+    const normAtk = (atkType || 'NORMAL').toUpperCase();
+    let mult = 1.0;
+    for (const d of (defTypes || [])) {
+      const normDef = d.toUpperCase();
+      if (this.typeChart[normAtk] && this.typeChart[normAtk][normDef] !== undefined) {
+        mult *= this.typeChart[normAtk][normDef];
+      }
+    }
+    return mult;
+  }
+
+  static getStatMultiplier(stage = 0) {
+    const s = Math.max(-6, Math.min(6, stage));
+    return s >= 0 ? (2 + s) / 2.0 : 2.0 / (2 - s);
+  }
+
+  // Fórmula Oficial Radical Red / CFRU Gen 8
+  static calculateDamage(attacker, defender, move, isCritical = false) {
+    if (!move || move.power === 0) {
+      return { damage: 0, mult: 1.0, isCritical: false };
+    }
+
+    const level = attacker.level || 50;
+    const power = move.power;
+    const split = (move.split || 'PHYSICAL').toUpperCase();
+
+    let atkStat = 100;
+    let defStat = 100;
+
+    const atkStages = attacker.stages || {};
+    const defStages = defender.stages || {};
+
+    if (split === 'PHYSICAL') {
+      atkStat = (attacker.stats?.attack || 100) * this.getStatMultiplier(atkStages.attack || 0);
+      defStat = (defender.stats?.defense || 100) * this.getStatMultiplier(defStages.defense || 0);
+      if (attacker.status === 'BURN') atkStat *= 0.5;
+    } else {
+      atkStat = (attacker.stats?.sp_attack || attacker.stats?.special_attack || 100) * this.getStatMultiplier(atkStages.sp_attack || 0);
+      defStat = (defender.stats?.sp_defense || defender.stats?.special_defense || 100) * this.getStatMultiplier(defStages.sp_defense || 0);
+    }
+
+    let baseDmg = (((2 * level / 5 + 2) * power * (atkStat / Math.max(1, defStat))) / 50) + 2;
+
+    if (isCritical) {
+      baseDmg *= 1.5;
+    }
+
+    // Variación aleatoria GBA: 85% a 100%
+    const randMult = (Math.floor(Math.random() * 16) + 85) / 100.0;
+    baseDmg *= randMult;
+
+    // STAB
+    const moveType = (move.type_name || move.type || 'NORMAL').toUpperCase();
+    const attackerTypes = (attacker.types || []).map(t => t.toUpperCase());
+    if (attackerTypes.includes(moveType)) {
+      baseDmg *= 1.5;
+    }
+
+    // Efectividad de tipo
+    const defTypes = (defender.types || []).map(t => t.toUpperCase());
+    const mult = this.getTypeEffectiveness(moveType, defTypes);
+    baseDmg *= mult;
+
+    return {
+      damage: Math.max(1, Math.floor(baseDmg)),
+      mult,
+      isCritical
+    };
+  }
+
+  // Resolver orden de turnos por prioridad y velocidad
+  static resolveTurnOrder(actionA, actionB) {
+    if (actionA.priority !== actionB.priority) {
+      return actionA.priority > actionB.priority ? [actionA, actionB] : [actionB, actionA];
+    }
+    if (actionA.speed !== actionB.speed) {
+      return actionA.speed > actionB.speed ? [actionA, actionB] : [actionB, actionA];
+    }
+    return Math.random() < 0.5 ? [actionA, actionB] : [actionB, actionA];
+  }
+}
+
+// Exportar globalmente
+window.GBABattleEngine = GBABattleEngine;
+
+// Compatibilidad con la arquitectura de salas
+class StadiumBattleEngine {
   static initBattleState(room) {
     const players = room.jugadores || [];
     if (players.length < 2) return null;
@@ -42,285 +142,142 @@ class StadiumBattleEngine {
     function setupCombatant(p) {
       const team = (p.equipo_pokemon || []).map((poke, idx) => {
         const hpStat = (poke.stats && poke.stats.hp) ? poke.stats.hp : 100;
-        // Fórmula estándar de HP a nivel 50: floor((2 * base + 31 + floor(85/4)) * 50 / 100) + 50 + 10
         const maxHp = Math.floor((2 * hpStat + 31) * 50 / 100) + 60;
         return {
           id: poke.id || (idx + 1),
           num: poke.num,
           name: poke.name,
           types: poke.types || ['Normal'],
-          stats: poke.stats || { hp: 100, atk: 100, def: 100, spa: 100, spd: 100, spe: 100 },
+          stats: poke.stats || { hp: maxHp, attack: 100, defense: 100, sp_attack: 100, sp_defense: 100, speed: 100 },
           maxHp: maxHp,
           currentHp: maxHp,
-          movimientos: (poke.movimientos || []).map(m => ({
-            id: m.id,
-            nombre: m.nombre || m.name,
-            nombre_ingles: m.nombre_ingles || m.name || m.nombre,
-            tipo: m.tipo || m.type || 'Normal',
-            categoria: m.categoria || m.category || 'Físico',
-            potencia: m.potencia !== undefined ? m.potencia : 60,
-            precision: m.precision !== undefined ? m.precision : 100,
-            pp: m.pp || 15,
-            maxPp: m.pp || 15
-          })),
-          fainted: false
+          level: 50,
+          status: null,
+          stages: { attack: 0, defense: 0, sp_attack: 0, sp_defense: 0, speed: 0 },
+          moves: (poke.movimientos && poke.movimientos.length > 0) ? poke.movimientos.map(m => ({
+            name: m.nombre_ingles || m.nombre,
+            power: m.potencia || 0,
+            type: m.tipo || 'Normal',
+            split: m.clase === 'Especial' ? 'SPECIAL' : 'PHYSICAL',
+            pp: m.pp || 20,
+            currentPp: m.pp || 20,
+            priority: 0
+          })) : [
+            { name: 'Tackle', power: 40, type: 'Normal', split: 'PHYSICAL', pp: 35, currentPp: 35, priority: 0 },
+            { name: 'Quick Attack', power: 40, type: 'Normal', split: 'PHYSICAL', pp: 30, currentPp: 30, priority: 1 }
+          ]
         };
       });
 
       return {
         apodo: p.apodo,
-        es_anfitrion: !!p.es_anfitrion,
         team: team,
         activeIndex: 0,
-        pendingAction: null // { type: 'move'|'switch', moveIndex: 0, targetPokemonIndex: 0 }
+        pendingAction: null
       };
     }
 
     return {
       turn: 1,
-      phase: 'awaiting_actions', // 'awaiting_actions', 'resolving_turn', 'finished'
+      phase: 'turn_in_progress',
       winner: null,
+      logs: [`¡Comienza la batalla entre ${p1.apodo} y ${p2.apodo}!`],
       p1: setupCombatant(p1),
-      p2: setupCombatant(p2),
-      logs: [
-        `⚔️ ¡Comienza el combate en la Arena Stadium!`,
-        `👑 ${p1.apodo} envía a ${p1.equipo_pokemon[0]?.name || 'Pokémon'}!`,
-        `🎮 ${p2.apodo} envía a ${p2.equipo_pokemon[0]?.name || 'Pokémon'}!`
-      ]
+      p2: setupCombatant(p2)
     };
   }
 
-  // Calcular daño usando la fórmula oficial de Pokémon Showdown
-  static calculateDamage(attacker, defender, move) {
-    const level = 50;
-    const cat = (move.categoria || '').toLowerCase();
-    const isSpecial = cat.includes('esp') || cat.includes('spec');
-    const isStatus = cat.includes('est') || cat.includes('stat');
+  static resolveTurn(bs) {
+    if (!bs || !bs.p1 || !bs.p2) return;
 
-    if (isStatus || move.potencia === null || move.potencia === 0) {
-      return { damage: 0, isStatus: true, eff: 1.0, isCrit: false };
+    const p1 = bs.p1;
+    const p2 = bs.p2;
+    const a1 = p1.pendingAction || { type: 'move', moveIndex: 0 };
+    const a2 = p2.pendingAction || { type: 'move', moveIndex: 0 };
+
+    const poke1 = p1.team[p1.activeIndex || 0];
+    const poke2 = p2.team[p2.activeIndex || 0];
+
+    // Resolver cambios de Pokémon primero
+    if (a1.type === 'switch') {
+      p1.activeIndex = a1.targetIndex;
+      bs.logs.push(`¡${p1.apodo} cambió a ${p1.team[p1.activeIndex].name}!`);
+    }
+    if (a2.type === 'switch') {
+      p2.activeIndex = a2.targetIndex;
+      bs.logs.push(`¡${p2.apodo} cambió a ${p2.team[p2.activeIndex].name}!`);
     }
 
-    const A = isSpecial ? (attacker.stats.spa || 100) : (attacker.stats.atk || 100);
-    const D = isSpecial ? (defender.stats.spd || 100) : (defender.stats.def || 100);
-    const power = move.potencia || 60;
-
-    let base = Math.floor(Math.floor((Math.floor((2 * level) / 5 + 2) * power * A) / D) / 50) + 2;
-
-    // STAB (Same Type Attack Bonus) = 1.5x
-    const atkTypes = attacker.types || [];
-    if (atkTypes.includes(move.tipo)) {
-      base = Math.floor(base * 1.5);
+    // Resolver movimientos
+    const moveActions = [];
+    if (a1.type === 'move') {
+      const m1 = poke1.moves[a1.moveIndex] || poke1.moves[0];
+      moveActions.push({ actor: 'p1', user: p1, poke: poke1, target: p2, targetPoke: poke2, move: m1, speed: poke1.stats.speed, priority: m1.priority || 0 });
+    }
+    if (a2.type === 'move') {
+      const m2 = poke2.moves[a2.moveIndex] || poke2.moves[0];
+      moveActions.push({ actor: 'p2', user: p2, poke: poke2, target: p1, targetPoke: poke1, move: m2, speed: poke2.stats.speed, priority: m2.priority || 0 });
     }
 
-    // Efectividad por tipos
-    const eff = this.getTypeEffectiveness(move.tipo, defender.types);
-    base = Math.floor(base * eff);
-
-    // Golpe crítico (aprox. 1/16 prob)
-    const isCrit = Math.random() < 0.0625;
-    if (isCrit) {
-      base = Math.floor(base * 1.5);
-    }
-
-    // Variación aleatoria (0.85 a 1.00)
-    const roll = 0.85 + Math.random() * 0.15;
-    const finalDamage = Math.max(1, Math.floor(base * roll));
-
-    return { damage: finalDamage, isStatus: false, eff, isCrit };
-  }
-
-  // Ejecutar turno cuando ambos jugadores hayan enviado su acción
-  static resolveTurn(battleState) {
-    if (!battleState || battleState.phase === 'finished') return battleState;
-
-    const p1 = battleState.p1;
-    const p2 = battleState.p2;
-    const p1Active = p1.team[p1.activeIndex];
-    const p2Active = p2.team[p2.activeIndex];
-
-    const logs = [`--- Turno ${battleState.turn} ---`];
-    const showdownCommands = [`|turn|${battleState.turn}`];
-
-    // Manejo de cambios de Pokémon (prioridad máxima antes que movimientos)
-    if (p1.pendingAction?.type === 'switch') {
-      p1.activeIndex = p1.pendingAction.targetIndex;
-      const swPoke = p1.team[p1.activeIndex];
-      logs.push(`🔄 ${p1.apodo} retira a su Pokémon y envía a ${swPoke.name}!`);
-      showdownCommands.push(`|switch|p1a: ${swPoke.name}|${swPoke.name}|${swPoke.currentHp}/${swPoke.maxHp}`);
-    }
-    if (p2.pendingAction?.type === 'switch') {
-      p2.activeIndex = p2.pendingAction.targetIndex;
-      const swPoke = p2.team[p2.activeIndex];
-      logs.push(`🔄 ${p2.apodo} retira a su Pokémon y envía a ${swPoke.name}!`);
-      showdownCommands.push(`|switch|p2a: ${swPoke.name}|${swPoke.name}|${swPoke.currentHp}/${swPoke.maxHp}`);
-    }
-
-    const currentP1 = p1.team[p1.activeIndex];
-    const currentP2 = p2.team[p2.activeIndex];
-
-    // Determinar orden de movimientos según Velocidad (Spe)
-    const p1Spe = currentP1.stats?.spe || 100;
-    const p2Spe = currentP2.stats?.spe || 100;
-    const p1First = p1Spe > p2Spe ? true : (p1Spe < p2Spe ? false : Math.random() < 0.5);
-
-    const firstCombatant = p1First ? { player: p1, poke: currentP1, oppPlayer: p2, oppPoke: currentP2, action: p1.pendingAction, sideId: 'p1a', oppSideId: 'p2a' } 
-                                  : { player: p2, poke: currentP2, oppPlayer: p1, oppPoke: currentP1, action: p2.pendingAction, sideId: 'p2a', oppSideId: 'p1a' };
-    const secondCombatant = p1First ? { player: p2, poke: currentP2, oppPlayer: p1, oppPoke: currentP1, action: p2.pendingAction, sideId: 'p2a', oppSideId: 'p1a' } 
-                                   : { player: p1, poke: currentP1, oppPlayer: p2, oppPoke: currentP2, action: p1.pendingAction, sideId: 'p1a', oppSideId: 'p2a' };
-
-    // Listas de movimientos de relevo (pivot) y expulsión (phazing)
-    const PIVOT_MOVES = new Set([
-      'ida y vuelta', 'voltiocambio', 'viraje', 'última palabra', 'ultima palabra',
-      'relevo', 'fría acogida', 'fria acogida', 'autotomía', 'autotomia',
-      'u-turn', 'uturn', 'volt switch', 'voltswitch', 'flip turn', 'flipturn',
-      'parting shot', 'partingshot', 'baton pass', 'batonpass', 'chilly reception', 'chillyreception', 'shed tail', 'shedtail'
-    ]);
-
-    const PHAZING_MOVES = new Set([
-      'rugido', 'remolino', 'cola dragón', 'cola dragon', 'llave giro',
-      'roar', 'whirlwind', 'dragon tail', 'dragontail', 'circle throw', 'circlethrow'
-    ]);
-
-    function executeMove(att, def) {
-      // Re-verificar que los combatientes activos no estén debilitados
-      att.poke = att.player.team[att.player.activeIndex];
-      def.poke = def.player.team[def.player.activeIndex];
-
-      if (att.poke.fainted || def.poke.fainted) return;
-      if (!att.action || att.action.type !== 'move') return;
-
-      const move = att.poke.movimientos[att.action.moveIndex];
-      if (!move) return;
-
-      // Disminuir PP
-      if (move.pp > 0) move.pp--;
-
-      const showdownMoveName = move.nombre_ingles || move.nombre;
-      logs.push(`💥 ¡${att.poke.name} de ${att.player.apodo} usa ${move.nombre}!`);
-      showdownCommands.push(`|move|${att.sideId}: ${att.poke.name}|${showdownMoveName}|${def.sideId}: ${def.poke.name}`);
-
-      // Verificar precisión
-      const acc = move.precision || 100;
-      if (acc < 100 && Math.random() * 100 > acc) {
-        logs.push(`💨 ¡El ataque de ${att.poke.name} ha fallado!`);
-        showdownCommands.push(`|-miss|${att.sideId}: ${att.poke.name}`);
-        return;
+    if (moveActions.length === 2) {
+      const [first, second] = GBABattleEngine.resolveTurnOrder(moveActions[0], moveActions[1]);
+      this._applyMoveAction(first, bs);
+      if (first.targetPoke.currentHp > 0) {
+        this._applyMoveAction(second, bs);
       }
-
-      const res = StadiumBattleEngine.calculateDamage(att.poke, def.poke, move);
-
-      if (res.isStatus) {
-        logs.push(`✨ ¡${move.nombre} surte efecto en el campo de batalla!`);
-      } else if (res.eff === 0) {
-        logs.push(`🛡️ No afecta a ${def.poke.name}...`);
-        showdownCommands.push(`|-immune|${def.sideId}: ${def.poke.name}`);
-        return;
-      } else {
-        def.poke.currentHp = Math.max(0, def.poke.currentHp - res.damage);
-        showdownCommands.push(`|-damage|${def.sideId}: ${def.poke.name}|${def.poke.currentHp}/${def.poke.maxHp}`);
-
-        if (res.isCrit) {
-          logs.push(`🎯 ¡Un golpe crítico!`);
-          showdownCommands.push(`|-crit|${def.sideId}: ${def.poke.name}`);
-        }
-        if (res.eff > 1.0) {
-          logs.push(`🔥 ¡Es súper eficaz! (-${res.damage} PS)`);
-          showdownCommands.push(`|-supereffective|${def.sideId}: ${def.poke.name}`);
-        } else if (res.eff < 1.0) {
-          logs.push(`🍃 No es muy eficaz... (-${res.damage} PS)`);
-          showdownCommands.push(`|-resisted|${def.sideId}: ${def.poke.name}`);
-        } else {
-          logs.push(`💥 Ha causado ${res.damage} puntos de daño a ${def.poke.name}.`);
-        }
-      }
-
-      // Si el defensor cae debilitado
-      if (def.poke.currentHp <= 0) {
-        def.poke.fainted = true;
-        logs.push(`💀 ¡${def.poke.name} de ${def.player.apodo} se ha debilitado!`);
-        showdownCommands.push(`|faint|${def.sideId}: ${def.poke.name}`);
-
-        // Auto-cambiar al siguiente disponible en el equipo del defensor
-        const nextIdx = def.player.team.findIndex(p => !p.fainted);
-        if (nextIdx !== -1) {
-          def.player.activeIndex = nextIdx;
-          const nextPoke = def.player.team[nextIdx];
-          logs.push(`👉 ${def.player.apodo} envía a combatir a ${nextPoke.name}!`);
-          showdownCommands.push(`|switch|${def.sideId}: ${nextPoke.name}|${nextPoke.name}|${nextPoke.currentHp}/${nextPoke.maxHp}`);
-        }
-        return;
-      }
-
-      // Detectar si el movimiento es de Relevo (Pivot): el atacante regresa a su Pokéball
-      const normMoveName = (move.nombre || '').toLowerCase().trim();
-      const normMoveEn = (move.nombre_ingles || '').toLowerCase().trim();
-      const isPivot = PIVOT_MOVES.has(normMoveName) || PIVOT_MOVES.has(normMoveEn);
-      const isPhazing = PHAZING_MOVES.has(normMoveName) || PHAZING_MOVES.has(normMoveEn);
-
-      if (isPivot && !att.poke.fainted) {
-        const availableIdx = att.player.team.findIndex((p, idx) => !p.fainted && idx !== att.player.activeIndex);
-        if (availableIdx !== -1) {
-          att.player.activeIndex = availableIdx;
-          const newAttacker = att.player.team[availableIdx];
-          logs.push(`🔄 ¡${att.poke.name} regresa a su Pokéball tras usar ${move.nombre}!`);
-          logs.push(`👉 ${att.player.apodo} envía a combatir a ${newAttacker.name}!`);
-          showdownCommands.push(`|switch|${att.sideId}: ${newAttacker.name}|${newAttacker.name}|${newAttacker.currentHp}/${newAttacker.maxHp}`);
-        }
-      } else if (isPhazing && !def.poke.fainted) {
-        // Detectar si el movimiento es de Expulsión (Phazing): el defensor es forzado a cambiar
-        const candidateIndices = [];
-        def.player.team.forEach((p, idx) => {
-          if (!p.fainted && idx !== def.player.activeIndex) candidateIndices.push(idx);
-        });
-
-        if (candidateIndices.length > 0) {
-          const randIdx = candidateIndices[Math.floor(Math.random() * candidateIndices.length)];
-          def.player.activeIndex = randIdx;
-          const forcedPoke = def.player.team[randIdx];
-          logs.push(`💨 ¡${def.poke.name} es forzado a salir del combate por ${move.nombre}!`);
-          logs.push(`👉 ${def.player.apodo} es obligado a enviar a ${forcedPoke.name}!`);
-          showdownCommands.push(`|drag|${def.sideId}: ${forcedPoke.name}|${forcedPoke.name}|${forcedPoke.currentHp}/${forcedPoke.maxHp}`);
-        }
-      }
+    } else if (moveActions.length === 1) {
+      this._applyMoveAction(moveActions[0], bs);
     }
-
-    executeMove(firstCombatant, secondCombatant);
-    executeMove(secondCombatant, firstCombatant);
 
     // Limpiar acciones pendientes
     p1.pendingAction = null;
     p2.pendingAction = null;
+    bs.turn = (bs.turn || 1) + 1;
 
     // Verificar condición de victoria
-    const p1AllFainted = p1.team.every(p => p.fainted);
-    const p2AllFainted = p2.team.every(p => p.fainted);
+    const p1Alive = p1.team.some(p => p.currentHp > 0);
+    const p2Alive = p2.team.some(p => p.currentHp > 0);
 
-    if (p1AllFainted && p2AllFainted) {
-      battleState.phase = 'finished';
-      battleState.winner = 'Empate';
-      logs.push(`🏆 ¡Ambos entrenadores han quedado sin Pokémon! ¡El combate termina en EMPATE!`);
-      showdownCommands.push(`|tie`);
-    } else if (p2AllFainted) {
-      battleState.phase = 'finished';
-      battleState.winner = p1.apodo;
-      logs.push(`🏆 ¡Todos los Pokémon de ${p2.apodo} se han debilitado! ¡${p1.apodo} GANA EL COMBATE!`);
-      showdownCommands.push(`|win|${p1.apodo}`);
-    } else if (p1AllFainted) {
-      battleState.phase = 'finished';
-      battleState.winner = p2.apodo;
-      logs.push(`🏆 ¡Todos los Pokémon de ${p1.apodo} se han debilitado! ¡${p2.apodo} GANA EL COMBATE!`);
-      showdownCommands.push(`|win|${p2.apodo}`);
-    } else {
-      battleState.turn++;
+    if (!p1Alive && !p2Alive) {
+      bs.phase = 'finished';
+      bs.winner = 'Empate';
+      bs.logs.push('¡Todos los Pokémon se han debilitado! ¡Empate!');
+    } else if (!p1Alive) {
+      bs.phase = 'finished';
+      bs.winner = p2.apodo;
+      bs.logs.push(`¡${p1.apodo} no tiene más Pokémon! ¡${p2.apodo} gana el combate!`);
+    } else if (!p2Alive) {
+      bs.phase = 'finished';
+      bs.winner = p1.apodo;
+      bs.logs.push(`¡${p2.apodo} no tiene más Pokémon! ¡${p1.apodo} gana el combate!`);
+    }
+  }
+
+  static _applyMoveAction(action, bs) {
+    const { user, poke, target, targetPoke, move } = action;
+    bs.logs.push(`¡${poke.name} de ${user.apodo} usó ${move.name}!`);
+
+    const result = GBABattleEngine.calculateDamage(poke, targetPoke, move);
+    targetPoke.currentHp = Math.max(0, targetPoke.currentHp - result.damage);
+
+    if (result.mult > 1.0) {
+      bs.logs.push('¡Es muy eficaz!');
+    } else if (result.mult === 0.0) {
+      bs.logs.push('No tuvo ningún efecto...');
+    } else if (result.mult < 1.0 && result.mult > 0) {
+      bs.logs.push('No es muy eficaz...');
     }
 
-    battleState.logs.push(...logs);
-    battleState.latestCommands = showdownCommands;
-    return battleState;
+    if (targetPoke.currentHp === 0) {
+      bs.logs.push(`¡${targetPoke.name} enemigo se debilitó!`);
+      // Cambio automático al siguiente disponible
+      const nextIdx = target.team.findIndex(p => p.currentHp > 0);
+      if (nextIdx !== -1) {
+        target.activeIndex = nextIdx;
+        bs.logs.push(`¡${target.apodo} envió a ${target.team[nextIdx].name}!`);
+      }
+    }
   }
 }
 
-if (typeof window !== 'undefined') {
-  window.StadiumBattleEngine = StadiumBattleEngine;
-}
+window.StadiumBattleEngine = StadiumBattleEngine;

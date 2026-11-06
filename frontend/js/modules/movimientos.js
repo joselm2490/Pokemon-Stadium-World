@@ -435,7 +435,7 @@ class MovimientosModule {
       let slug = nameL.replace(/\s+/g, '-').replace(/[^a-z0-9-]/g, '');
       if (slug.includes('mr-mime')) slug = slug.replace('mr-mime', 'mrmime');
       if (slug.includes('tauros-paldea-')) slug = slug.replace('tauros-paldea-', 'tauros-paldea');
-      return `https://play.pokemonshowdown.com/sprites/gen5/${slug}.png`;
+      return `/sprites/pokemon/${slug}.png`;
     }
 
     return `https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/${p.num}.png`;
@@ -449,7 +449,7 @@ class MovimientosModule {
     let slug = (p.name || '').toLowerCase().replace(/\s+/g, '-').replace(/[^a-z0-9-]/g, '');
     if (slug.includes('mr-mime')) slug = slug.replace('mr-mime', 'mrmime');
     if (slug.includes('tauros-paldea-')) slug = slug.replace('tauros-paldea-', 'tauros-paldea');
-    return `https://play.pokemonshowdown.com/sprites/gen5/${slug}.png`;
+    return `/sprites/pokemon/${slug}.png`;
   }
 
   static openMoveDetailById(moveId) {
