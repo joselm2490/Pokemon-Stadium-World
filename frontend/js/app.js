@@ -44,6 +44,11 @@ function initStadiumApp() {
     window.MovimientosModule.init(GameState.moves, GameState.pokemon);
   }
 
+    // Inicializar Motor de Combate GBA Red
+  if (window.GBABattleEngine) {
+    window.GBABattleEngine.init();
+  }
+
   if (window.BatallaModule) {
     window.BatallaModule.init(GameState.pokemon, GameState.movesById);
   }

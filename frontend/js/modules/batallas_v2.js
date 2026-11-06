@@ -2448,7 +2448,7 @@ class BatallaModule {
                     ${isMarked ? '✕' : ''}
                   </div>
 
-                  <img src="${sprite}" alt="${poke.name}" class="assigned-pokemon-img" onerror="this.src='https://play.pokemonshowdown.com/sprites/gen5/${poke.name.toLowerCase()}.png'" />
+                  <img src="${sprite}" alt="${poke.name}" class="assigned-pokemon-img" onerror="this.src='/assets/gba/pokemon/species_0001/front.png'" />
                   <div class="assigned-pokemon-name">${poke.name}</div>
                   <div class="assigned-pokemon-types">
                     ${(poke.types || []).map(t => `<span class="badge-type type-${t}" style="font-size:0.65rem; padding: 2px 6px;">${t}</span>`).join('')}
