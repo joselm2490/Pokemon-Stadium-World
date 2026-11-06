@@ -5,11 +5,37 @@ class AuthManager {
   static SESSION_KEY = 'stadium_session_user';
 
   static init() {
-    // Limpieza de cualquier residuo viejo en localStorage
-    try {
-      localStorage.removeItem('stadium_users_db');
-      localStorage.removeItem('stadium_session_user');
-    } catch (e) {}
+    // 1. Capturar usuario desde query param tras login o registro en Django
+    const urlParams = new URLSearchParams(window.location.search);
+    const authUserParam = urlParams.get('auth_user');
+    if (authUserParam) {
+      try {
+        const parsed = JSON.parse(decodeURIComponent(authUserParam));
+        if (parsed && parsed.username) {
+          this.setCurrentUser({
+            id: parsed.id,
+            username: parsed.username,
+            nombre: parsed.first_name || parsed.username,
+            email: parsed.email || '',
+            is_staff: !!parsed.is_staff,
+            is_superuser: !!parsed.is_superuser
+          });
+          // Limpiar el parámetro de la URL sin recargar
+          urlParams.delete('auth_user');
+          const cleanQuery = urlParams.toString() ? ('?' + urlParams.toString()) : '';
+          history.replaceState(null, '', window.location.pathname + cleanQuery);
+        }
+      } catch (e) {
+        console.error('Error parseando auth_user:', e);
+      }
+    }
+
+    // 2. Comprobar si está autenticado. Si NO está autenticado, forzar login
+    if (!this.isLoggedIn()) {
+      console.warn('🔒 Acceso restringido: Se requiere autenticación obligatoria.');
+      this.redirectToDjangoLogin();
+      return;
+    }
 
     this.setupModalListeners();
     this.renderUserWidget();
@@ -171,6 +197,7 @@ class AuthManager {
 
     this.setCurrentUser(null);
     this.renderUserWidget();
+    this.redirectToDjangoLogin();
     if (window.BatallaModule && typeof window.BatallaModule.syncUserNickname === 'function') {
       window.BatallaModule.syncUserNickname();
       if (window.BatallaModule.currentScreen === 'landing') {

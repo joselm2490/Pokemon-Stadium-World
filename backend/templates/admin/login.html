@@ -16,7 +16,7 @@
     }
 
     body {
-      background: radial-gradient(circle at 50% 20%, #1e293b 0%, #090d16 80%, #030712 100%);
+      background: #030712 url('{% static "img/stadium_bg.webp" %}') center center / cover no-repeat fixed;
       color: #f1f5f9;
       font-family: 'Inter', -apple-system, sans-serif;
       min-height: 100vh;
@@ -28,14 +28,12 @@
       overflow-x: hidden;
     }
 
+    /* Capa de oscurecimiento y ambientación para destacar la tarjeta */
     body::before {
       content: '';
       position: fixed;
       top: 0; left: 0; right: 0; bottom: 0;
-      background-image: 
-        linear-gradient(rgba(56, 189, 248, 0.05) 1px, transparent 1px),
-        linear-gradient(90deg, rgba(56, 189, 248, 0.05) 1px, transparent 1px);
-      background-size: 36px 36px;
+      background: radial-gradient(circle at 50% 50%, rgba(3, 7, 18, 0.65) 0%, rgba(3, 7, 18, 0.88) 100%);
       pointer-events: none;
       z-index: 0;
     }
@@ -269,8 +267,7 @@
           {% endfor %}
         {% endif %}
 
-        <form action="{{ app_path }}" method="post" id="login-form">
-          {% csrf_token %}
+                <form id="login-form" onsubmit="handleLoginSubmit(event)">
           <div class="form-group">
             <label class="form-label" for="id_username">Usuario:</label>
             <input type="text" name="username" autofocus autocapitalize="none" autocomplete="username" maxlength="150" required id="id_username" class="form-input" placeholder="Ej: joselm2490">
@@ -279,10 +276,9 @@
           <div class="form-group">
             <label class="form-label" for="id_password">Contraseña:</label>
             <input type="password" name="password" autocomplete="current-password" required id="id_password" class="form-input" placeholder="Tu contraseña">
-            <input type="hidden" name="next" value="{{ next }}">
           </div>
 
-          <button type="submit" class="btn-submit">Entrar al Sistema</button>
+          <button type="submit" id="btnLoginSubmit" class="btn-submit">Entrar al Sistema</button>
         </form>
       </div>
 
@@ -345,6 +341,46 @@
       }
     }
 
+        async function handleLoginSubmit(e) {
+      e.preventDefault();
+      const username = document.getElementById('id_username').value.trim();
+      const password = document.getElementById('id_password').value;
+      const btn = document.getElementById('btnLoginSubmit');
+      const errorBox = document.getElementById('loginMsgBox');
+
+      if (errorBox) errorBox.style.display = 'none';
+      btn.disabled = true;
+      btn.innerText = 'Verificando...';
+
+      try {
+        const response = await fetch('/api/auth/login/', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ username, password })
+        });
+        const data = await response.json();
+        if (response.ok && data.ok) {
+          const userJson = encodeURIComponent(JSON.stringify(data.user));
+          window.location.href = 'https://pokemonstadiumworld.vercel.app/?auth_user=' + userJson;
+        } else {
+          let errDiv = document.getElementById('loginMsgBox');
+          if (!errDiv) {
+            errDiv = document.createElement('div');
+            errDiv.id = 'loginMsgBox';
+            errDiv.className = 'error-box';
+            document.getElementById('viewLogin').insertBefore(errDiv, document.getElementById('login-form'));
+          }
+          errDiv.innerText = data.error || 'Usuario o contraseña incorrectos.';
+          errDiv.style.display = 'block';
+        }
+      } catch (err) {
+        alert('Error conectando con el servidor de autenticación.');
+      } finally {
+        btn.disabled = false;
+        btn.innerText = 'Entrar al Sistema';
+      }
+    }
+
     async function handleRegisterSubmit(e) {
       e.preventDefault();
       const username = document.getElementById('reg_username').value.trim();
@@ -387,7 +423,8 @@
           msgBox.style.display = 'block';
           
           setTimeout(() => {
-            window.location.href = 'https://pokemonstadiumworld.vercel.app';
+            const userJson = encodeURIComponent(JSON.stringify(data.user));
+            window.location.href = 'https://pokemonstadiumworld.vercel.app/?auth_user=' + userJson;
           }, 1200);
         } else {
           msgBox.className = 'error-box';
