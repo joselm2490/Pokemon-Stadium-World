@@ -9,23 +9,24 @@ class StadiumRouter {
     'battle': { viewId: 'view-batalla', navId: 'menuItemBatalla' },
     'batalla': { viewId: 'view-batalla', navId: 'menuItemBatalla' },
     'batallas': { viewId: 'view-batalla', navId: 'menuItemBatalla' },
-    'users': { viewId: 'view-usuarios', navId: 'menuItemUsuarios' },
-    'usuarios': { viewId: 'view-usuarios', navId: 'menuItemUsuarios' }
+    'admin': { viewId: 'view-usuarios', navId: 'menuItemUsuarios', superuserOnly: true },
+    'users': { viewId: 'view-usuarios', navId: 'menuItemUsuarios', superuserOnly: true },
+    'usuarios': { viewId: 'view-usuarios', navId: 'menuItemUsuarios', superuserOnly: true }
   };
 
   static currentRoute = null;
 
   static init() {
+    // 1. Eliminar cualquier # de la URL de forma inmediata e irreversible
+    if (window.location.hash) {
+      let clean = window.location.hash.replace(/^#\/?/, '/');
+      if (!clean.startsWith('/')) clean = '/' + clean;
+      history.replaceState(null, '', clean);
+    }
+
     // Escuchar navegación del historial (Botones Atrás/Adelante del navegador)
     window.addEventListener('popstate', () => this.handleLocationChange());
-    window.addEventListener('hashchange', () => this.handleLocationChange());
     this.setupNavClickListeners();
-
-    // Migrar automáticamente URLs con # a URLs limpias estándar
-    if (window.location.hash && window.location.hash.startsWith('#/')) {
-      const cleanPath = window.location.hash.replace(/^#\/?/, '/');
-      history.replaceState(null, '', cleanPath);
-    }
 
     // Si la ruta raíz es vacía o /, navegar a /pokemon
     const path = window.location.pathname.replace(/^\/+/, '');
@@ -37,12 +38,14 @@ class StadiumRouter {
   }
 
   static parseCurrentUrl() {
-    // Si viene hash, limpiarlo
-    let cleanPath = window.location.pathname;
-    if (window.location.hash && window.location.hash.startsWith('#/')) {
-      cleanPath = window.location.hash.replace(/^#\/?/, '/');
+    // Si todavía viniera un hash residual, limpiarlo en el acto
+    if (window.location.hash) {
+      let clean = window.location.hash.replace(/^#\/?/, '/');
+      if (!clean.startsWith('/')) clean = '/' + clean;
+      history.replaceState(null, '', clean);
     }
 
+    const cleanPath = window.location.pathname;
     const segments = cleanPath.split('/').filter(Boolean);
     const mainRoute = (segments[0] || 'pokemon').toLowerCase();
     const subParam = segments.length > 1 ? segments[1].toUpperCase() : null;
@@ -78,17 +81,19 @@ class StadiumRouter {
   static handleLocationChange() {
     const { path, params } = this.parseCurrentUrl();
 
-    // Casos especiales de modales de autenticación
-    if (path === 'login') {
-      if (window.AuthManager) window.AuthManager.openModal('login');
-      return;
-    }
-    if (path === 'register' || path === 'registro') {
-      if (window.AuthManager) window.AuthManager.openModal('register');
-      return;
+    // Redirección especial de admin: Sólo superusuarios
+    if (path === 'admin' || path === 'users' || path === 'usuarios') {
+      const currentUser = window.AuthManager ? window.AuthManager.getCurrentUser() : null;
+      const isSuper = currentUser && (currentUser.is_superuser === true || currentUser.is_superuser === 1);
+      if (!isSuper) {
+        console.warn('⛔ Acceso denegado a /admin: Se requiere cuenta de Superusuario.');
+        history.replaceState(null, '', '/pokemon');
+        this.activateView('pokemon');
+        return;
+      }
     }
 
-    // Ruta estándar: pokemon, moves, battle, users
+    // Ruta estándar: pokemon, moves, battle, admin
     const targetRoute = this.routes[path] ? path : 'pokemon';
     this.activateView(targetRoute, params);
 
@@ -138,7 +143,7 @@ class StadiumRouter {
       } else {
         window.BatallaModule.renderCurrentView();
       }
-    } else if ((routeName === 'users' || routeName === 'usuarios') && window.AdminUsuariosModule) {
+    } else if ((routeName === 'admin' || routeName === 'users' || routeName === 'usuarios') && window.AdminUsuariosModule) {
       window.AdminUsuariosModule.loadUsers();
     }
 
@@ -179,7 +184,7 @@ class StadiumRouter {
           let target = view;
           if (view === 'movimientos') target = 'moves';
           if (view === 'batalla') target = 'battle';
-          if (view === 'usuarios') target = 'users';
+          if (view === 'usuarios') target = 'admin';
 
           StadiumRouter.navigate(target);
           window.scrollTo({ top: 180, behavior: 'smooth' });

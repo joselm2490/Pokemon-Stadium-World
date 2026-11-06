@@ -74,11 +74,10 @@ class BatallaModule {
     this.syncUserNickname();
 
     // Revisar si la URL o la sesión traen una sala activa
-    const urlHash = window.location.hash || '';
     let urlCode = null;
-    const match = urlHash.match(/#\/batallas?\/([A-Za-z0-9]+)/i);
-    if (match && match[1]) {
-      urlCode = match[1].toUpperCase();
+    const pathParts = window.location.pathname.split('/').filter(Boolean);
+    if (pathParts.length >= 2 && (pathParts[0] === 'battle' || pathParts[0] === 'batalla' || pathParts[0] === 'batallas')) {
+      urlCode = pathParts[1].toUpperCase();
     }
 
     const savedRoomCode = urlCode || sessionStorage.getItem('stadium_active_room_code');
