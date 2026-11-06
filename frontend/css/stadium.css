@@ -6261,15 +6261,15 @@ body {
 .gba-arena-background {
   position: absolute;
   top: 0; left: 0; right: 0; bottom: 0;
-  background: url('/assets/gba/battle_backgrounds/building_scene_composite.png') center/cover no-repeat;
-  filter: brightness(0.95);
+  background: url('/assets/gba/battle_backgrounds/stadium_arena_clean.png') center/cover no-repeat;
+  filter: brightness(1.0);
   z-index: 0;
 }
 
 /* Oponente (Rival Frontal Arriba a la Derecha) */
 .gba-opponent-wrapper {
   position: absolute;
-  top: 15%;
+  top: 14%;
   right: 18%;
   display: flex;
   flex-direction: column;
@@ -6278,9 +6278,9 @@ body {
 }
 
 .gba-platform-opponent {
-  width: 240px;
+  width: 220px;
   height: 60px;
-  background: url('/assets/gba/battle_backgrounds/building_platform.png') center/contain no-repeat;
+  background: url('/assets/gba/battle_backgrounds/stadium_platform_clean.png') center/contain no-repeat;
   position: absolute;
   bottom: 0px;
   z-index: 1;
@@ -6300,7 +6300,7 @@ body {
 /* Jugador (Tu Pokémon de Espaldas Abajo a la Izquierda) */
 .gba-player-wrapper {
   position: absolute;
-  bottom: 10%;
+  bottom: 12%;
   left: 15%;
   display: flex;
   flex-direction: column;
@@ -6309,11 +6309,11 @@ body {
 }
 
 .gba-platform-player {
-  width: 300px;
-  height: 70px;
-  background: url('/assets/gba/battle_backgrounds/building_platform.png') center/contain no-repeat;
+  width: 280px;
+  height: 75px;
+  background: url('/assets/gba/battle_backgrounds/stadium_platform_clean.png') center/contain no-repeat;
   position: absolute;
-  bottom: -10px;
+  bottom: -12px;
   z-index: 1;
 }
 

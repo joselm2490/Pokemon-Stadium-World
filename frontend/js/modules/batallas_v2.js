@@ -2533,6 +2533,7 @@ class BatallaModule {
       return;
     }
 
+    this.syncUserNickname();
     const room = this.currentRoom;
     const myNick = (this.userNickname || 'Entrenador').trim();
     const myPlayer = (room.jugadores || []).find(p => (p.apodo || '').toLowerCase() === myNick.toLowerCase());
@@ -2542,7 +2543,8 @@ class BatallaModule {
     const p1 = bs.p1 || {};
     const p2 = bs.p2 || {};
 
-    const isP1 = (p1.apodo || '').toLowerCase().trim() === myNick.toLowerCase();
+    // El jugador local es P1 si coincide su apodo, si es sala tutorial, o por defecto si es anfitrión
+    const isP1 = room.es_tutorial || (p1.apodo || '').toLowerCase().trim() === myNick.toLowerCase() || (myPlayer && myPlayer.es_anfitrion);
     const mySide = isP1 ? p1 : p2;
     const oppSide = isP1 ? p2 : p1;
 
