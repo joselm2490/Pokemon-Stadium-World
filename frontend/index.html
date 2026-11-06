@@ -6,6 +6,22 @@
   <title>Pokémon Stadium World - Juego Web</title>
   <meta name="description" content="Pokémon Stadium World - Videojuego web de Pokémon con base de datos completa de movimientos, Pokémon y modo batalla estilo arena.">
 
+  <!-- Guardia Síncrono de Seguridad (Zero-Flicker): Bloqueo instantáneo si no hay sesión -->
+  <script>
+    (function() {
+      const urlParams = new URLSearchParams(window.location.search);
+      const hasAuthParam = urlParams.has('auth_user');
+      const hasSession = !!sessionStorage.getItem('stadium_session_user');
+      if (!hasAuthParam && !hasSession) {
+        document.documentElement.style.display = 'none';
+        const loginUrl = (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1')
+          ? 'http://127.0.0.1:8000/admin/login/'
+          : 'https://pokemon-stadium-backend.onrender.com/admin/login/';
+        window.location.replace(loginUrl);
+      }
+    })();
+  </script>
+
   <!-- Tipografía moderna -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
