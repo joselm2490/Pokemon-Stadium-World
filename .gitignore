@@ -16,3 +16,4 @@ __pycache__/
 # Archivos de ROM grandes
 red/*.gba
 backend/staticfiles/
+red/
