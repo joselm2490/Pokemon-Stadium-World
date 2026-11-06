@@ -2579,48 +2579,48 @@ class BatallaModule {
         </header>
 
         <main class="gba-battle-arena-stage">
-          <!-- Fondo oficial GBA -->
+          <!-- Fondo oficial GBA FireRed -->
           <div class="gba-arena-background"></div>
 
           <!-- Oponente (Arriba a la derecha) -->
           <div class="gba-opponent-wrapper" id="gbaOpponentWrapper">
-            <div class="gba-healthbox gba-healthbox-opponent" id="gbaOpponentHealthbox">
-              <div class="gba-hb-name-row">
-                <span class="gba-poke-name" id="gbaOpponentName">${this.escapeHtml(oppActivePoke.name || 'Rival')}</span>
-                <span class="gba-poke-level" id="gbaOpponentLevel">Nv${oppActivePoke.level || 50}</span>
-              </div>
-              <div class="gba-hp-row-wrapper">
-                <span class="gba-hp-badge">HP</span>
-                <div class="gba-hp-bar-track">
-                  <div class="gba-hp-bar-fill" id="gbaOpponentHpFill" style="width: ${oppHpPercent}%; background: ${oppHpPercent > 50 ? '#22c55e' : (oppHpPercent > 20 ? '#eab308' : '#ef4444')};"></div>
-                </div>
+            <img src="${oppSprite}" class="gba-sprite-opponent" id="gbaOpponentSprite" alt="${oppActivePoke.name}">
+          </div>
+
+          <!-- Caja de Vida Oponente (Arriba a la IZQUIERDA en FireRed) -->
+          <div class="gba-healthbox-firered gba-healthbox-opponent" id="gbaOpponentHealthbox">
+            <div class="gba-hb-name-row">
+              <span class="gba-poke-name" id="gbaOpponentName">${this.escapeHtml(oppActivePoke.name || 'Rival')}</span>
+              <span class="gba-poke-level" id="gbaOpponentLevel">Nv${oppActivePoke.level || 50}</span>
+            </div>
+            <div class="gba-hp-row-wrapper">
+              <div class="gba-hp-bar-track">
+                <div class="gba-hp-bar-fill" id="gbaOpponentHpFill" style="width: ${oppHpPercent}%; background: ${oppHpPercent > 50 ? '#22c55e' : (oppHpPercent > 20 ? '#eab308' : '#ef4444')};"></div>
               </div>
             </div>
-            <div class="gba-platform-opponent"></div>
-            <img src="${oppSprite}" class="gba-sprite-opponent" id="gbaOpponentSprite" alt="${oppActivePoke.name}">
           </div>
 
           <!-- Jugador (Abajo a la izquierda) -->
           <div class="gba-player-wrapper" id="gbaPlayerWrapper">
-            <div class="gba-platform-player"></div>
             <img src="${mySprite}" class="gba-sprite-player" id="gbaPlayerSprite" alt="${myActivePoke.name}">
-            <div class="gba-healthbox gba-healthbox-player" id="gbaPlayerHealthbox">
-              <div class="gba-hb-name-row">
-                <span class="gba-poke-name" id="gbaPlayerName">${this.escapeHtml(myActivePoke.name || 'Mi Pokémon')}</span>
-                <span class="gba-poke-level" id="gbaPlayerLevel">Nv${myActivePoke.level || 50}</span>
-              </div>
-              <div class="gba-hp-row-wrapper">
-                <span class="gba-hp-badge">HP</span>
-                <div class="gba-hp-bar-track">
-                  <div class="gba-hp-bar-fill" id="gbaPlayerHpFill" style="width: ${myHpPercent}%; background: ${myHpPercent > 50 ? '#22c55e' : (myHpPercent > 20 ? '#eab308' : '#ef4444')};"></div>
-                </div>
-              </div>
-              <div class="gba-hp-numbers" id="gbaPlayerHpNumbers">${myActivePoke.currentHp || 100} / ${myActivePoke.maxHp || 100}</div>
+          </div>
+
+          <!-- Caja de Vida Jugador (Abajo a la DERECHA en FireRed) -->
+          <div class="gba-healthbox-firered gba-healthbox-player" id="gbaPlayerHealthbox">
+            <div class="gba-hb-name-row">
+              <span class="gba-poke-name" id="gbaPlayerName">${this.escapeHtml(myActivePoke.name || 'Mi Pokémon')}</span>
+              <span class="gba-poke-level" id="gbaPlayerLevel">Nv${myActivePoke.level || 50}</span>
             </div>
+            <div class="gba-hp-row-wrapper">
+              <div class="gba-hp-bar-track">
+                <div class="gba-hp-bar-fill" id="gbaPlayerHpFill" style="width: ${myHpPercent}%; background: ${myHpPercent > 50 ? '#22c55e' : (myHpPercent > 20 ? '#eab308' : '#ef4444')};"></div>
+              </div>
+            </div>
+            <div class="gba-hp-numbers" id="gbaPlayerHpNumbers">${myActivePoke.currentHp || 100} / ${myActivePoke.maxHp || 100}</div>
           </div>
         </main>
 
-        <!-- Consola de Combate GBA (Estilo FireRed / pokemon-battle-sim-master) -->
+        <!-- Consola de Combate GBA Oficial (pokemon-battle-sim-master) -->
         <footer class="gba-battle-controls">
           <div class="gba-dialog-log-box" id="gbaDialogBox">
             <div class="gba-log-text" id="gbaDialogText">
@@ -2633,7 +2633,7 @@ class BatallaModule {
               <!-- SUBMENÚ 1: SELECCIÓN DE MOVIMIENTOS (2x2) -->
               <div class="gba-moves-view">
                 <div class="gba-moves-header-bar">
-                  <span style="font-size:0.75rem; font-weight:700; color:#94a3b8;">SELECCIONA UN MOVIMIENTO</span>
+                  <span style="font-size:0.75rem; font-weight:700; color:#cbd5e1;">SELECCIONA UN MOVIMIENTO</span>
                   <button class="gba-btn-back" onclick="BatallaModule.setBattleMenuState(false)">← VOLVER</button>
                 </div>
                 <div class="gba-moves-grid">
@@ -2649,20 +2649,12 @@ class BatallaModule {
                 </div>
               </div>
             ` : `
-              <!-- MENÚ PRINCIPAL GBA: LUCHA, POKÉMON, MOCHILA, HUIR -->
+              <!-- MENÚ PRINCIPAL 4 BOTONES GBA: LUCHA, MOCHILA, POKÉMON, HUIR -->
               <div class="gba-main-menu-grid">
-                <button class="gba-btn-menu-action action-fight" onclick="BatallaModule.setBattleMenuState(true)">
-                  <span>⚔️ LUCHA</span>
-                </button>
-                <button class="gba-btn-menu-action action-bag" onclick="alert('Mochila no disponible en torneo de estadio.')">
-                  <span>🎒 MOCHILA</span>
-                </button>
-                <button class="gba-btn-menu-action action-pokemon" onclick="document.getElementById('gbaBenchBar').scrollIntoView({behavior:'smooth'})">
-                  <span>🐾 EQUIPO</span>
-                </button>
-                <button class="gba-btn-menu-action action-run" onclick="BatallaModule.leaveRoom()">
-                  <span>🏃 HUIR</span>
-                </button>
+                <button class="gba-btn-menu-action action-fight" onclick="BatallaModule.setBattleMenuState(true)" title="Lucha"></button>
+                <button class="gba-btn-menu-action action-bag" onclick="alert('Mochila no disponible en torneo de estadio.')" title="Mochila"></button>
+                <button class="gba-btn-menu-action action-pokemon" onclick="document.getElementById('gbaBenchBar').scrollIntoView({behavior:'smooth'})" title="Pokémon"></button>
+                <button class="gba-btn-menu-action action-run" onclick="BatallaModule.leaveRoom()" title="Huir"></button>
               </div>
             `}
 
