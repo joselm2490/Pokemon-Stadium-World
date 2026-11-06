@@ -94,7 +94,7 @@ class BattleRoomStore {
 
           if (window.StadiumSupabase && r.id) {
             try {
-              window.StadiumSupabase.request(`salas_batalla?id=eq.${r.id}`, {
+              window.StadiumSupabase.request(`battle_rooms?id=eq.${r.id}`, {
                 method: 'PATCH',
                 body: JSON.stringify({
                   estado: 'finalizada',
@@ -129,17 +129,17 @@ class BattleRoomStore {
     try {
       const code = this.activeRoomCode;
       // Consultar la sala en Supabase
-      const roomRes = await window.StadiumSupabase.request(`salas_batalla?codigo=eq.${encodeURIComponent(code)}&select=*`);
+      const roomRes = await window.StadiumSupabase.request(`battle_rooms?codigo=eq.${encodeURIComponent(code)}&select=*`);
       if (!roomRes.ok || !roomRes.data || roomRes.data.length === 0) return;
 
       const remoteRoom = roomRes.data[0];
 
       // Consultar jugadores de la sala
-      const playersRes = await window.StadiumSupabase.request(`sala_jugadores?sala_id=eq.${remoteRoom.id}&select=*&order=id.asc`);
+      const playersRes = await window.StadiumSupabase.request(`room_players?sala_id=eq.${remoteRoom.id}&select=*&order=id.asc`);
       const remotePlayers = playersRes.ok && playersRes.data ? playersRes.data : [];
 
       // Consultar mensajes de la sala
-      const msgsRes = await window.StadiumSupabase.request(`sala_mensajes?sala_id=eq.${remoteRoom.id}&select=*&order=id.asc`);
+      const msgsRes = await window.StadiumSupabase.request(`room_messages?sala_id=eq.${remoteRoom.id}&select=*&order=id.asc`);
       const remoteMsgs = msgsRes.ok && msgsRes.data ? msgsRes.data : [];
 
       const currentLocal = this.getRoomByCode(code);
@@ -268,7 +268,7 @@ class BattleRoomStore {
     if (window.StadiumSupabase) {
       try {
         const res = await window.StadiumSupabase.request(
-          'salas_batalla?select=id,codigo,contrasena,anfitrion_nombre,estado,pokemon_por_jugador,max_jugadores,jugadores_actuales,creada_en,finalizada_en&order=creada_en.desc&limit=30'
+          'battle_rooms?select=id,codigo,contrasena,anfitrion_nombre,estado,pokemon_por_jugador,max_jugadores,jugadores_actuales,creada_en,finalizada_en&order=creada_en.desc&limit=30'
         );
         if (res.ok && Array.isArray(res.data)) {
           allCandidates = res.data.map(remote => {
@@ -319,7 +319,7 @@ class BattleRoomStore {
     if (window.StadiumSupabase) {
       try {
         const res = await window.StadiumSupabase.request(
-          `salas_batalla?estado=in.(esperando,en_combate)&select=id,codigo,estado,anfitrion_nombre,jugadores_actuales,creada_en`
+          `battle_rooms?estado=in.(esperando,en_combate)&select=id,codigo,estado,anfitrion_nombre,jugadores_actuales,creada_en`
         );
         if (res.ok && Array.isArray(res.data)) {
           for (const r of res.data) {
@@ -332,7 +332,7 @@ class BattleRoomStore {
               const cMs = new Date(r.creada_en).getTime();
               if (cMs && (nowMs - cMs) > FIVE_MINUTES_MS) {
                 // Marcar como finalizada en segundo plano
-                window.StadiumSupabase.request(`salas_batalla?id=eq.${r.id}`, {
+                window.StadiumSupabase.request(`battle_rooms?id=eq.${r.id}`, {
                   method: 'PATCH',
                   body: JSON.stringify({ estado: 'finalizada', finalizada_en: new Date().toISOString() })
                 }).catch(() => {});
@@ -342,7 +342,7 @@ class BattleRoomStore {
 
             // Consultar si el apodo está en sala_jugadores de esta sala
             const pRes = await window.StadiumSupabase.request(
-              `sala_jugadores?sala_id=eq.${r.id}&apodo=eq.${encodeURIComponent(userNickname.trim())}&select=id,apodo`
+              `room_players?sala_id=eq.${r.id}&apodo=eq.${encodeURIComponent(userNickname.trim())}&select=id,apodo`
             );
             if (pRes.ok && pRes.data && pRes.data.length > 0) {
               return r; // Ya está activo en esta sala
@@ -454,7 +454,7 @@ class BattleRoomStore {
           jugadores: JSON.stringify(newRoom.jugadores)
         };
 
-        const res = await window.StadiumSupabase.request('salas_batalla', {
+        const res = await window.StadiumSupabase.request('battle_rooms', {
           method: 'POST',
           headers: { 'Prefer': 'return=representation' },
           body: JSON.stringify(payload)
@@ -465,7 +465,7 @@ class BattleRoomStore {
           newRoom.id = dbRoom.id;
 
           // Registrar anfitrión en sala_jugadores
-          await window.StadiumSupabase.request('sala_jugadores', {
+          await window.StadiumSupabase.request('room_players', {
             method: 'POST',
             body: JSON.stringify({
               sala_id: dbRoom.id,
@@ -477,7 +477,7 @@ class BattleRoomStore {
           });
 
           // Registrar mensaje inicial del sistema
-          await window.StadiumSupabase.request('sala_mensajes', {
+          await window.StadiumSupabase.request('room_messages', {
             method: 'POST',
             body: JSON.stringify({
               sala_id: dbRoom.id,
@@ -501,16 +501,16 @@ class BattleRoomStore {
 
     if (window.StadiumSupabase) {
       try {
-        const res = await window.StadiumSupabase.request(`salas_batalla?codigo=eq.${encodeURIComponent(cleanCode)}&select=*`);
+        const res = await window.StadiumSupabase.request(`battle_rooms?codigo=eq.${encodeURIComponent(cleanCode)}&select=*`);
         if (res.ok && res.data && res.data.length > 0) {
           const dbRoom = res.data[0];
           
           // Traer jugadores actuales de la sala desde Supabase
-          const playersRes = await window.StadiumSupabase.request(`sala_jugadores?sala_id=eq.${dbRoom.id}&select=*&order=id.asc`);
+          const playersRes = await window.StadiumSupabase.request(`room_players?sala_id=eq.${dbRoom.id}&select=*&order=id.asc`);
           const remotePlayers = playersRes.ok && playersRes.data ? playersRes.data : [];
 
           // Traer mensajes
-          const msgsRes = await window.StadiumSupabase.request(`sala_mensajes?sala_id=eq.${dbRoom.id}&select=*&order=id.asc`);
+          const msgsRes = await window.StadiumSupabase.request(`room_messages?sala_id=eq.${dbRoom.id}&select=*&order=id.asc`);
           const remoteMsgs = msgsRes.ok && msgsRes.data ? msgsRes.data : [];
 
           const local = this.getRoomByCode(cleanCode);
@@ -605,16 +605,16 @@ class BattleRoomStore {
     // Intentar buscar en Supabase primero para asegurar datos actualizados
     if (window.StadiumSupabase) {
       try {
-        const res = await window.StadiumSupabase.request(`salas_batalla?codigo=eq.${encodeURIComponent(cleanCode)}&select=*`);
+        const res = await window.StadiumSupabase.request(`battle_rooms?codigo=eq.${encodeURIComponent(cleanCode)}&select=*`);
         if (res.ok && res.data && res.data.length > 0) {
           const dbRoom = res.data[0];
           
           // Traer jugadores actuales
-          const playersRes = await window.StadiumSupabase.request(`sala_jugadores?sala_id=eq.${dbRoom.id}&select=*`);
+          const playersRes = await window.StadiumSupabase.request(`room_players?sala_id=eq.${dbRoom.id}&select=*`);
           const players = playersRes.ok && playersRes.data ? playersRes.data : [];
 
           // Traer mensajes
-          const msgsRes = await window.StadiumSupabase.request(`sala_mensajes?sala_id=eq.${dbRoom.id}&select=*&order=id.asc`);
+          const msgsRes = await window.StadiumSupabase.request(`room_messages?sala_id=eq.${dbRoom.id}&select=*&order=id.asc`);
           const msgs = msgsRes.ok && msgsRes.data ? msgsRes.data : [];
 
           const existingLocal = this.getRoomByCode(cleanCode);
@@ -731,9 +731,9 @@ class BattleRoomStore {
       });
 
       // Registrar jugador en Supabase
-      if (window.StadiumSupabase && room.id) {
+      if (window.StadiumSupabase && room.id && !room.es_tutorial && room.id !== 999999) {
         try {
-          await window.StadiumSupabase.request('sala_jugadores', {
+          await window.StadiumSupabase.request('room_players', {
             method: 'POST',
             body: JSON.stringify({
               sala_id: room.id,
@@ -744,7 +744,7 @@ class BattleRoomStore {
             })
           });
 
-          await window.StadiumSupabase.request(`salas_batalla?id=eq.${room.id}`, {
+          await window.StadiumSupabase.request(`battle_rooms?id=eq.${room.id}`, {
             method: 'PATCH',
             body: JSON.stringify({ 
               jugadores_actuales: currentPlayers.length,
@@ -752,7 +752,7 @@ class BattleRoomStore {
             })
           });
 
-          await window.StadiumSupabase.request('sala_mensajes', {
+          await window.StadiumSupabase.request('room_messages', {
             method: 'POST',
             body: JSON.stringify({
               sala_id: room.id,
@@ -799,21 +799,21 @@ class BattleRoomStore {
     this.updateRoom(room);
 
     // Replicar en Supabase
-    if (window.StadiumSupabase && room.id) {
+    if (window.StadiumSupabase && room.id && !room.es_tutorial && room.id !== 999999) {
       try {
-        await window.StadiumSupabase.request(`sala_jugadores?sala_id=eq.${room.id}&apodo=eq.${encodeURIComponent(userNickname)}`, {
+        await window.StadiumSupabase.request(`room_players?sala_id=eq.${room.id}&apodo=eq.${encodeURIComponent(userNickname)}`, {
           method: 'PATCH',
           body: JSON.stringify({ listo: player.listo ? 1 : 0 })
         });
 
-        await window.StadiumSupabase.request(`salas_batalla?id=eq.${room.id}`, {
+        await window.StadiumSupabase.request(`battle_rooms?id=eq.${room.id}`, {
           method: 'PATCH',
           body: JSON.stringify({
             jugadores: JSON.stringify(room.jugadores)
           })
         });
 
-        await window.StadiumSupabase.request('sala_mensajes', {
+        await window.StadiumSupabase.request('room_messages', {
           method: 'POST',
           body: JSON.stringify({
             sala_id: room.id,
@@ -859,7 +859,7 @@ class BattleRoomStore {
           if (updatedRoom.finalizada_en) payload.finalizada_en = updatedRoom.finalizada_en;
           if (updatedRoom.ganador_nombre) payload.ganador_nombre = updatedRoom.ganador_nombre;
 
-          await window.StadiumSupabase.request(`salas_batalla?id=eq.${updatedRoom.id}`, {
+          await window.StadiumSupabase.request(`battle_rooms?id=eq.${updatedRoom.id}`, {
             method: 'PATCH',
             body: JSON.stringify(payload)
           });
@@ -876,7 +876,7 @@ class BattleRoomStore {
               if (p.equipo_confirmado !== undefined) {
                 playerPayload.equipo_confirmado = p.equipo_confirmado ? 1 : 0;
               }
-              await window.StadiumSupabase.request(`sala_jugadores?sala_id=eq.${updatedRoom.id}&apodo=eq.${encodeURIComponent(p.apodo)}`, {
+              await window.StadiumSupabase.request(`room_players?sala_id=eq.${updatedRoom.id}&apodo=eq.${encodeURIComponent(p.apodo)}`, {
                 method: 'PATCH',
                 body: JSON.stringify(playerPayload)
               });
@@ -907,9 +907,9 @@ class BattleRoomStore {
     this.updateRoom(room);
 
     // Replicar en Supabase
-    if (window.StadiumSupabase && room.id) {
+    if (window.StadiumSupabase && room.id && !room.es_tutorial && room.id !== 999999) {
       try {
-        await window.StadiumSupabase.request('sala_mensajes', {
+        await window.StadiumSupabase.request('room_messages', {
           method: 'POST',
           body: JSON.stringify({
             sala_id: room.id,
@@ -963,12 +963,12 @@ class BattleRoomStore {
 
       this.updateRoom(room);
 
-      if (window.StadiumSupabase && room.id) {
+      if (window.StadiumSupabase && room.id && !room.es_tutorial && room.id !== 999999) {
         try {
-          await window.StadiumSupabase.request(`sala_jugadores?sala_id=eq.${room.id}`, {
+          await window.StadiumSupabase.request(`room_players?sala_id=eq.${room.id}`, {
             method: 'DELETE'
           });
-          await window.StadiumSupabase.request(`salas_batalla?id=eq.${room.id}`, {
+          await window.StadiumSupabase.request(`battle_rooms?id=eq.${room.id}`, {
             method: 'PATCH',
             body: JSON.stringify({
               estado: 'finalizada',
@@ -977,7 +977,7 @@ class BattleRoomStore {
               finalizada_en: new Date().toISOString()
             })
           });
-          await window.StadiumSupabase.request('sala_mensajes', {
+          await window.StadiumSupabase.request('room_messages', {
             method: 'POST',
             body: JSON.stringify({
               sala_id: room.id,
@@ -999,12 +999,12 @@ class BattleRoomStore {
       room.jugadores_actuales = 0;
       this.updateRoom(room);
 
-      if (window.StadiumSupabase && room.id) {
+      if (window.StadiumSupabase && room.id && !room.es_tutorial && room.id !== 999999) {
         try {
-          await window.StadiumSupabase.request(`sala_jugadores?sala_id=eq.${room.id}`, {
+          await window.StadiumSupabase.request(`room_players?sala_id=eq.${room.id}`, {
             method: 'DELETE'
           });
-          await window.StadiumSupabase.request(`salas_batalla?id=eq.${room.id}`, {
+          await window.StadiumSupabase.request(`battle_rooms?id=eq.${room.id}`, {
             method: 'PATCH',
             body: JSON.stringify({ 
               estado: 'cancelada', 
@@ -1047,20 +1047,20 @@ class BattleRoomStore {
 
       this.updateRoom(room);
 
-      if (window.StadiumSupabase && room.id) {
+      if (window.StadiumSupabase && room.id && !room.es_tutorial && room.id !== 999999) {
         try {
-          await window.StadiumSupabase.request(`sala_jugadores?sala_id=eq.${room.id}&apodo=eq.${encodeURIComponent(userNickname)}`, {
+          await window.StadiumSupabase.request(`room_players?sala_id=eq.${room.id}&apodo=eq.${encodeURIComponent(userNickname)}`, {
             method: 'DELETE'
           });
 
           if (newHostNick) {
             // Actualizar en Supabase al nuevo anfitrión
-            await window.StadiumSupabase.request(`sala_jugadores?sala_id=eq.${room.id}&apodo=eq.${encodeURIComponent(newHostNick)}`, {
+            await window.StadiumSupabase.request(`room_players?sala_id=eq.${room.id}&apodo=eq.${encodeURIComponent(newHostNick)}`, {
               method: 'PATCH',
               body: JSON.stringify({ es_anfitrion: 1 })
             });
 
-            await window.StadiumSupabase.request(`salas_batalla?id=eq.${room.id}`, {
+            await window.StadiumSupabase.request(`battle_rooms?id=eq.${room.id}`, {
               method: 'PATCH',
               body: JSON.stringify({
                 anfitrion_nombre: newHostNick,
@@ -1068,7 +1068,7 @@ class BattleRoomStore {
               })
             });
 
-            await window.StadiumSupabase.request('sala_mensajes', {
+            await window.StadiumSupabase.request('room_messages', {
               method: 'POST',
               body: JSON.stringify({
                 sala_id: room.id,
@@ -1078,7 +1078,7 @@ class BattleRoomStore {
               })
             });
           } else {
-            await window.StadiumSupabase.request(`salas_batalla?id=eq.${room.id}`, {
+            await window.StadiumSupabase.request(`battle_rooms?id=eq.${room.id}`, {
               method: 'PATCH',
               body: JSON.stringify({
                 jugadores_actuales: room.jugadores.length
@@ -1158,7 +1158,7 @@ class BattleRoomStore {
     this.updateRoom(room);
 
     // Replicar en Supabase si está disponible
-    if (window.StadiumSupabase && room.id) {
+    if (window.StadiumSupabase && room.id && !room.es_tutorial && room.id !== 999999) {
       try {
         const updatePayload = {
           jugadores: JSON.stringify(room.jugadores)
@@ -1168,7 +1168,7 @@ class BattleRoomStore {
           updatePayload.ganador_nombre = bs.winner;
           updatePayload.finalizada_en = room.finalizada_en;
         }
-        await window.StadiumSupabase.request(`salas_batalla?id=eq.${room.id}`, {
+        await window.StadiumSupabase.request(`battle_rooms?id=eq.${room.id}`, {
           method: 'PATCH',
           body: JSON.stringify(updatePayload)
         });
